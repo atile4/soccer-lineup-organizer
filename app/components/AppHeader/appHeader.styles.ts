@@ -3,8 +3,8 @@
 export const appHeaderStyles = {
   header: {
     container: "bg-green-600 shadow-sm border-b border-gray-200",
-    inner: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
-    layout: "relative flex items-center justify-center py-4",
+    inner: "w-full mx-auto px-4 sm:px-6 lg:px-8",
+    layout: "relative flex items-center justify-between py-4",
   },
 
   centerSection: {
@@ -23,7 +23,7 @@ export const appHeaderStyles = {
   },
 
   user: {
-    wrapper: "absolute right-0",
+    wrapper: "",
     button:
       "flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors",
     icon: "w-5 h-5",
