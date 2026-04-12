@@ -15,6 +15,7 @@ import LineupCreator from "./components/LineupCreator";
 import PlayerList from "./components/PlayerList";
 import AppHeader from "./components/AppHeader/AppHeader";
 import ManageTeamSidebar from "./components/ManageTeamSidebar/ManageTeamSidebar";
+import PlayerSidebar from "./components/PlayerSidebar/PlayerSidebar";
 
 export default function DashboardPage() {
   const [teams, setTeams] = useState<Team[]>([]);
@@ -179,6 +180,7 @@ export default function DashboardPage() {
         <div className="flex-1 overflow-y-auto">
           {/* Rest of your page content */}
         </div>
+        <PlayerSidebar />
       </main>
     </div>
   );
