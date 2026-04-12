@@ -235,6 +235,11 @@ export default function DashboardPage() {
         </div>
 
         {/* Tab Content */}
+        {/* 
+          TODO: DELETE TEAM MANAGER TAB CONTENT
+          The following TeamManager component should be removed when redesigning the teams feature
+        */}
+        {/* 
         {activeTab === "teams" && (
           <TeamManager
             teams={teams}
@@ -246,13 +251,22 @@ export default function DashboardPage() {
             onSelectTeam={setSelectedTeam}
           />
         )}
+        */}
 
+        {/* 
+          TODO: DELETE LINEUP CREATOR TAB CONTENT
+          The following entire lineup grid layout and all its sub-components should be removed:
+          - Left Sidebar with Team Selection, Division Selection, Formation Selection, and Player List
+          - Main Area with Lineup Field and all action buttons (Reset, Undo, Redo, Save)
+          - LineupCreator component
+        */}
+        {/* 
         {activeTab === "lineup" && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left Sidebar - Configuration */}
-            <div className="lg:col-span-1 space-y-6">
+            {/* <div className="lg:col-span-1 space-y-6">
               {/* Team Selection */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
+              {/* <div className="bg-white rounded-lg shadow-sm p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   Select Team
                 </h3>
@@ -274,7 +288,7 @@ export default function DashboardPage() {
               </div>
 
               {/* Division Selection */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
+              {/* <div className="bg-white rounded-lg shadow-sm p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   Division
                 </h3>
@@ -296,7 +310,7 @@ export default function DashboardPage() {
               </div>
 
               {/* Formation Selection */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
+              {/* <div className="bg-white rounded-lg shadow-sm p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   Formation
                 </h3>
@@ -325,16 +339,16 @@ export default function DashboardPage() {
               </div>
 
               {/* Player List */}
-              {selectedTeam && (
+              {/* {selectedTeam && (
                 <PlayerList
                   players={selectedTeam.players}
                   lineupPositions={lineupPositions}
                 />
-              )}
-            </div>
+              )} */}
+            {/* </div> */}
 
             {/* Main Area - Lineup Field */}
-            <div className="lg:col-span-2">
+            {/* <div className="lg:col-span-2">
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h3 className="text-lg font-semibold text-gray-900">
@@ -344,7 +358,7 @@ export default function DashboardPage() {
                   </h3>
 
                   {/* Action Buttons */}
-                  <div className="flex space-x-2">
+                  {/* <div className="flex space-x-2">
                     <button
                       onClick={handleResetLineup}
                       className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors flex items-center space-x-2"
@@ -425,20 +439,19 @@ export default function DashboardPage() {
                       </svg>
                       <span className="text-sm font-medium">Save</span>
                     </button>
-                  </div>
-                </div>
+                  </div> */}
 
-                <LineupCreator
+                {/* <LineupCreator
                   positions={lineupPositions}
                   players={selectedTeam?.players || []}
                   division={division}
                   onPlayerDrop={handlePlayerDrop}
                   onRemovePlayer={handleRemovePlayerFromPosition}
-                />
-              </div>
-            </div>
-          </div>
-        )}
+                /> */}
+              {/* </div> */}
+            {/* </div> */}
+          {/* </div> */}
+        {/* }} */}
       </main>
     </div>
   );
