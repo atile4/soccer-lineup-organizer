@@ -175,7 +175,7 @@ export default function DashboardPage() {
       {/* Header - Now using AppHeader component */}
       <AppHeader userName="Guest User" onLogout={handleLogout} />
 
-      <main className="flex-1 flex overflow-hidden py-4 pr-4 gap-4">
+      <main className="flex-1 flex overflow-hidden py-4 gap-4">
         <ManageTeamSidebar />
         <div className="flex-1 overflow-y-auto">
           {/* Rest of your page content */}

@@ -15,8 +15,9 @@ export const playerSidebarStyles = {
   innerWrapper: "w-full min-w-72 p-4",
 
   // Header row
-  header: "flex items-center justify-between mb-6",
+  header: "relative flex items-center justify-center mb-6",
   title: "text-xl font-bold text-gray-800",
-  closeButton: "p-1 rounded-md hover:bg-gray-100 transition-colors",
+  closeButton:
+    "absolute left-0 p-1 rounded-md hover:bg-gray-100 transition-colors",
   closeButtonIcon: "h-5 w-5 text-gray-500",
 };
