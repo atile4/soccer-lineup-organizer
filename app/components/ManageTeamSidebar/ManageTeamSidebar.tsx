@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { ChevronRight, X } from "lucide-react";
 import { sidebarStyles } from "./ManageTeamSidebar.styles";
 
 interface ManageTeamSidebarProps {
@@ -18,20 +19,7 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({}) => {
           className={sidebarStyles.openButton}
           aria-label="Open sidebar"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className={sidebarStyles.openButtonIcon}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
+          <ChevronRight className={sidebarStyles.openButtonIcon} />
         </button>
       )}
 
@@ -42,56 +30,43 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({}) => {
         <div className={sidebarStyles.innerWrapper}>
           {/* Header row with title + close (X) button */}
           <div className={sidebarStyles.header}>
-            <h2 className={sidebarStyles.title}>Menu</h2>
+            <h1 className={sidebarStyles.title}>Manage Team</h1>
 
             <button
               onClick={() => setSidebarOpen(false)}
               className={sidebarStyles.closeButton}
               aria-label="Close sidebar"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className={sidebarStyles.closeButtonIcon}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+              <X className={sidebarStyles.closeButtonIcon} />
             </button>
           </div>
+          {/* Put lineup dropdown here */}
+          <p>Lineup Dropdown here</p>
+          <div className={sidebarStyles.manageSection}>
+            {/* Formation */}
+            <div className={sidebarStyles.fieldGroup}>
+              <h2 className={sidebarStyles.sectionTitle}>Formation:</h2>
+              <input
+                type="text"
+                placeholder="e.g 1-4-5, 4-5, 4-1-3..."
+                className={sidebarStyles.textInput}
+              />
+            </div>
 
-          {/* Navigation links */}
-          <nav className={sidebarStyles.nav}>
-            <button
-              onClick={() => setActiveTab("teams")}
-              className={`${sidebarStyles.navButton} ${
-                activeTab === "teams"
-                  ? sidebarStyles.navButtonActive
-                  : sidebarStyles.navButtonInactive
-              }`}
-            >
-              🏟️ Teams
-            </button>
-            <button
-              onClick={() => setActiveTab("lineup")}
-              className={`${sidebarStyles.navButton} ${
-                activeTab === "lineup"
-                  ? sidebarStyles.navButtonActive
-                  : sidebarStyles.navButtonInactive
-              }`}
-            >
-              📋 Lineup
-            </button>
-          </nav>
+            {/* Split by */}
+            <div className={sidebarStyles.fieldGroup}>
+              <h2 className={sidebarStyles.sectionTitle}>Split by:</h2>
+            </div>
 
-          {/* Extra section (placeholder) */}
-          <div className={sidebarStyles.extraSection}>
+            {/* Notes */}
+            <div className={sidebarStyles.fieldGroup}>
+              <h2 className={sidebarStyles.sectionTitle}>Notes:</h2>
+              <textarea
+                placeholder="Add notes here..."
+                className={sidebarStyles.textArea}
+              />
+            </div>
+
             <p className={sidebarStyles.extraSectionText}>
               Add more sidebar content here.
             </p>

@@ -170,13 +170,13 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-gray-50">
+    <div className="h-screen flex flex-col">
       {/* Header - Now using AppHeader component */}
       <AppHeader userName="Guest User" onLogout={handleLogout} />
 
-      <main className="flex">
+      <main className="flex-1 flex overflow-hidden py-4 pr-4 gap-4">
         <ManageTeamSidebar />
-        <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex-1 overflow-y-auto">
           {/* Rest of your page content */}
         </div>
       </main>

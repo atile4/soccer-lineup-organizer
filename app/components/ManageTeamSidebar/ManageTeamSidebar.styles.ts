@@ -1,51 +1,33 @@
 export const sidebarStyles = {
-  // Arrow button pinned to the left edge of the screen when sidebar is collapsed
+  // Arrow button visible when sidebar is collapsed
   openButton:
     "fixed top-20 left-0 z-40 bg-white border border-l-0 border-gray-300 rounded-r-lg p-2 shadow-md hover:bg-gray-100 transition-colors",
-
-  // Chevron icon inside the open button
   openButtonIcon: "h-5 w-5 text-gray-600",
 
-  // The collapsible <aside> panel — width animates via sidebarOpen / sidebarClosed
+  // Collapsible <aside> — width toggles between sidebarOpen / sidebarClosed
+  // Height and spacing are controlled by the parent <main> in page.tsx
   sidebar:
-    "transition-all duration-300 ease-in-out overflow-hidden bg-white border-r border-gray-200 shadow-sm min-h-[calc(100vh-64px)] flex-shrink-0",
-
-  // Width when open (288px)
-  sidebarOpen: "w-72",
-
-  // Width when collapsed (0px, content hidden by overflow-hidden)
+    "transition-all duration-300 ease-in-out overflow-hidden overflow-y-auto bg-white border border-gray-200 rounded-r-lg shadow-sm flex-shrink-0 h-full",
+  sidebarOpen: "w-80",
   sidebarClosed: "w-0",
 
-  // Fixed-width wrapper inside <aside> — prevents content from reflowing during animation
-  innerWrapper: "w-72 p-4",
+  // Fixed-width wrapper — prevents content from reflowing during animation
+  innerWrapper: "w-full min-w-72 p-4",
 
-  // Top row: title on the left, close button on the right
+  // Header row
   header: "flex items-center justify-between mb-6",
-
-  // "Menu" heading text
-  title: "text-lg font-semibold text-gray-800",
-
-  // X button that collapses the sidebar
+  title: "text-xl font-bold text-gray-800",
   closeButton: "p-1 rounded-md hover:bg-gray-100 transition-colors",
-
-  // X icon inside the close button
   closeButtonIcon: "h-5 w-5 text-gray-500",
 
-  // Container for the nav buttons
-  nav: "space-y-1",
+  // Fields section
+  manageSection: "mt-6 pt-6 border-t border-gray-200 space-y-5",
+  fieldGroup: "flex flex-col gap-1",
+  sectionTitle: "text-lg font-semibold text-gray-800",
+  textInput:
+    "w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400",
+  textArea:
+    "w-full px-3 py-2 text-sm border border-gray-300 rounded-lg resize-y min-h-[80px] focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400",
 
-  // Shared base styles for each nav button
-  navButton: "w-full text-left px-3 py-2 rounded-lg text-sm transition-colors",
-
-  // Currently selected tab
-  navButtonActive: "bg-green-100 text-green-800 font-medium",
-
-  // Non-selected tabs
-  navButtonInactive: "text-gray-600 hover:bg-gray-100",
-
-  // Placeholder section below the nav, separated by a top border
-  extraSection: "mt-6 pt-6 border-t border-gray-200",
-
-  // Subtle text inside the extra section
   extraSectionText: "text-xs text-gray-400",
 };
