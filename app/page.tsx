@@ -14,6 +14,7 @@ import TeamManager from "./components/TeamManager";
 import LineupCreator from "./components/LineupCreator";
 import PlayerList from "./components/PlayerList";
 import AppHeader from "./components/AppHeader/AppHeader";
+import ManageTeamSidebar from "./components/ManageTeamSidebar/ManageTeamSidebar";
 
 export default function DashboardPage() {
   const [teams, setTeams] = useState<Team[]>([]);
@@ -21,7 +22,6 @@ export default function DashboardPage() {
   const [division, setDivision] = useState<Division>("U-12");
   const [formation, setFormation] = useState<string>("1-3-3");
   const [lineupPositions, setLineupPositions] = useState<Position[]>([]);
-  const [activeTab, setActiveTab] = useState<"teams" | "lineup">("teams");
 
   // Initialize lineup positions when formation or division changes
   useEffect(() => {
@@ -174,8 +174,12 @@ export default function DashboardPage() {
       {/* Header - Now using AppHeader component */}
       <AppHeader userName="Guest User" onLogout={handleLogout} />
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"></main>
+      <main className="flex">
+        <ManageTeamSidebar />
+        <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Rest of your page content */}
+        </div>
+      </main>
     </div>
   );
 }
