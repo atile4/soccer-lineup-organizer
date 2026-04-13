@@ -172,13 +172,28 @@ export default function DashboardPage() {
 
   return (
     <div className="h-screen flex flex-col">
-      {/* Header - Now using AppHeader component */}
       <AppHeader userName="Guest User" onLogout={handleLogout} />
 
       <main className="flex-1 flex overflow-hidden py-4 gap-4">
         <ManageTeamSidebar />
-        <div className="flex-1 overflow-y-auto">
-          {/* Rest of your page content */}
+
+        {/* Soccer Field */}
+        <div className="flex-1 flex items-center justify-center h-full w-full min-w-0 px-4">
+          <div
+            className="relative w-full"
+            style={{
+              maxWidth: "900px",
+              maxHeight: "calc(100vh - 6rem)",
+            }}
+          >
+            <img
+              src="/images/soccer_field.png"
+              alt="Soccer field"
+              className="rounded-lg shadow-lg w-full h-auto object-contain"
+              style={{ maxHeight: "calc(100vh - 6rem)" }}
+            />
+            {/* Future: drag-and-drop player components will be layered here */}
+          </div>
         </div>
         <PlayerSidebar />
       </main>
