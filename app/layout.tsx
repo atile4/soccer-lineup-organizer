@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Inter } from "next/font/google";
 
+// context providers
+import { AuthProvider } from "@/context/AuthContext";
+
 export const metadata: Metadata = {
   title: "Soccer Lineup Organizer",
   description: "Create and manage soccer team lineups",
@@ -19,7 +22,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }
