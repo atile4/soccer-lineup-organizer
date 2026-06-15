@@ -51,7 +51,7 @@ export default function LoginPage() {
     if (!loading && user) router.push("/");
   }, [user, loading]);
 
-  if (loading || !user) return null;
+  if (loading) return null;
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center py-10 px-4">
