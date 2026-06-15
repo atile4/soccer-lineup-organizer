@@ -24,8 +24,7 @@ export const appHeaderStyles = {
 
   user: {
     wrapper: "",
-    button:
-      "flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors",
+    button: "flex items-center space-x-2 px-4 py-2 text-white font-medium border border-white/70 rounded-lg hover:bg-white hover:text-green-700 transition-colors duration-150",
     icon: "w-5 h-5",
     name: "text-sm font-medium",
   },
