@@ -1,22 +1,21 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 interface ProfileButtonProps {
-  userName?: string;
-  userEmail?: string;
   onProfileClick?: () => void;
   onThemeClick?: () => void;
   onLogout?: () => void;
 }
 
 export default function ProfileButton({
-  userName = "Guest User",
-  userEmail,
   onProfileClick,
   onThemeClick,
   onLogout,
 }: ProfileButtonProps) {
+  const { user, loading } = useAuth();
+
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -126,11 +125,20 @@ export default function ProfileButton({
         <div
           className={`${buttonStyles.avatar} ${buttonStyles.avatarBg} ${buttonStyles.avatarText}`}
         >
-          {getInitials(userName)}
+          {user?.photoURL ? (
+            <img
+              src={user.photoURL}
+              alt={user.displayName ?? "User avatar"}
+              className="w-full h-full object-cover rounded-full"
+            />
+          ) : (
+            // @TODO figure out if we use display names and stuff, and the default behavior for no avatar
+            getInitials("Placeholder Avatar")
+          )}
         </div>
 
         {/* User Name */}
-        <span className={buttonStyles.userName}>{userName}</span>
+        <span className={buttonStyles.userName}>{user?.displayName}</span>
 
         {/* Chevron Icon */}
         <svg
@@ -158,9 +166,9 @@ export default function ProfileButton({
           <div
             className={`${popoverStyles.header} ${popoverStyles.headerBorder}`}
           >
-            <div className={popoverStyles.headerName}>{userName}</div>
-            {userEmail && (
-              <div className={popoverStyles.headerEmail}>{userEmail}</div>
+            <div className={popoverStyles.headerName}>{user?.displayName}</div>
+            {user?.email && (
+              <div className={popoverStyles.headerEmail}>{user.email}</div>
             )}
           </div>
 

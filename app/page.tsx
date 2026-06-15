@@ -161,18 +161,9 @@ export default function DashboardPage() {
     alert("Lineup saved! (Implement your save logic in handleSaveLineup)");
   };
 
-  // TODO: AUTHENTICATION POINT #4 - Add logout functionality
-  const handleLogout = () => {
-    // TODO: Implement logout logic here
-    // Example: signOut() from your auth provider
-    console.log("Logout clicked - Implement your logout logic here");
-    // For now, just redirect to home
-    // router.push('/')
-  };
-
   return (
     <div className="h-screen flex flex-col">
-      <AppHeader userName="Guest User" onLogout={handleLogout} />
+      <AppHeader />
 
       <main className="flex-1 flex overflow-hidden py-4 gap-4">
         <ManageTeamSidebar />
