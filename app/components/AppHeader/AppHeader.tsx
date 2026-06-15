@@ -2,28 +2,53 @@
 
 import { appHeaderStyles as styles } from "./appHeader.styles";
 
+// Context
+import { useAuth } from "@/context/AuthContext";
+import { signOut } from "firebase/auth";
+import { useRouter } from "next/navigation";
+
 // Components
 import ProfileButton from "./ProfileMenu";
 import LogoAndTitle from "./LogoAndTitle";
+import { auth } from "@/lib/firebase";
 
-interface AppHeaderProps {
-  userName?: string;
-  onLogout?: () => void;
-}
+export default function AppHeader() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
 
-export default function AppHeader({
-  userName = "Guest User",
-  onLogout,
-}: AppHeaderProps) {
+  const handleLogout = async () => {
+    await signOut(auth);
+    router.push("/login");
+  };
+
+  const handleLogin = () => {
+    router.push("/login");
+  };
+
   return (
     <header className={styles.header.container}>
       <div className={styles.header.inner}>
         <div className={styles.header.layout}>
           <LogoAndTitle title={"Soccer Lineup Organizer"} />
 
-          <div className={styles.user.wrapper}>
-            <ProfileButton />
-          </div>
+          {loading ? (
+            <p>Loading...</p>
+          ) : (
+            <div className={styles.user.wrapper}>
+              {user ? (
+                <ProfileButton onLogout={handleLogout} />
+              ) : (
+                <button
+                  type="button"
+                  className={styles.user.button}
+                  onClick={handleLogin}
+                  aria-label="Log in"
+                >
+                  Log in
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </header>
