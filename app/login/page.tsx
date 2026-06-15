@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+// TODO: don't make this look vibe coded
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
