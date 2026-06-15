@@ -13,7 +13,7 @@ interface ProfileButtonProps {
 
 export default function ProfileButton({
   userName = "Guest User",
-  userEmail,
+  userEmail = "example@eee.com",
   onProfileClick,
   onThemeClick,
   onLogout,
@@ -25,17 +25,13 @@ export default function ProfileButton({
   // TODO: CUSTOMIZATION POINT - Button Styles
   const buttonStyles = {
     container:
-      "flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors",
-    containerHover: "hover:bg-gray-100",
+      "flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors",
     avatar:
-      "w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm",
-    avatarBg: "bg-gradient-to-br from-primary to-green-600",
-    avatarText: "text-white",
+      "w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm bg-gradient-to-br from-primary to-green-600 text-white",
     userName: "text-sm font-medium text-gray-700",
     chevron: "w-4 h-4 text-gray-500 transition-transform",
   };
 
-  // Close popover when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -58,32 +54,30 @@ export default function ProfileButton({
   const handleProfileClick = () => {
     setIsOpen(false);
     onProfileClick?.();
-    // TODO: Implement profile navigation or modal
-    console.log("Profile clicked - Implement your profile logic here");
+  };
+
+  const handleInfoClick = () => {
+    setIsOpen(false);
+    onProfileClick?.();
   };
 
   const handleThemeClick = () => {
     setIsOpen(false);
     onThemeClick?.();
-    // TODO: Implement theme toggle logic
-    console.log("Theme clicked - Implement your theme logic here");
   };
 
   const handleLogoutClick = () => {
     setIsOpen(false);
     onLogout?.();
-    // TODO: Implement logout logic
-    console.log("Logout clicked - Implement your logout logic here");
   };
 
-  const getInitials = (name: string) => {
-    return name
+  const getInitials = (name: string) =>
+    name
       .split(" ")
       .map((n) => n[0])
       .join("")
       .toUpperCase()
       .slice(0, 2);
-  };
 
   return (
     <div className="relative">
@@ -91,19 +85,10 @@ export default function ProfileButton({
       <button
         ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
-        className={`${buttonStyles.container} ${buttonStyles.containerHover}`}
+        className={buttonStyles.container}
       >
-        {/* Avatar */}
-        <div
-          className={`${buttonStyles.avatar} ${buttonStyles.avatarBg} ${buttonStyles.avatarText}`}
-        >
-          {getInitials(userName)}
-        </div>
-
-        {/* User Name */}
+        <div className={buttonStyles.avatar}>{getInitials(userName)}</div>
         <span className={buttonStyles.userName}>{userName}</span>
-
-        {/* Chevron Icon */}
         <svg
           className={`${buttonStyles.chevron} ${isOpen ? "rotate-180" : ""}`}
           fill="none"
@@ -121,29 +106,22 @@ export default function ProfileButton({
 
       {/* Popover Menu */}
       {isOpen && (
-        <div
-          ref={popoverRef}
-          className={`${popoverStyles.container} ${popoverStyles.containerBg} ${popoverStyles.containerBorder}`}
-        >
-          {/* Header with user info */}
-          <div
-            className={`${popoverStyles.header} ${popoverStyles.headerBorder}`}
-          >
+        <div ref={popoverRef} className={popoverStyles.container}>
+          {/* Header */}
+          <div className={popoverStyles.header}>
             <div className={popoverStyles.headerName}>{userName}</div>
-            {userEmail && (
-              <div className={popoverStyles.headerEmail}>{userEmail}</div>
-            )}
+            <div className={popoverStyles.headerEmail}>{userEmail}</div>
           </div>
 
           {/* Menu Items */}
           <div className="py-2">
-            {/* Profile Option */}
+            {/* Profile */}
             <div
               onClick={handleProfileClick}
-              className={`${popoverStyles.menuItem} ${popoverStyles.menuItemHover}`}
+              className={popoverStyles.menuItem}
             >
               <svg
-                className={`${popoverStyles.menuIcon} ${popoverStyles.menuIconColor}`}
+                className={popoverStyles.menuIcon}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -155,46 +133,48 @@ export default function ProfileButton({
                   d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                 />
               </svg>
-              <div className="flex-1">
-                <div className={popoverStyles.menuText}>Profile</div>
-                <div className={popoverStyles.menuDescription}>
-                  Manage your account
-                </div>
-              </div>
+              <div className={popoverStyles.menuText}>Profile</div>
             </div>
 
-            {/* Theme Option */}
-            <div
-              onClick={handleThemeClick}
-              className={`${popoverStyles.menuItem} ${popoverStyles.menuItemHover}`}
-            >
+            {/* About */}
+            <div onClick={handleInfoClick} className={popoverStyles.menuItem}>
               <svg
-                className={`${popoverStyles.menuIcon} ${popoverStyles.menuIconColor}`}
+                className={popoverStyles.menuIcon}
                 fill="none"
-                stroke="currentColor"
                 viewBox="0 0 24 24"
+                stroke="currentColor"
               >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+                  strokeWidth={1.5}
+                  d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"
                 />
               </svg>
-              <div className="flex-1">
-                <div className={popoverStyles.menuText}>Theme</div>
-                <div className={popoverStyles.menuDescription}>
-                  Customize appearance
-                </div>
-              </div>
+              <div className={popoverStyles.menuText}>About</div>
+            </div>
+
+            {/* Report Issues */}
+            <div onClick={handleThemeClick} className={popoverStyles.menuItem}>
+              <svg
+                className={popoverStyles.menuIcon}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z"
+                />
+              </svg>
+              <div className={popoverStyles.menuText}>Report Issues</div>
             </div>
           </div>
 
-          {/* Logout Option (separated) */}
-          <div
-            onClick={handleLogoutClick}
-            className={`${popoverStyles.logoutItem} ${popoverStyles.logoutBorder} ${popoverStyles.logoutHover}`}
-          >
+          {/* Logout */}
+          <div onClick={handleLogoutClick} className={popoverStyles.logoutItem}>
             <svg
               className={popoverStyles.logoutIcon}
               fill="none"
