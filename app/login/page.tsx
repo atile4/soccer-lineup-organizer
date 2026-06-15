@@ -3,11 +3,19 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { auth } from "@/lib/firebase";
+import {
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
+
 // TODO: don't make this look vibe coded
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleProviderLogin = (provider: string) => {
     // TODO: Add OAuth login flow for each provider
@@ -15,11 +23,25 @@ export default function LoginPage() {
     router.push("/");
   };
 
-  const handleEmailLogin = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleEmailLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // TODO: Add email/password authentication logic
     console.log("Login with email", { email, password });
-    router.push("/");
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      router.push("/");
+    } catch (e: any) {
+      setError(e.message);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      router.push("/");
+    } catch (e: any) {
+      setError(e.message);
+    }
   };
 
   return (
@@ -37,7 +59,7 @@ export default function LoginPage() {
               {/* Google */}
               <button
                 type="button"
-                onClick={() => handleProviderLogin("Google")}
+                onClick={() => handleGoogleLogin()}
                 className="flex items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
               >
                 <svg
@@ -107,6 +129,7 @@ export default function LoginPage() {
                 Continue with Yahoo
               </button>
             </div>
+            {error && <p className="text-red-500 text-sm">{error}</p>}
 
             <div className="my-8 flex items-center gap-3 text-sm text-slate-400">
               <span className="h-px flex-1 bg-slate-200"></span>
