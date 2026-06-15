@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 import { auth } from "@/lib/firebase";
 import {
@@ -12,6 +13,7 @@ import {
 
 // TODO: don't make this look vibe coded
 export default function LoginPage() {
+  const { user, loading } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -43,6 +45,13 @@ export default function LoginPage() {
       setError(e.message);
     }
   };
+
+  // guard for logged in users
+  useEffect(() => {
+    if (!loading && user) router.push("/");
+  }, [user, loading]);
+
+  if (loading || !user) return null;
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center py-10 px-4">
