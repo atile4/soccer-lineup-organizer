@@ -8,7 +8,7 @@ import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 
 // Components
-import ProfileButton from "./ProfileMenu";
+import ProfileMenu from "./ProfileMenu";
 import LogoAndTitle from "./LogoAndTitle";
 import { auth } from "@/lib/firebase";
 
@@ -36,7 +36,7 @@ export default function AppHeader() {
           ) : (
             <div className={styles.user.wrapper}>
               {user ? (
-                <ProfileButton onLogout={handleLogout} />
+                <ProfileMenu onLogout={handleLogout} />
               ) : (
                 <button
                   type="button"

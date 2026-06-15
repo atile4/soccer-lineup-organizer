@@ -4,17 +4,17 @@ import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { popoverStyles } from "./ProfileMenu.styles";
 
-interface ProfileButtonProps {
+interface ProfileMenuProps {
   onProfileClick?: () => void;
   onThemeClick?: () => void;
   onLogout?: () => void;
 }
 
-export default function ProfileButton({
+export default function ProfileMenu({
   onProfileClick,
   onThemeClick,
   onLogout,
-}: ProfileButtonProps) {
+}: ProfileMenuProps) {
   const { user, loading } = useAuth();
 
   const [isOpen, setIsOpen] = useState(false);
