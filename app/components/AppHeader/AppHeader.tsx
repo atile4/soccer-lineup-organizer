@@ -3,7 +3,7 @@
 import { appHeaderStyles as styles } from "./appHeader.styles";
 
 // Components
-import ProfileButton from "./ProfileButton";
+import ProfileButton from "./ProfileMenu";
 import LogoAndTitle from "./LogoAndTitle";
 
 interface AppHeaderProps {
