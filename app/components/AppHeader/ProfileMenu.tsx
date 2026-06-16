@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { popoverStyles } from "./ProfileMenu.styles";
+import { popoverStyles, buttonStyles } from "./ProfileMenu.styles";
 
 interface ProfileMenuProps {
   onProfileClick?: () => void;
@@ -20,15 +20,6 @@ export default function ProfileMenu({
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-
-  const buttonStyles = {
-    container:
-      "flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors",
-    avatar:
-      "w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm bg-gradient-to-br from-primary to-green-600 text-white",
-    userName: "text-sm font-medium text-gray-700",
-    chevron: "w-4 h-4 text-gray-500 transition-transform",
-  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -98,9 +89,6 @@ export default function ProfileMenu({
           )}
         </div>
 
-        {/* User Name */}
-        <span className={buttonStyles.userName}>{user?.displayName}</span>
-
         {/* Chevron */}
         <svg
           className={`${buttonStyles.chevron} ${isOpen ? "rotate-180" : ""}`}
@@ -122,10 +110,27 @@ export default function ProfileMenu({
         <div ref={popoverRef} className={popoverStyles.container}>
           {/* Header */}
           <div className={popoverStyles.header}>
-            <div className={popoverStyles.headerName}>{user?.displayName}</div>
-            {user?.email && (
-              <div className={popoverStyles.headerEmail}>{user.email}</div>
-            )}
+            {/* Avatar */}
+            <div className={buttonStyles.avatar}>
+              {user?.photoURL ? (
+                <img
+                  src={user.photoURL}
+                  alt={user.displayName ?? undefined}
+                  className="w-full h-full object-cover rounded-full"
+                />
+              ) : (
+                user?.displayName && getInitials(user.displayName)
+              )}
+            </div>
+
+            <div>
+              <div className={popoverStyles.headerName}>
+                {user?.displayName}
+              </div>
+              {user?.email && (
+                <div className={popoverStyles.headerEmail}>{user.email}</div>
+              )}
+            </div>
           </div>
 
           {/* Menu Items */}
