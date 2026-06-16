@@ -12,7 +12,7 @@ interface ProfileMenuProps {
 
 export default function ProfileMenu({
   onProfileClick,
-  onThemeClick,
+  onThemeClick: onReportClick,
   onLogout,
 }: ProfileMenuProps) {
   const { user, loading } = useAuth();
@@ -50,9 +50,9 @@ export default function ProfileMenu({
     onProfileClick?.();
   };
 
-  const handleThemeClick = () => {
+  const handleReportClick = () => {
     setIsOpen(false);
-    onThemeClick?.();
+    onReportClick?.();
   };
 
   const handleLogoutClick = () => {
@@ -160,7 +160,7 @@ export default function ProfileMenu({
             </div>
 
             {/* Report Issues */}
-            <div onClick={handleThemeClick} className={popoverStyles.menuItem}>
+            <div onClick={handleReportClick} className={popoverStyles.menuItem}>
               <svg
                 className={popoverStyles.menuIcon}
                 fill="none"
