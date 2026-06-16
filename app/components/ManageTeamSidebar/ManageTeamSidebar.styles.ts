@@ -29,5 +29,6 @@ export const sidebarStyles = {
   textArea:
     "w-full px-3 py-2 text-sm border border-gray-300 rounded-lg resize-y min-h-[80px] focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400",
 
+  errorText: "text-xs text-red-600 mt-1",
   extraSectionText: "text-xs text-gray-400",
 };

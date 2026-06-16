@@ -1,14 +1,73 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChevronRight, X } from "lucide-react";
 import { sidebarStyles } from "./ManageTeamSidebar.styles";
 
 interface ManageTeamSidebarProps {
-  // Add props here
+  maxPlayers?: number;
 }
 
 export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({}) => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
-  const [activeTab, setActiveTab] = useState<"teams" | "lineup">("teams");
+  const [formation, setFormation] = useState("");
+  const [formationError, setFormationError] = useState("");
+
+  const checkFormation = () => {
+    // Empty input: no error, nothing to validate
+    if (!formation) {
+      setFormationError("");
+      return;
+    }
+
+    let error = "";
+    let total = 0;
+    let prevnum = 0;
+
+    for (const c of formation) {
+      // invalid character (0, or not a digit/hyphen)
+      if (c === "0" || (c !== "-" && isNaN(+c))) {
+        error = "Error: must be a non-zero digit or hyphen.";
+        break;
+      }
+
+      // start of string must be a digit
+      if (total === 0 && prevnum === 0) {
+        if (c === "-") {
+          error = "The formation must start with a digit";
+          break;
+        }
+      }
+
+      if (c === "-") {
+        // a hyphen with no preceding number => double hyphen / leading hyphen
+        if (prevnum === 0) {
+          error = "Error: double hyphens are not allowed";
+          break;
+        }
+        prevnum = 0;
+      } else {
+        // a digit
+        if (prevnum !== 0) {
+          error = "Error: double digits are not allowed";
+          break;
+        }
+        total += +c;
+        prevnum = +c;
+      }
+    }
+
+    // formation cannot end with a hyphen
+    if (!error && prevnum === 0 && total !== 0) {
+      error = "Error: formation cannot end with a hyphen";
+    }
+
+    // @TODO check if total exceeds maxPlayers
+
+    setFormationError(error);
+  };
+
+  useEffect(() => {
+    checkFormation();
+  }, [formation]);
 
   return (
     <>
@@ -41,7 +100,6 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({}) => {
             </button>
           </div>
           {/* Put lineup dropdown here */}
-          <p>Lineup Dropdown here</p>
           <div className={sidebarStyles.manageSection}>
             {/* Formation */}
             <div className={sidebarStyles.fieldGroup}>
@@ -50,7 +108,13 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({}) => {
                 type="text"
                 placeholder="e.g 1-4-5, 4-5, 4-1-3..."
                 className={sidebarStyles.textInput}
+                onChange={(event) => {
+                  setFormation(event.target.value);
+                }}
               />
+              {formationError && (
+                <p className={sidebarStyles.errorText}>{formationError}</p>
+              )}
             </div>
 
             {/* Split by */}
