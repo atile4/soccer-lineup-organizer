@@ -180,10 +180,6 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({}) => {
                 }
               />
             </div>
-
-            <p className={sidebarStyles.extraSectionText}>
-              Add more sidebar content here.
-            </p>
           </div>
         </div>
       </aside>
