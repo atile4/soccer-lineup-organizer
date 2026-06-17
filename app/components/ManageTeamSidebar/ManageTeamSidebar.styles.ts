@@ -24,10 +24,16 @@ export const sidebarStyles = {
   manageSection: "mt-6 pt-6 border-t border-gray-200 space-y-5",
   fieldGroup: "flex flex-col gap-1",
   sectionTitle: "text-lg font-semibold text-gray-800",
+  selectWrapper: "relative",
   textInput:
     "w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400",
+  selectInput:
+    "w-full appearance-none bg-white px-3 py-2 pr-10 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400 cursor-pointer",
+  customArrowIcon:
+    "pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500",
   textArea:
     "w-full px-3 py-2 text-sm border border-gray-300 rounded-lg resize-y min-h-[80px] focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400",
 
+  errorText: "text-xs text-red-600 mt-1",
   extraSectionText: "text-xs text-gray-400",
 };
