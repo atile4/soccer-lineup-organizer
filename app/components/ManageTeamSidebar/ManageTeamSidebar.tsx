@@ -101,7 +101,34 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({}) => {
               <X className={sidebarStyles.closeButtonIcon} />
             </button>
           </div>
-          {/* Put lineup dropdown here */}
+          {/* Split by */}
+          <div className={sidebarStyles.fieldGroup}>
+            <div className={sidebarStyles.selectWrapper}>
+              <select
+                className={sidebarStyles.selectInput}
+                defaultValue="No Lineup Selected"
+                aria-label="Split by"
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                  setSplitBy(e.target.value)
+                }
+              >
+                <option value="Placeholder Lineup 1">
+                  Placeholder Lineup 1
+                </option>
+                <option value="Placeholder Lineup 2">
+                  Placeholder Lineup 2
+                </option>
+                <option value="Placeholder Lineup 3">
+                  Placeholder Lineup 3
+                </option>
+              </select>
+              <ChevronDown
+                className={sidebarStyles.customArrowIcon}
+                aria-hidden="true"
+              />
+            </div>
+          </div>
+
           <div className={sidebarStyles.manageSection}>
             {/* Formation */}
             <div className={sidebarStyles.fieldGroup}>
