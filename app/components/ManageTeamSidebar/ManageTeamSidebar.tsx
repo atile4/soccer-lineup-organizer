@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { TextareaHTMLAttributes, useEffect, useState } from "react";
 import { ChevronDown, ChevronRight, X } from "lucide-react";
 import { sidebarStyles } from "./ManageTeamSidebar.styles";
 
@@ -10,7 +10,8 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({}) => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
   const [formation, setFormation] = useState("");
   const [formationError, setFormationError] = useState("");
-  const [splitBy, setSplitBy] = useState("None");
+  const [splitBy, setSplitBy] = useState("None"); // @TODO get a user's saved splitby from endpoint
+  const [notes, setNotes] = useState(""); // @TODO get user's saved notes from endpoint
 
   const checkFormation = () => {
     // Empty input: no error, nothing to validate
@@ -147,6 +148,9 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({}) => {
               <textarea
                 placeholder="Add notes here..."
                 className={sidebarStyles.textArea}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  setNotes(e.target.value)
+                }
               />
             </div>
 
