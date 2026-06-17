@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ChevronRight, X } from "lucide-react";
+import { ChevronDown, ChevronRight, X } from "lucide-react";
 import { sidebarStyles } from "./ManageTeamSidebar.styles";
 
 interface ManageTeamSidebarProps {
@@ -10,6 +10,7 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({}) => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
   const [formation, setFormation] = useState("");
   const [formationError, setFormationError] = useState("");
+  const [splitBy, setSplitBy] = useState("None");
 
   const checkFormation = () => {
     // Empty input: no error, nothing to validate
@@ -120,6 +121,24 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({}) => {
             {/* Split by */}
             <div className={sidebarStyles.fieldGroup}>
               <h2 className={sidebarStyles.sectionTitle}>Split by:</h2>
+              <div className={sidebarStyles.selectWrapper}>
+                <select
+                  className={sidebarStyles.selectInput}
+                  defaultValue="None"
+                  aria-label="Split by"
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                    setSplitBy(e.target.value)
+                  }
+                >
+                  <option value="None">None</option>
+                  <option value="Half">Half</option>
+                  <option value="Quarter">Quarter</option>
+                </select>
+                <ChevronDown
+                  className={sidebarStyles.customArrowIcon}
+                  aria-hidden="true"
+                />
+              </div>
             </div>
 
             {/* Notes */}
