@@ -8,56 +8,12 @@ import { PlayerList } from "./PlayerList";
 // types
 import { TempPlayer } from "../../types";
 
-interface PlayerSidebarProps {
-  title?: string;
-}
+// mock data import
+import playersData from "../../../data/mockPlayers.json";
 
-const players: TempPlayer[] = [
-  {
-    id: 0,
-    name: "John David",
-    number: 4,
-  },
-  {
-    id: 1,
-    name: "Alan Gong",
-    number: 67,
-  },
-  {
-    id: 2,
-    name: "Michael Chen",
-    number: 12,
-  },
-  {
-    id: 3,
-    name: "Sarah Kim",
-    number: 23,
-  },
-  {
-    id: 4,
-    name: "David Lee",
-    number: 31,
-  },
-  {
-    id: 5,
-    name: "Emma Wilson",
-    number: 45,
-  },
-  {
-    id: 6,
-    name: "Chris Martinez",
-    number: 52,
-  },
-  {
-    id: 7,
-    name: "Jessica Brown",
-    number: 88,
-  },
-];
+const players: TempPlayer[] = playersData;
 
-export const PlayerSidebar: React.FC<PlayerSidebarProps> = ({
-  title = "Players",
-}) => {
+export const PlayerSidebar = () => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 
   return (
@@ -96,6 +52,10 @@ export const PlayerSidebar: React.FC<PlayerSidebarProps> = ({
 
           {/* Content area*/}
           <PlayerList players={players} />
+
+          <button type="button" className={playerSidebarStyles.sendAllButton}>
+            Send All Players to Bench
+          </button>
         </div>
       </aside>
     </>

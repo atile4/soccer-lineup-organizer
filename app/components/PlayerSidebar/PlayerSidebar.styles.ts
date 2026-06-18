@@ -12,7 +12,7 @@ export const playerSidebarStyles = {
   sidebarClosed: "w-0",
 
   // Fixed-width wrapper — prevents content from reflowing during animation
-  innerWrapper: "w-full min-w-72 p-4",
+  innerWrapper: "w-full min-w-72 p-4 flex h-full flex-col",
 
   // Header row
   header: "relative flex items-center justify-center mb-6",
@@ -22,5 +22,8 @@ export const playerSidebarStyles = {
   closeButtonIcon: "h-5 w-5 text-gray-500",
 
   // Player List
-  playerList: "w-64 h-full bg-white p-4 flex flex-col overflow-y-auto"
+  playerList: "w-full flex-1 min-h-0 bg-white p-4 flex flex-col overflow-y-auto",
+
+  // Bench All Players Button
+  sendAllButton: "mt-auto mb-1 w-2/3 mx-auto rounded-md bg-[#318e2a] px-4 py-2 text-white font-semibold shadow-sm hover:bg-[#2d7b26] transition-colors"
 };
