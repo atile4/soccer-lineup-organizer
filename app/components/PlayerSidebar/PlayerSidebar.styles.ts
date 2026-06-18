@@ -20,4 +20,7 @@ export const playerSidebarStyles = {
   closeButton:
     "absolute left-0 p-1 rounded-md hover:bg-gray-100 transition-colors",
   closeButtonIcon: "h-5 w-5 text-gray-500",
+
+  // Player List
+  playerList: "w-64 h-full bg-white p-4 flex flex-col overflow-y-auto"
 };

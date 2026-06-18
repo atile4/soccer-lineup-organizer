@@ -1,10 +1,59 @@
 import React, { useState } from "react";
-import { ChevronLeft, X } from "lucide-react";
 import { playerSidebarStyles } from "./PlayerSidebar.styles";
+
+// components
+import { ChevronLeft, X } from "lucide-react";
+import { PlayerList } from "./PlayerList";
+
+// types
+import { TempPlayer } from "../../types";
 
 interface PlayerSidebarProps {
   title?: string;
 }
+
+const players: TempPlayer[] = [
+  {
+    id: 0,
+    name: "John David",
+    number: 4,
+  },
+  {
+    id: 1,
+    name: "Alan Gong",
+    number: 67,
+  },
+  {
+    id: 2,
+    name: "Michael Chen",
+    number: 12,
+  },
+  {
+    id: 3,
+    name: "Sarah Kim",
+    number: 23,
+  },
+  {
+    id: 4,
+    name: "David Lee",
+    number: 31,
+  },
+  {
+    id: 5,
+    name: "Emma Wilson",
+    number: 45,
+  },
+  {
+    id: 6,
+    name: "Chris Martinez",
+    number: 52,
+  },
+  {
+    id: 7,
+    name: "Jessica Brown",
+    number: 88,
+  },
+];
 
 export const PlayerSidebar: React.FC<PlayerSidebarProps> = ({
   title = "Players",
@@ -42,13 +91,11 @@ export const PlayerSidebar: React.FC<PlayerSidebarProps> = ({
             >
               <X className={playerSidebarStyles.closeButtonIcon} />
             </button>
-            <h1 className={playerSidebarStyles.title}>{title}</h1>
+            <h1 className={playerSidebarStyles.title}>{"Players"}</h1>
           </div>
 
-          {/* Content area - customize as needed */}
-          <div className="mt-6 text-gray-400 text-sm">
-            Sidebar content goes here
-          </div>
+          {/* Content area*/}
+          <PlayerList players={players} />
         </div>
       </aside>
     </>

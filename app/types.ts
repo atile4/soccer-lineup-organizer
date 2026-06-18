@@ -2,7 +2,14 @@ export interface Player {
   id: string;
   name: string;
   number: number;
-  position?: string;
+  // position?: string;
+}
+
+// temp mock data
+export interface TempPlayer {
+  id: number;
+  name: string;
+  number: number;
 }
 
 export interface Team {
