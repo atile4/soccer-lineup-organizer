@@ -22,7 +22,7 @@ export const PlayerList = ({ players }: PlayerListProps) => {
         <div className="grid grid-cols-2 gap-3">
           {players.map((player) => (
             <PlayerCard
-              key={player.name}
+              key={player.id}
               name={player.name}
               number={player.number}
               // jerseyColor="#7C3AED"  ← change team color here
