@@ -2,7 +2,8 @@ export interface Player {
   id: string;
   name: string;
   number: number;
-  position?: string;
+  position: string;
+  team_id: string;
 }
 
 export interface Team {
