@@ -14,7 +14,12 @@ export default function LoginPage() {
   const [error, setError] = useState("");
 
   const handleOAuthLogin = async (provider: "google" | "azure") => {
-    const { error } = await supabase.auth.signInWithOAuth({ provider });
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+      },
+    });
     if (error) setError(error.message);
   };
 
