@@ -12,7 +12,6 @@ import {
 // Components
 import TeamManager from "./components/TeamManager";
 import LineupCreator from "./components/LineupCreator";
-import PlayerList from "./components/PlayerList";
 import AppHeader from "./components/AppHeader/AppHeader";
 import ManageTeamSidebar from "./components/ManageTeamSidebar/ManageTeamSidebar";
 import PlayerSidebar from "./components/PlayerSidebar/PlayerSidebar";

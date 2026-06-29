@@ -5,6 +5,8 @@ import { playerSidebarStyles } from "./PlayerSidebar.styles";
 //types
 import { Player } from "../../types";
 
+import { PlayerList } from "./PlayerList";
+
 import { fetchPlayers } from "@/services/players";
 
 interface PlayerSidebarProps {
@@ -14,7 +16,7 @@ interface PlayerSidebarProps {
 
 export const PlayerSidebar: React.FC<PlayerSidebarProps> = ({
   title = "Players",
-  teamId = "b7e882e5-b931-4a03-b896-bc71d140dcfe",
+  teamId = "b7e882e5-b931-4a03-b896-bc71d140dcfe", // test team id
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
   const [players, setPlayers] = useState<Player[]>([]);
@@ -54,13 +56,15 @@ export const PlayerSidebar: React.FC<PlayerSidebarProps> = ({
             >
               <X className={playerSidebarStyles.closeButtonIcon} />
             </button>
-            <h1 className={playerSidebarStyles.title}>{title}</h1>
+            <h1 className={playerSidebarStyles.title}>{"Players"}</h1>
           </div>
 
-          {/* Content area - customize as needed */}
-          <div className="mt-6 text-gray-400 text-sm">
-            Sidebar content goes here
-          </div>
+          {/* Content area*/}
+          <PlayerList players={players} />
+
+          <button type="button" className={playerSidebarStyles.sendAllButton}>
+            Send All Players to Bench
+          </button>
         </div>
       </aside>
     </>
