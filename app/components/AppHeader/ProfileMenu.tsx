@@ -15,7 +15,13 @@ export default function ProfileMenu({
   onThemeClick: onReportClick,
   onLogout,
 }: ProfileMenuProps) {
-  const { user, loading } = useAuth();
+  // user session variables
+  const { session, loading } = useAuth();
+  const user = session?.user;
+
+  const displayName = user?.user_metadata?.full_name ?? "";
+  const photoURL = user?.user_metadata?.avatar_url ?? "";
+  const email = user?.email ?? "";
 
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -78,14 +84,14 @@ export default function ProfileMenu({
       >
         {/* Avatar */}
         <div className={buttonStyles.avatar}>
-          {user?.photoURL ? (
+          {photoURL ? (
             <img
-              src={user.photoURL}
-              alt={user.displayName ?? undefined}
+              src={photoURL}
+              alt={displayName ?? undefined}
               className="w-full h-full object-cover rounded-full"
             />
           ) : (
-            user?.displayName && getInitials(user.displayName)
+            displayName && getInitials(displayName)
           )}
         </div>
       </button>
@@ -97,21 +103,19 @@ export default function ProfileMenu({
           <div className={popoverStyles.header}>
             {/* Avatar */}
             <div className={buttonStyles.avatar}>
-              {user?.photoURL ? (
+              {photoURL ? (
                 <img
-                  src={user.photoURL}
-                  alt={user.displayName ?? undefined}
+                  src={photoURL}
+                  alt={displayName ?? undefined}
                   className="w-full h-full object-cover rounded-full"
                 />
               ) : (
-                user?.displayName && getInitials(user.displayName)
+                displayName && getInitials(displayName)
               )}
             </div>
 
             <div>
-              <div className={popoverStyles.headerName}>
-                {user?.displayName}
-              </div>
+              <div className={popoverStyles.headerName}>{displayName}</div>
               {user?.email && (
                 <div className={popoverStyles.headerEmail}>{user.email}</div>
               )}

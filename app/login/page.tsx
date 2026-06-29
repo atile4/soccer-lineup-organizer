@@ -3,53 +3,40 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-
-import { auth } from "@/lib/firebase";
-import {
-  signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup,
-} from "firebase/auth";
+import { supabase } from "@/lib/supabase";
 
 // TODO: don't make this look vibe coded
 export default function LoginPage() {
-  const { user, loading } = useAuth();
+  const { session, loading } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleProviderLogin = (provider: string) => {
-    // TODO: Add OAuth login flow for each provider
-    console.log(`Login with ${provider}`);
-    router.push("/");
+  const handleOAuthLogin = async (provider: "google" | "azure") => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+      },
+    });
+    if (error) setError(error.message);
   };
 
   const handleEmailLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("Login with email", { email, password });
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      router.push("/");
-    } catch (e: any) {
-      setError(e.message);
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    try {
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
-      router.push("/");
-    } catch (e: any) {
-      setError(e.message);
-    }
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) setError(error.message);
+    else router.push("/");
   };
 
   // guard for logged in users
   useEffect(() => {
-    if (!loading && user) router.push("/");
-  }, [user, loading]);
+    if (!loading && session) router.push("/");
+  }, [session, loading]);
 
   if (loading) return null;
 
@@ -68,7 +55,7 @@ export default function LoginPage() {
               {/* Google */}
               <button
                 type="button"
-                onClick={() => handleGoogleLogin()}
+                onClick={() => handleOAuthLogin("google")}
                 className="flex items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
               >
                 <svg
@@ -100,7 +87,7 @@ export default function LoginPage() {
               {/* Microsoft */}
               <button
                 type="button"
-                onClick={() => handleProviderLogin("Microsoft")}
+                onClick={() => handleOAuthLogin("azure")}
                 className="flex items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
               >
                 <svg
@@ -118,9 +105,9 @@ export default function LoginPage() {
               </button>
 
               {/* Yahoo */}
-              <button
+              {/* <button
                 type="button"
-                onClick={() => handleProviderLogin("Yahoo")}
+                onClick={() => handleOAuthLogin("yahoo")}
                 className="flex items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-[#410093] px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#330074]"
               >
                 <svg
@@ -136,7 +123,7 @@ export default function LoginPage() {
                   <circle cx="24" cy="26" r="4" fill="white" />
                 </svg>
                 Continue with Yahoo
-              </button>
+              </button> */}
             </div>
             {error && <p className="text-red-500 text-sm">{error}</p>}
 

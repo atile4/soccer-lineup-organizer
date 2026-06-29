@@ -4,20 +4,19 @@ import { appHeaderStyles as styles } from "./appHeader.styles";
 
 // Context
 import { useAuth } from "@/context/AuthContext";
-import { signOut } from "firebase/auth";
+import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
 // Components
 import ProfileMenu from "./ProfileMenu";
 import LogoAndTitle from "./LogoAndTitle";
-import { auth } from "@/lib/firebase";
 
 export default function AppHeader() {
-  const { user, loading } = useAuth();
+  const { session, loading } = useAuth();
   const router = useRouter();
 
   const handleLogout = async () => {
-    await signOut(auth);
+    await supabase.auth.signOut();
     router.push("/login");
   };
 
@@ -35,7 +34,7 @@ export default function AppHeader() {
             <p>Loading...</p>
           ) : (
             <div className={styles.user.wrapper}>
-              {user ? (
+              {session ? (
                 <ProfileMenu onLogout={handleLogout} />
               ) : (
                 <button
