@@ -2,16 +2,35 @@ import React, { TextareaHTMLAttributes, useEffect, useState } from "react";
 import { ChevronDown, ChevronRight, X } from "lucide-react";
 import { sidebarStyles } from "./ManageTeamSidebar.styles";
 
+// services
+import { fetchTeams } from "@/services/teams";
+
+// types
+import { Team } from "@/app/types";
+
 interface ManageTeamSidebarProps {
+  userId?: string;
   maxPlayers?: number;
 }
 
-export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({}) => {
+export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
+  userId = "testing-user",
+}) => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
   const [formation, setFormation] = useState("");
   const [formationError, setFormationError] = useState("");
   const [splitBy, setSplitBy] = useState("None"); // @TODO get a user's saved splitby from endpoint
   const [notes, setNotes] = useState(""); // @TODO get user's saved notes from endpoint
+
+  const [teams, setTeams] = useState<Team[]>([]);
+
+  // fetch teams
+  useEffect(() => {
+    fetchTeams(userId).then((data) => {
+      console.log("team: ", data);
+      setTeams(data);
+    });
+  }, [userId]);
 
   const checkFormation = () => {
     // Empty input: no error, nothing to validate
@@ -112,15 +131,10 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({}) => {
                   setSplitBy(e.target.value)
                 }
               >
-                <option value="Placeholder Lineup 1">
-                  Placeholder Lineup 1
-                </option>
-                <option value="Placeholder Lineup 2">
-                  Placeholder Lineup 2
-                </option>
-                <option value="Placeholder Lineup 3">
-                  Placeholder Lineup 3
-                </option>
+                {teams &&
+                  teams.map((team) => (
+                    <option key={team.id}>{team.name}</option>
+                  ))}
               </select>
               <ChevronDown
                 className={sidebarStyles.customArrowIcon}
