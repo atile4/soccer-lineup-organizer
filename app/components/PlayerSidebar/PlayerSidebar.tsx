@@ -1,15 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChevronLeft, X } from "lucide-react";
 import { playerSidebarStyles } from "./PlayerSidebar.styles";
 
+//types
+import { Player } from "../../types";
+
+import { fetchPlayers } from "@/services/players";
+
 interface PlayerSidebarProps {
   title?: string;
+  teamId?: string;
 }
 
 export const PlayerSidebar: React.FC<PlayerSidebarProps> = ({
   title = "Players",
+  teamId = "b7e882e5-b931-4a03-b896-bc71d140dcfe",
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const [players, setPlayers] = useState<Player[]>([]);
+
+  useEffect(() => {
+    fetchPlayers(teamId).then(setPlayers);
+  }, [teamId]);
 
   return (
     <>
