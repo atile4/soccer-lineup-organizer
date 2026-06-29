@@ -2,14 +2,8 @@ export interface Player {
   id: string;
   name: string;
   number: number;
-  // position?: string;
-}
-
-// temp mock data
-export interface TempPlayer {
-  id: number;
-  name: string;
-  number: number;
+  position: string;
+  team_id: string;
 }
 
 export interface Team {

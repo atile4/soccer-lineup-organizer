@@ -1,20 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { ChevronLeft, X } from "lucide-react";
 import { playerSidebarStyles } from "./PlayerSidebar.styles";
 
-// components
-import { ChevronLeft, X } from "lucide-react";
+//types
+import { Player } from "../../types";
+
 import { PlayerList } from "./PlayerList";
 
-// types
-import { TempPlayer } from "../../types";
+import { fetchPlayers } from "@/services/players";
 
-// mock data import
-import playersData from "../../../data/mockPlayers.json";
+interface PlayerSidebarProps {
+  title?: string;
+  teamId?: string;
+}
 
-const players: TempPlayer[] = playersData;
-
-export const PlayerSidebar = () => {
+export const PlayerSidebar: React.FC<PlayerSidebarProps> = ({
+  title = "Players",
+  teamId = "b7e882e5-b931-4a03-b896-bc71d140dcfe", // test team id
+}) => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const [players, setPlayers] = useState<Player[]>([]);
+
+  useEffect(() => {
+    fetchPlayers(teamId).then(setPlayers);
+  }, [teamId]);
 
   return (
     <>
