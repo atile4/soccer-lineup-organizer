@@ -17,6 +17,7 @@ export interface Game {
   id: string;
   team_id: string;
   name: string;
+  split_by: SplitBy;
   notes: string;
 }
 

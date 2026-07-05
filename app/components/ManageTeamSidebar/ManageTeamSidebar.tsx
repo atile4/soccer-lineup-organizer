@@ -4,7 +4,7 @@ import { sidebarStyles } from "./ManageTeamSidebar.styles";
 
 // services
 import { fetchTeams } from "@/services/teams";
-import { fetchGames, updateSplit } from "@/services/games";
+import { fetchGames, fetchSplit, updateSplit } from "@/services/games";
 
 // types
 import { Game, SplitBy } from "@/app/types";
@@ -22,7 +22,7 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
   const [formation, setFormation] = useState("");
   const [formationError, setFormationError] = useState("");
-  const [splitBy, setSplitBy] = useState<SplitBy>("none"); // @TODO get a user's saved splitby from endpoint
+  const [splitBy, setSplitBy] = useState<SplitBy>();
   const [notes, setNotes] = useState(""); // @TODO get user's saved notes from endpoint
 
   const [games, setGames] = useState<Game[]>([]);
@@ -35,6 +35,14 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
       setGame(data[0]); // use the freshly-fetched array, not the stale state variable
     });
   }, [teamId]);
+
+  // fetch initial split
+  useEffect(() => {
+    if (game) {
+      setSplitBy(game.split_by);
+    }
+  }, [game]);
+
   const checkFormation = () => {
     // Empty input: no error, nothing to validate
     if (!formation) {

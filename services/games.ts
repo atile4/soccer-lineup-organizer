@@ -8,6 +8,17 @@ export async function fetchGames(teamId: string) {
   return data;
 }
 
+export async function fetchSplit(gameId: string) {
+  const { data, error } = await supabase
+    .from("games")
+    .select("split_by")
+    .eq("id", gameId)
+    .single();
+
+  if (error) throw error;
+  return data.split_by;
+}
+
 export async function updateSplit(gameId: string, splitType: SplitBy) {
   const { data, error } = await supabase
     .from("games")
