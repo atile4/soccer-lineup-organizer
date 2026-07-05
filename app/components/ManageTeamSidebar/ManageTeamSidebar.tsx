@@ -6,15 +6,18 @@ import { sidebarStyles } from "./ManageTeamSidebar.styles";
 import { fetchTeams } from "@/services/teams";
 
 // types
-import { Team } from "@/app/types";
+import { Game } from "@/app/types";
+import { fetchGames } from "@/services/games";
 
 interface ManageTeamSidebarProps {
   userId?: string;
+  teamId?: string;
   maxPlayers?: number;
 }
 
 export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
   userId = "testing-user",
+  teamId = "71908f3b-2a07-4007-bc94-1c7914517f4a",
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
   const [formation, setFormation] = useState("");
@@ -22,15 +25,15 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
   const [splitBy, setSplitBy] = useState("None"); // @TODO get a user's saved splitby from endpoint
   const [notes, setNotes] = useState(""); // @TODO get user's saved notes from endpoint
 
-  const [teams, setTeams] = useState<Team[]>([]);
+  const [games, setGames] = useState<Game[]>([]);
 
   // fetch teams
   useEffect(() => {
-    fetchTeams(userId).then((data) => {
-      console.log("team: ", data);
-      setTeams(data);
+    fetchGames(teamId).then((data) => {
+      console.log("game: ", data);
+      setGames(data);
     });
-  }, [userId]);
+  }, [teamId]);
 
   const checkFormation = () => {
     // Empty input: no error, nothing to validate
@@ -131,8 +134,8 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
                   setSplitBy(e.target.value)
                 }
               >
-                {teams &&
-                  teams.map((team) => (
+                {games &&
+                  games.map((team) => (
                     <option key={team.id}>{team.name}</option>
                   ))}
               </select>
