@@ -20,11 +20,12 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
   teamId = "71908f3b-2a07-4007-bc94-1c7914517f4a", // Testing team id
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
-  const [formation, setFormation] = useState("");
+  const [formation, setFormation] = useState(""); // @TODO figure out how to save formation
   const [formationError, setFormationError] = useState("");
   const [splitBy, setSplitBy] = useState<SplitBy>();
-  const [notes, setNotes] = useState(""); // @TODO get user's saved notes from endpoint
+  const [notes, setNotes] = useState(""); // @TODO save notes to db
 
+  //@TODO save current game to db, load current game
   const [games, setGames] = useState<Game[]>([]);
   const [game, setGame] = useState<Game>();
 
@@ -32,7 +33,7 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
   useEffect(() => {
     fetchGames(teamId).then((data) => {
       setGames(data);
-      setGame(data[0]); // use the freshly-fetched array, not the stale state variable
+      setGame(data[0]);
     });
   }, [teamId]);
 
