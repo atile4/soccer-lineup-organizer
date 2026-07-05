@@ -22,6 +22,8 @@ export interface Game {
 
 export type Division = "U-8" | "U-10" | "U-12" | "U-14" | "U-16" | "U-18";
 
+export type SplitBy = "none" | "half" | "quarter";
+
 export interface Formation {
   name: string;
   positions: Position[];

@@ -4,10 +4,10 @@ import { sidebarStyles } from "./ManageTeamSidebar.styles";
 
 // services
 import { fetchTeams } from "@/services/teams";
-import { fetchGames } from "@/services/games";
+import { fetchGames, updateSplit } from "@/services/games";
 
 // types
-import { Game } from "@/app/types";
+import { Game, SplitBy } from "@/app/types";
 
 interface ManageTeamSidebarProps {
   userId?: string;
@@ -22,19 +22,19 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
   const [formation, setFormation] = useState("");
   const [formationError, setFormationError] = useState("");
-  const [splitBy, setSplitBy] = useState("None"); // @TODO get a user's saved splitby from endpoint
+  const [splitBy, setSplitBy] = useState<SplitBy>("none"); // @TODO get a user's saved splitby from endpoint
   const [notes, setNotes] = useState(""); // @TODO get user's saved notes from endpoint
 
   const [games, setGames] = useState<Game[]>([]);
+  const [game, setGame] = useState<Game>();
 
   // fetch games
   useEffect(() => {
     fetchGames(teamId).then((data) => {
-      console.log("game: ", data);
       setGames(data);
+      setGame(data[0]); // use the freshly-fetched array, not the stale state variable
     });
   }, [teamId]);
-
   const checkFormation = () => {
     // Empty input: no error, nothing to validate
     if (!formation) {
@@ -93,6 +93,20 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
     checkFormation();
   }, [formation]);
 
+  // handling changing game split
+  const handleSplitByChange = async (value: SplitBy) => {
+    if (!game) {
+      console.error("No game selected — cannot update split type");
+      return;
+    }
+    try {
+      const updatedGame = await updateSplit(game.id, value);
+      setSplitBy(updatedGame.split_by);
+    } catch (err) {
+      console.error("Failed to save split type:", err);
+    }
+  };
+
   return (
     <>
       {/* Open-sidebar arrow button (visible only when sidebar is collapsed) */}
@@ -123,21 +137,23 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
               <X className={sidebarStyles.closeButtonIcon} />
             </button>
           </div>
-          {/* Split by */}
+          {/* Game Selection */}
           <div className={sidebarStyles.fieldGroup}>
             <div className={sidebarStyles.selectWrapper}>
               <select
                 className={sidebarStyles.selectInput}
-                defaultValue="No Lineup Selected"
-                aria-label="Split by"
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                  setSplitBy(e.target.value)
-                }
+                value={game?.id ?? ""}
+                aria-label="Select game"
+                onChange={(e) => {
+                  const selected = games.find((g) => g.id === e.target.value);
+                  setGame(selected);
+                }}
               >
-                {games &&
-                  games.map((team) => (
-                    <option key={team.id}>{team.name}</option>
-                  ))}
+                {games.map((g) => (
+                  <option key={g.id} value={g.id}>
+                    {g.name}
+                  </option>
+                ))}
               </select>
               <ChevronDown
                 className={sidebarStyles.customArrowIcon}
@@ -169,15 +185,15 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
               <div className={sidebarStyles.selectWrapper}>
                 <select
                   className={sidebarStyles.selectInput}
-                  defaultValue="None"
+                  value={splitBy}
                   aria-label="Split by"
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                    setSplitBy(e.target.value)
+                  onChange={(e) =>
+                    handleSplitByChange(e.target.value as SplitBy)
                   }
                 >
-                  <option value="None">None</option>
-                  <option value="Half">Half</option>
-                  <option value="Quarter">Quarter</option>
+                  <option value="none">None</option>
+                  <option value="half">Half</option>
+                  <option value="quarter">Quarter</option>
                 </select>
                 <ChevronDown
                   className={sidebarStyles.customArrowIcon}
