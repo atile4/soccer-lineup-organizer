@@ -13,7 +13,17 @@ export interface Team {
   division: Division;
 }
 
+export interface Game {
+  id: string;
+  team_id: string;
+  name: string;
+  split_by: SplitBy;
+  notes: string;
+}
+
 export type Division = "U-8" | "U-10" | "U-12" | "U-14" | "U-16" | "U-18";
+
+export type SplitBy = "none" | "half" | "quarter";
 
 export interface Formation {
   name: string;
