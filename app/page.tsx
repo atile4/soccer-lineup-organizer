@@ -44,7 +44,7 @@ export default function DashboardPage({
             {/* Future: drag-and-drop player components will be layered here */}
           </div>
         </div>
-        <PlayerSidebar />
+        <PlayerSidebar teamId={teamId} />
       </main>
     </div>
   );

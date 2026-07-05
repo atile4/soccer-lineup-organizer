@@ -10,19 +10,18 @@ import { PlayerList } from "./PlayerList";
 import { fetchPlayers } from "@/services/players";
 
 interface PlayerSidebarProps {
-  title?: string;
   teamId?: string;
 }
 
-export const PlayerSidebar: React.FC<PlayerSidebarProps> = ({
-  title = "Players",
-  teamId = "b7e882e5-b931-4a03-b896-bc71d140dcfe", // test team id
-}) => {
+export const PlayerSidebar: React.FC<PlayerSidebarProps> = ({ teamId }) => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
   const [players, setPlayers] = useState<Player[]>([]);
 
   useEffect(() => {
-    fetchPlayers(teamId).then(setPlayers);
+    if (teamId) {
+      console.log(teamId);
+      fetchPlayers(teamId).then(setPlayers);
+    }
   }, [teamId]);
 
   return (
