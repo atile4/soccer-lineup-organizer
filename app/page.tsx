@@ -1,17 +1,30 @@
 "use client";
 
+// hooks
+import { useAuth } from "@/context/AuthContext";
+
 // Components
 import AppHeader from "./components/AppHeader/AppHeader";
 import ManageTeamSidebar from "./components/ManageTeamSidebar/ManageTeamSidebar";
 import PlayerSidebar from "./components/PlayerSidebar/PlayerSidebar";
 
-export default function DashboardPage() {
+interface DashboardPageProps {
+  teamId?: string;
+}
+
+export default function DashboardPage({
+  teamId = "71908f3b-2a07-4007-bc94-1c7914517f4a",
+}: DashboardPageProps) {
+  // @TODO store a 'current team' column per user, and retrieve that team id for use in sidebar components
+  //       something like a getCurrentId(userId)
+  const { session, loading } = useAuth();
+
   return (
     <div className="h-screen flex flex-col">
       <AppHeader />
 
       <main className="flex-1 flex overflow-hidden py-4 gap-4">
-        <ManageTeamSidebar />
+        <ManageTeamSidebar userId={session?.user.id} teamId={teamId} />
 
         {/* Soccer Field */}
         <div className="flex-1 flex items-center justify-center h-full w-full min-w-0 px-4">

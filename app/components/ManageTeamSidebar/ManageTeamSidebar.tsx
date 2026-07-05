@@ -4,10 +4,10 @@ import { sidebarStyles } from "./ManageTeamSidebar.styles";
 
 // services
 import { fetchTeams } from "@/services/teams";
+import { fetchGames } from "@/services/games";
 
 // types
 import { Game } from "@/app/types";
-import { fetchGames } from "@/services/games";
 
 interface ManageTeamSidebarProps {
   userId?: string;
@@ -17,7 +17,7 @@ interface ManageTeamSidebarProps {
 
 export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
   userId = "testing-user",
-  teamId = "71908f3b-2a07-4007-bc94-1c7914517f4a",
+  teamId = "71908f3b-2a07-4007-bc94-1c7914517f4a", // Testing team id
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
   const [formation, setFormation] = useState("");
@@ -27,7 +27,7 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
 
   const [games, setGames] = useState<Game[]>([]);
 
-  // fetch teams
+  // fetch games
   useEffect(() => {
     fetchGames(teamId).then((data) => {
       console.log("game: ", data);
