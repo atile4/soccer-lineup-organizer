@@ -8,16 +8,11 @@ import AppHeader from "./components/AppHeader/AppHeader";
 import ManageTeamSidebar from "./components/ManageTeamSidebar/ManageTeamSidebar";
 import PlayerSidebar from "./components/PlayerSidebar/PlayerSidebar";
 
-interface DashboardPageProps {
-  teamId?: string;
-}
-
-export default function DashboardPage({
-  teamId = "71908f3b-2a07-4007-bc94-1c7914517f4a",
-}: DashboardPageProps) {
+export default function DashboardPage() {
   // @TODO store a 'current team' column per user, and retrieve that team id for use in sidebar components
   //       something like a getCurrentId(userId)
   const { session, loading } = useAuth();
+  const teamId = "71908f3b-2a07-4007-bc94-1c7914517f4a"; // temp test team id
 
   return (
     <div className="h-screen flex flex-col">

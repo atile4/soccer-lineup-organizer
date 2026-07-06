@@ -1,4 +1,4 @@
-import { TempPlayer } from "@/app/types";
+import { Player } from "@/app/types";
 import PlayerCard from "./PlayerCard";
 import { playerSidebarStyles } from "./PlayerSidebar.styles";
 
@@ -8,7 +8,7 @@ interface player {
 }
 
 interface PlayerListProps {
-  players: TempPlayer[];
+  players: Player[];
 }
 
 export const PlayerList = ({ players }: PlayerListProps) => {
