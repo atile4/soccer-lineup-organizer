@@ -10,7 +10,9 @@ export interface Team {
   id: string;
   name: string;
   players: Player[];
-  division: Division;
+  division: Division | null;
+  gender: Gender;
+  color: string;
 }
 
 export interface Game {
@@ -20,6 +22,8 @@ export interface Game {
   split_by: SplitBy;
   notes: string;
 }
+
+export type Gender = "Boys" | "Girls" | "Coed";
 
 export type Division = "U-8" | "U-10" | "U-12" | "U-14" | "U-16" | "U-18";
 
