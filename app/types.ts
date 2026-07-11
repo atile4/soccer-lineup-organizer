@@ -23,7 +23,7 @@ export interface Game {
   notes: string;
 }
 
-export type Gender = "boys" | "girls" | "coed";
+export type Gender = "Boys" | "Girls" | "Coed";
 
 export type Division = "U-8" | "U-10" | "U-12" | "U-14" | "U-16" | "U-18";
 

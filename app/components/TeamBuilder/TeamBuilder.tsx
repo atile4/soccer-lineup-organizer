@@ -153,12 +153,7 @@ export default function TeamBuilder() {
         {/* Heading */}
         <div className={s.headingRow}>
           <div>
-            <div className={s.eyebrow}>Coach&apos;s clipboard</div>
             <h2 className={s.title}>Team Builder</h2>
-            <p className={s.subtitle}>
-              Set up your roster once — name, division, and players. It carries
-              straight into your lineups.
-            </p>
           </div>
           <div className={s.headingActions}>
             <button
