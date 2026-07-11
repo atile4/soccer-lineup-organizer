@@ -3,11 +3,30 @@
 import { useMemo, useState } from "react";
 import { ChevronDown, Users, UserPlus, X } from "lucide-react";
 import { teamBuilderStyles as s, themeVars } from "./TeamBuilder.styles";
-import { Division } from "@/app/types";
+import { Division, Gender } from "@/app/types";
 import { DIVISIONS } from "@/app/formations";
 import { useAuth } from "@/context/AuthContext";
 import { createTeam } from "@/services/teams";
 import { createPlayers, NewPlayer } from "@/services/players";
+
+const GENDER_OPTIONS: Gender[] = ["Boys", "Girls", "Coed"];
+
+// Matches the swatches from the original design. Must be valid 6-digit
+// hex, since the DB's teams_color_check constraint will reject anything else.
+const COLOR_SWATCHES = [
+  "#dc2626",
+  "#f97316",
+  "#eab308",
+  "#16a34a",
+  "#14b8a6",
+  "#2563eb",
+  "#1e3a8a",
+  "#7c3aed",
+  "#ec4899",
+  "#111827",
+  "#e5e7eb",
+  "#6b7280",
+];
 
 // A player the coach has added to the roster but hasn't saved yet.
 // Only exists in this component's state until "Save team" is clicked.
@@ -25,6 +44,8 @@ export default function TeamBuilder() {
   const [theme, setTheme] = useState<"notebook" | "turf">("notebook");
   const [teamName, setTeamName] = useState("");
   const [division, setDivision] = useState<Division>("U-12");
+  const [gender, setGender] = useState<Gender>("Coed");
+  const [color, setColor] = useState("#2563eb");
   const [players, setPlayers] = useState<DraftPlayer[]>([]);
 
   // Add-player form fields
@@ -98,7 +119,13 @@ export default function TeamBuilder() {
 
     setSaving(true);
     try {
-      const team = await createTeam(session.user.id, teamName.trim(), division);
+      const team = await createTeam(
+        session.user.id,
+        teamName.trim(),
+        division,
+        gender,
+        color,
+      );
 
       if (players.length > 0) {
         const newPlayers: NewPlayer[] = players.map((p) => ({
@@ -165,6 +192,27 @@ export default function TeamBuilder() {
               Team details
             </h3>
 
+            {/* Jersey preview */}
+            <div className={s.jerseyPreview}>
+              <svg viewBox="0 0 100 90" width="52" height="47">
+                <path
+                  d="M25 10 L10 30 L25 35 L25 80 L75 80 L75 35 L90 30 L75 10 C70 18 60 22 50 22 C40 22 30 18 25 10Z"
+                  fill={color}
+                  stroke="#1a1a1a"
+                  strokeWidth="3"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <div className="min-w-0">
+                <div className={s.jerseyPreviewName}>
+                  {teamName.trim() || "Your team name"}
+                </div>
+                <div className={s.jerseyPreviewMeta}>
+                  {[division, gender].join(" · ")}
+                </div>
+              </div>
+            </div>
+
             <label className={s.fieldLabel}>Team name</label>
             <input
               type="text"
@@ -188,6 +236,52 @@ export default function TeamBuilder() {
                 ))}
               </select>
               <ChevronDown className={s.selectChevron} />
+            </div>
+
+            <label className={s.fieldLabel}>Team</label>
+            <div className={s.segmentedGroup}>
+              {GENDER_OPTIONS.map((g) => (
+                <button
+                  key={g}
+                  type="button"
+                  onClick={() => setGender(g)}
+                  className={`${s.segmentedOption} ${
+                    gender === g
+                      ? s.segmentedOptionActive
+                      : s.segmentedOptionInactive
+                  }`}
+                >
+                  {g}
+                </button>
+              ))}
+            </div>
+
+            <label className={s.fieldLabel}>Jersey color</label>
+            <div className={s.swatchGrid}>
+              {COLOR_SWATCHES.map((hex) => (
+                <button
+                  key={hex}
+                  type="button"
+                  aria-label={hex}
+                  onClick={() => setColor(hex)}
+                  className={`${s.swatch} ${color === hex ? s.swatchActive : ""}`}
+                  style={{ background: hex, borderColor: "rgba(0,0,0,.12)" }}
+                />
+              ))}
+            </div>
+            <div className={s.customColorRow}>
+              <label className={s.customColorLabel}>
+                <input
+                  type="color"
+                  value={color}
+                  onChange={(e) => setColor(e.target.value)}
+                  className={s.customColorInput}
+                />
+                Custom
+              </label>
+              <span className={s.customColorValue}>
+                Selected {color.toUpperCase()}
+              </span>
             </div>
           </section>
 

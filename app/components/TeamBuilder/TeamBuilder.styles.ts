@@ -1,4 +1,4 @@
-// Two color themes, matching the original Claude Design mockup.
+// Two color themes
 // Applied as CSS custom properties on the root wrapper, then referenced
 // by Tailwind's arbitrary-value syntax, e.g. bg-[var(--card)].
 export const themeVars = {
@@ -58,6 +58,13 @@ export const teamBuilderStyles = {
   cardTitle: "text-base font-bold mb-4 flex items-center gap-2",
   cardIcon:
     "w-6 h-6 rounded-md bg-[var(--chip)] flex items-center justify-center text-[var(--green)] flex-shrink-0",
+
+  // Jersey preview badge
+  jerseyPreview:
+    "flex items-center gap-3.5 p-3.5 bg-[var(--paper)] border border-dashed border-[var(--line)] rounded-xl mb-4",
+  jerseyPreviewName: "text-base font-extrabold tracking-tight truncate",
+  jerseyPreviewMeta: "text-xs text-[var(--muted)] mt-0.5",
+
   fieldLabel: "block text-sm font-semibold mb-1.5",
   textInput:
     "w-full px-3 py-2.5 text-sm bg-[var(--field-bg)] border border-[var(--line)] rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-[var(--green)]/25 focus:border-[var(--green)]",
@@ -66,6 +73,25 @@ export const teamBuilderStyles = {
     "w-full appearance-none px-3 py-2.5 pr-9 text-sm bg-[var(--field-bg)] border border-[var(--line)] rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--green)]/25 focus:border-[var(--green)]",
   selectChevron:
     "pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted)]",
+
+  // Gender segmented control
+  segmentedGroup:
+    "grid grid-cols-3 gap-1.5 bg-[var(--chip)] p-1 rounded-xl mb-4",
+  segmentedOption:
+    "py-2 text-xs font-semibold rounded-lg border-none cursor-pointer transition",
+  segmentedOptionActive: "bg-[var(--card)] text-[var(--green)] shadow-sm",
+  segmentedOptionInactive: "bg-transparent text-[var(--muted)]",
+
+  // Color swatches
+  swatchGrid: "grid grid-cols-6 gap-2 mb-2.5",
+  swatch: "aspect-square rounded-lg border-2 cursor-pointer",
+  swatchActive: "ring-2 ring-offset-2 ring-[var(--green)]",
+  customColorRow: "flex items-center gap-2.5",
+  customColorLabel:
+    "inline-flex items-center gap-2 text-xs text-[var(--muted)] cursor-pointer",
+  customColorInput:
+    "w-8 h-8 p-0 border border-[var(--line)] rounded-md bg-transparent cursor-pointer",
+  customColorValue: "text-xs text-[var(--muted)] tabular-nums",
 
   // Right column
   rightCol: "flex flex-col gap-4 min-w-0",

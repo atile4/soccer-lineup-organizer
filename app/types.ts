@@ -11,6 +11,8 @@ export interface Team {
   name: string;
   players: Player[];
   division: Division | null;
+  gender: Gender;
+  color: string;
 }
 
 export interface Game {
@@ -20,6 +22,8 @@ export interface Game {
   split_by: SplitBy;
   notes: string;
 }
+
+export type Gender = "boys" | "girls" | "coed";
 
 export type Division = "U-8" | "U-10" | "U-12" | "U-14" | "U-16" | "U-18";
 
