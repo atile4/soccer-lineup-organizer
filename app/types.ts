@@ -10,7 +10,7 @@ export interface Team {
   id: string;
   name: string;
   players: Player[];
-  division: Division;
+  division: Division | null;
 }
 
 export interface Game {
