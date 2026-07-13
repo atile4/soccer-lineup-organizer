@@ -4,7 +4,7 @@ export const appHeaderStyles = {
   header: {
     container: "bg-green-600 shadow-sm border-b border-gray-200",
     inner: "w-full mx-auto px-4 sm:px-6 lg:px-8",
-    layout: "relative flex items-center justify-between py-4",
+    layout: "relative flex items-center justify-between py-2",
   },
 
   centerSection: {
@@ -24,7 +24,8 @@ export const appHeaderStyles = {
 
   user: {
     wrapper: "",
-    button: "flex items-center space-x-2 px-4 py-2 text-white font-medium border border-white/70 rounded-lg hover:bg-white hover:text-green-700 transition-colors duration-150",
+    button:
+      "flex items-center space-x-2 px-4 py-2 text-white font-medium border border-white/70 rounded-lg hover:bg-white hover:text-green-700 transition-colors duration-150",
     icon: "w-5 h-5",
     name: "text-sm font-medium",
   },
