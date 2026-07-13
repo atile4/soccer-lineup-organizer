@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 
 // fetches
-import { fetchCurrentIDs } from "@/services/current_ids";
+import { fetchCurrentIDs } from "@/services/profiles";
 
 // Components
 import AppHeader from "./components/AppHeader/AppHeader";
