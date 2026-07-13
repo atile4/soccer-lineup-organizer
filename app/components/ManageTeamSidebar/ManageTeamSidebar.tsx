@@ -10,14 +10,12 @@ import { fetchGames, fetchSplit, updateSplit } from "@/services/games";
 import { Game, SplitBy } from "@/app/types";
 
 interface ManageTeamSidebarProps {
-  userId?: string;
-  teamId?: string;
+  teamId: string | null;
   maxPlayers?: number;
 }
 
 export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
-  userId = "testing-user",
-  teamId = "71908f3b-2a07-4007-bc94-1c7914517f4a", // Testing team id
+  teamId,
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
   const [formation, setFormation] = useState(""); // @TODO figure out how to save formation
@@ -31,10 +29,12 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
 
   // fetch games
   useEffect(() => {
-    fetchGames(teamId).then((data) => {
-      setGames(data);
-      setGame(data[0]);
-    });
+    if (teamId) {
+      fetchGames(teamId).then((data) => {
+        setGames(data);
+        setGame(data[0]);
+      });
+    }
   }, [teamId]);
 
   // fetch initial split

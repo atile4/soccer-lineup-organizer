@@ -1,25 +1,41 @@
 "use client";
 
 // hooks
+import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+
+// fetches
+import { fetchCurrentIDs } from "@/services/profiles";
 
 // Components
 import AppHeader from "./components/AppHeader/AppHeader";
 import ManageTeamSidebar from "./components/ManageTeamSidebar/ManageTeamSidebar";
 import PlayerSidebar from "./components/PlayerSidebar/PlayerSidebar";
 
+type CurrentIds = {
+  current_team_id: string | null;
+  current_game_id: string | null;
+};
+
 export default function DashboardPage() {
-  // @TODO store a 'current team' column per user, and retrieve that team id for use in sidebar components
-  //       something like a getCurrentId(userId)
   const { session, loading } = useAuth();
-  const teamId = "71908f3b-2a07-4007-bc94-1c7914517f4a"; // temp test team id
+  const [currentIDs, setCurrentIDs] = useState<CurrentIds | null>(null);
+
+  useEffect(() => {
+    if (session) {
+      fetchCurrentIDs(session.user.id).then(setCurrentIDs);
+    }
+  }, [session]);
+
+  useEffect(() => {});
 
   return (
     <div className="h-screen flex flex-col">
       <AppHeader />
-
       <main className="flex-1 flex overflow-hidden py-4 gap-4">
-        <ManageTeamSidebar userId={session?.user.id} teamId={teamId} />
+        <ManageTeamSidebar
+          teamId={currentIDs ? currentIDs.current_team_id : null}
+        />
 
         {/* Soccer Field */}
         <div className="flex-1 flex items-center justify-center h-full w-full min-w-0 px-4">
@@ -39,7 +55,9 @@ export default function DashboardPage() {
             {/* Future: drag-and-drop player components will be layered here */}
           </div>
         </div>
-        <PlayerSidebar teamId={teamId} />
+        <PlayerSidebar
+          teamId={currentIDs ? currentIDs.current_team_id : null}
+        />
       </main>
     </div>
   );
