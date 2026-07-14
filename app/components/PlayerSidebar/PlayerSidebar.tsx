@@ -10,7 +10,7 @@ import { PlayerList } from "./PlayerList";
 import { fetchPlayers } from "@/services/players";
 
 interface PlayerSidebarProps {
-  teamId?: string;
+  teamId: string | null;
 }
 
 export const PlayerSidebar: React.FC<PlayerSidebarProps> = ({ teamId }) => {

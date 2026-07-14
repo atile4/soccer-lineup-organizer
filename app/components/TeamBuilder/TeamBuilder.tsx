@@ -6,7 +6,7 @@ import { teamBuilderStyles as s, themeVars } from "./TeamBuilder.styles";
 import { Division, Gender } from "@/app/types";
 import { DIVISIONS } from "@/app/formations";
 import { useAuth } from "@/context/AuthContext";
-import { createTeam } from "@/services/teams";
+import { createTeam, createTeamWithDefaultGame } from "@/services/teams";
 import { createPlayers, NewPlayer } from "@/services/players";
 
 const GENDER_OPTIONS: Gender[] = ["Boys", "Girls", "Coed"];
@@ -119,7 +119,7 @@ export default function TeamBuilder() {
 
     setSaving(true);
     try {
-      const team = await createTeam(
+      const team = await createTeamWithDefaultGame(
         session.user.id,
         teamName.trim(),
         division,
