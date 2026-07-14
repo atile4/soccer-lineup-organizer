@@ -3,6 +3,7 @@
 // hooks
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { useTeam } from "@/context/TeamContext";
 
 // fetches
 import { fetchCurrentIDs } from "@/services/profiles";
@@ -19,6 +20,7 @@ type CurrentIds = {
 
 export default function DashboardPage() {
   const { session, loading } = useAuth();
+  const { currentTeamId } = useTeam();
   const [currentIDs, setCurrentIDs] = useState<CurrentIds | null>(null);
 
   useEffect(() => {
@@ -33,9 +35,7 @@ export default function DashboardPage() {
     <div className="h-screen flex flex-col">
       <AppHeader />
       <main className="flex-1 flex overflow-hidden py-4 gap-4">
-        <ManageTeamSidebar
-          teamId={currentIDs ? currentIDs.current_team_id : null}
-        />
+        <ManageTeamSidebar teamId={currentTeamId} />
 
         {/* Soccer Field */}
         <div className="flex-1 flex items-center justify-center h-full w-full min-w-0 px-4">
@@ -55,9 +55,7 @@ export default function DashboardPage() {
             {/* Future: drag-and-drop player components will be layered here */}
           </div>
         </div>
-        <PlayerSidebar
-          teamId={currentIDs ? currentIDs.current_team_id : null}
-        />
+        <PlayerSidebar teamId={currentTeamId} />
       </main>
     </div>
   );

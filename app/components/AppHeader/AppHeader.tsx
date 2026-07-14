@@ -35,7 +35,7 @@ export default function AppHeader() {
             <p>Loading...</p>
           ) : (
             <div className={`${styles.user.wrapper} flex items-center gap-3`}>
-              {session && <TeamSwitcher userId={session.user.id} />}
+              {session && <TeamSwitcher />}
 
               {session ? (
                 <ProfileMenu onLogout={handleLogout} />
