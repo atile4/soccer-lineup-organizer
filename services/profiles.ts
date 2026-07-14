@@ -7,6 +7,8 @@ export async function fetchCurrentIDs(userId: string) {
     .eq("id", userId)
     .single();
 
-  if (error) throw error;
+  if (error && error.code !== "PGRST116") throw error;
+  if (!data) throw new Error(`No profile found for user ${userId}`);
+
   return data;
 }

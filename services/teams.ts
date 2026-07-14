@@ -39,3 +39,15 @@ export async function createTeamWithDefaultGame(
   await createGame(team.id, "New Game", "", "none");
   return team;
 }
+
+export async function setCurrentTeam(userId: string, teamId: string) {
+  const { data, error } = await supabase
+    .from("profiles")
+    .update({ current_team_id: teamId })
+    .eq("id", userId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}

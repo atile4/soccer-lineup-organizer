@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 // Components
 import ProfileMenu from "./ProfileMenu";
 import LogoAndTitle from "./LogoAndTitle";
+import TeamSwitcher from "./TeamSwitcher";
 
 export default function AppHeader() {
   const { session, loading } = useAuth();
@@ -33,7 +34,9 @@ export default function AppHeader() {
           {loading ? (
             <p>Loading...</p>
           ) : (
-            <div className={styles.user.wrapper}>
+            <div className={`${styles.user.wrapper} flex items-center gap-3`}>
+              {session && <TeamSwitcher userId={session.user.id} />}
+
               {session ? (
                 <ProfileMenu onLogout={handleLogout} />
               ) : (
