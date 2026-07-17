@@ -10,14 +10,14 @@ import {
 } from "react";
 import { useAuth } from "./AuthContext";
 import {
-  fetchTeams,
+  fetchTeamsWithPlayerCount,
   setCurrentTeam as persistCurrentTeam,
 } from "@/services/teams";
 import { fetchCurrentIDs } from "@/services/profiles";
-import { Team } from "@/app/types";
+import { TeamWithPlayerCount } from "@/app/types";
 
 interface TeamContextValue {
-  teams: Team[];
+  teams: TeamWithPlayerCount[];
   currentTeamId: string | null;
   loading: boolean;
   switchTeam: (teamId: string) => Promise<void>;
@@ -29,11 +29,10 @@ export function TeamProvider({ children }: { children: ReactNode }) {
   const { session } = useAuth();
   const userId = session?.user?.id ?? null;
 
-  const [teams, setTeams] = useState<Team[]>([]);
+  const [teams, setTeams] = useState<TeamWithPlayerCount[]>([]);
   const [currentTeamId, setCurrentTeamId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Single source of truth: load once per logged-in user
   useEffect(() => {
     if (!userId) {
       setTeams([]);
@@ -45,7 +44,7 @@ export function TeamProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
     setLoading(true);
 
-    Promise.all([fetchTeams(userId), fetchCurrentIDs(userId)])
+    Promise.all([fetchTeamsWithPlayerCount(userId), fetchCurrentIDs(userId)])
       .then(([teamList, current]) => {
         if (cancelled) return;
         setTeams(teamList);
@@ -66,12 +65,12 @@ export function TeamProvider({ children }: { children: ReactNode }) {
     async (teamId: string) => {
       if (!userId) return;
       const previous = currentTeamId;
-      setCurrentTeamId(teamId); // optimistic
+      setCurrentTeamId(teamId);
       try {
         await persistCurrentTeam(userId, teamId);
       } catch (err) {
         console.error("Failed to switch teams:", err);
-        setCurrentTeamId(previous); // roll back
+        setCurrentTeamId(previous);
       }
     },
     [userId, currentTeamId],

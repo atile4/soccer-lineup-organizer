@@ -9,10 +9,14 @@ export interface Player {
 export interface Team {
   id: string;
   name: string;
-  players: Player[];
   division: Division | null;
   gender: Gender;
   color: string;
+}
+
+// includes player count, which is not a column in the teams table
+export interface TeamWithPlayerCount extends Team {
+  playerCount: number;
 }
 
 export interface Game {

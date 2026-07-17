@@ -4,16 +4,17 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Check } from "lucide-react";
 import { teamSwitcherStyles as styles } from "./TeamSwitcher.styles";
 import { useTeam } from "@/context/TeamContext";
-import { Team } from "@/app/types";
+import { TeamWithPlayerCount } from "@/app/types";
 
-// One line of "division · gender · player count" text, reused for
-// both the trigger button and each row in the dropdown.
-const teamMeta = (team: Team) =>
+// One line of "division · gender · player count" text
+const teamMeta = (team: TeamWithPlayerCount) =>
   [
-    team.division ?? "No division",
+    team.division,
     team.gender,
-    // `${team.players.length} ${team.players.length === 1 ? "player" : "players"}`,
-  ].join(" · ");
+    `${team.playerCount} ${team.playerCount === 1 ? "player" : "players"}`,
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
 export default function TeamSwitcher() {
   const { teams, currentTeamId, loading, switchTeam } = useTeam();

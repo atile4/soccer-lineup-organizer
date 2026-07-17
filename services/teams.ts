@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { Team, Division, Gender } from "@/app/types";
+import { Team, Division, Gender, TeamWithPlayerCount } from "@/app/types";
 import { createGame } from "./games";
 
 export async function fetchTeams(userId: string) {
@@ -9,6 +9,22 @@ export async function fetchTeams(userId: string) {
     .eq("user_id", userId);
   if (error) throw error;
   return data;
+}
+
+export async function fetchTeamsWithPlayerCount(
+  userId: string,
+): Promise<TeamWithPlayerCount[]> {
+  const { data, error } = await supabase
+    .from("teams")
+    .select("*, players(count)")
+    .eq("user_id", userId);
+
+  if (error) throw error;
+
+  return (data ?? []).map((team) => ({
+    ...team,
+    playerCount: team.players?.[0]?.count ?? 0,
+  }));
 }
 
 export async function createTeam(
