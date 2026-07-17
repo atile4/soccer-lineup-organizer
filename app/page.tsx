@@ -12,6 +12,7 @@ import { fetchCurrentIDs } from "@/services/profiles";
 import AppHeader from "./components/AppHeader/AppHeader";
 import ManageTeamSidebar from "./components/ManageTeamSidebar/ManageTeamSidebar";
 import PlayerSidebar from "./components/PlayerSidebar/PlayerSidebar";
+import Bench from "./components/Bench/Bench";
 
 type CurrentIds = {
   current_team_id: string | null;
@@ -55,6 +56,7 @@ export default function DashboardPage() {
             {/* Future: drag-and-drop player components will be layered here */}
           </div>
         </div>
+        <Bench />
         <PlayerSidebar teamId={currentTeamId} />
       </main>
     </div>
