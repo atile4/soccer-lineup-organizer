@@ -1,10 +1,11 @@
-import React, { TextareaHTMLAttributes, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChevronDown, ChevronRight, X } from "lucide-react";
 import { sidebarStyles } from "./ManageTeamSidebar.styles";
 
+import { useTeam } from "@/context/TeamContext";
+
 // services
-import { fetchTeams } from "@/services/teams";
-import { fetchGames, fetchSplit, updateSplit } from "@/services/games";
+import { fetchGames, updateSplit } from "@/services/games";
 
 // types
 import { Game, SplitBy } from "@/app/types";
