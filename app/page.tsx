@@ -5,6 +5,13 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useTeam } from "@/context/TeamContext";
 
+// drag-and-drop
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+
+// context
+import { LineupProvider } from "@/context/LineupContext";
+
 // fetches
 import { fetchCurrentIDs } from "@/services/profiles";
 
@@ -13,6 +20,7 @@ import AppHeader from "./components/AppHeader/AppHeader";
 import ManageTeamSidebar from "./components/ManageTeamSidebar/ManageTeamSidebar";
 import PlayerSidebar from "./components/PlayerSidebar/PlayerSidebar";
 import Bench from "./components/Bench/Bench";
+import { Field } from "./components/Field/Field";
 
 type CurrentIds = {
   current_team_id: string | null;
@@ -20,7 +28,7 @@ type CurrentIds = {
 };
 
 export default function DashboardPage() {
-  const { session, loading } = useAuth();
+  const { session } = useAuth();
   const { currentTeamId } = useTeam();
   const [currentIDs, setCurrentIDs] = useState<CurrentIds | null>(null);
 
@@ -30,38 +38,31 @@ export default function DashboardPage() {
     }
   }, [session]);
 
-  useEffect(() => {});
-
+  // @TODO gameId comes from the user's current game. Once lineup switching
+  //       exists, the active lineup/period should drive placements too.
   return (
     <div className="h-screen flex flex-col">
       <AppHeader />
-      <main className="flex-1 flex overflow-hidden py-4 gap-4">
-        <ManageTeamSidebar teamId={currentTeamId} />
+      <DndProvider backend={HTML5Backend}>
+        <LineupProvider
+          teamId={currentTeamId}
+          gameId={currentIDs?.current_game_id ?? null}
+        >
+          <main className="flex-1 flex overflow-hidden py-4 gap-4">
+            <ManageTeamSidebar teamId={currentTeamId} />
 
-        {/* Soccer Field */}
-        <div className="flex-1 flex items-center justify-center h-full w-full min-w-0 px-4">
-          <div className="flex items-start gap-4">
-            <div className="relative flex-shrink-0">
-              <img
-                src="/images/soccer_field.png"
-                alt="Soccer field"
-                className="rounded-lg block"
-                style={{
-                  maxHeight: "calc(100vh - 6rem)",
-                  maxWidth: "900px",
-                  width: "auto",
-                  height: "auto",
-                }}
-              />
-              {/* Future: drag-and-drop player components will be layered here */}
+            {/* Soccer Field */}
+            <div className="flex-1 flex items-center justify-center h-full w-full min-w-0 px-4">
+              <div className="flex items-start gap-4">
+                <Field />
+                <Bench />
+              </div>
             </div>
 
-            <Bench />
-          </div>
-        </div>
-
-        <PlayerSidebar teamId={currentTeamId} />
-      </main>
+            <PlayerSidebar />
+          </main>
+        </LineupProvider>
+      </DndProvider>
     </div>
   );
 }

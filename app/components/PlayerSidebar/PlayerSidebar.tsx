@@ -1,28 +1,20 @@
-import React, { useEffect, useState } from "react";
+"use client";
+
+import React, { useState } from "react";
 import { ChevronLeft, X } from "lucide-react";
 import { playerSidebarStyles } from "./PlayerSidebar.styles";
 
-//types
-import { Player } from "../../types";
-
 import { PlayerList } from "./PlayerList";
+import { useLineup } from "@/context/LineupContext";
 
-import { fetchPlayers } from "@/services/players";
-
-interface PlayerSidebarProps {
-  teamId: string | null;
-}
-
-export const PlayerSidebar: React.FC<PlayerSidebarProps> = ({ teamId }) => {
+// Roster/availability list for the active lineup. Players are sourced from
+// LineupContext so the sidebar, field, and bench stay in sync.
+//
+// @TODO The list is currently team-wide. Once lineup switching exists, the set
+//       of available players should be scoped per lineup (see LineupContext).
+export const PlayerSidebar: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
-  const [players, setPlayers] = useState<Player[]>([]);
-
-  useEffect(() => {
-    if (teamId) {
-      console.log(teamId);
-      fetchPlayers(teamId).then(setPlayers);
-    }
-  }, [teamId]);
+  const { benchAll } = useLineup();
 
   return (
     <>
@@ -59,9 +51,13 @@ export const PlayerSidebar: React.FC<PlayerSidebarProps> = ({ teamId }) => {
           </div>
 
           {/* Content area*/}
-          <PlayerList players={players} />
+          <PlayerList />
 
-          <button type="button" className={playerSidebarStyles.sendAllButton}>
+          <button
+            type="button"
+            onClick={benchAll}
+            className={playerSidebarStyles.sendAllButton}
+          >
             Send All Players to Bench
           </button>
         </div>
