@@ -1,13 +1,13 @@
 export const playerSidebarStyles = {
   // Arrow button visible when sidebar is collapsed
   openButton:
-    "fixed top-20 right-0 z-40 bg-white border border-r-0 border-gray-300 rounded-l-lg p-2 shadow-md hover:bg-gray-100 transition-colors",
+    "fixed top-20 right-0 z-40 bg-[#fefcf3] border border-r-0 border-[#e8e0c8] rounded-l-lg p-2 shadow-md hover:bg-[#f5edd4] transition-colors",
   openButtonIcon: "h-5 w-5 text-gray-600",
 
   // Collapsible <aside> — width toggles between sidebarOpen / sidebarClosed
   // Height and spacing are controlled by the parent <main> in page.tsx
   sidebar:
-    "transition-all duration-300 ease-in-out overflow-hidden overflow-y-auto bg-white border border-gray-200 rounded-l-lg shadow-sm flex-shrink-0 h-full",
+    "transition-all duration-300 ease-in-out overflow-hidden overflow-y-auto bg-[#fefcf3] border border-[#e8e0c8] rounded-l-lg shadow-sm flex-shrink-0 h-full",
   sidebarOpen: "w-80",
   sidebarClosed: "w-0",
 
@@ -22,7 +22,7 @@ export const playerSidebarStyles = {
   closeButtonIcon: "h-5 w-5 text-gray-500",
 
   // Player List
-playerList: "w-full flex-1 min-h-0 bg-white px-4 pt-2 pb-0 flex flex-col overflow-y-auto max-h-[87%]",
+playerList: "w-full flex-1 min-h-0 bg-[#fefcf3] px-4 pt-2 pb-0 flex flex-col overflow-y-auto max-h-[87%]",
 
   // Bench All Players Button
   sendAllButton: "mt-auto mb-1 w-2/3 mx-auto rounded-md bg-[#318e2a] px-4 py-1 text-white font-semibold shadow-sm hover:bg-[#2d7b26] transition-colors"

@@ -1,13 +1,13 @@
 export const sidebarStyles = {
   // Arrow button visible when sidebar is collapsed
   openButton:
-    "fixed top-20 left-0 z-40 bg-white border border-l-0 border-gray-300 rounded-r-lg p-2 shadow-md hover:bg-gray-100 transition-colors",
+    "fixed top-20 left-0 z-40 bg-[#fefcf3] border border-l-0 border-[#e8e0c8] rounded-r-lg p-2 shadow-md hover:bg-[#f5edd4] transition-colors",
   openButtonIcon: "h-5 w-5 text-gray-600",
 
   // Collapsible <aside> — width toggles between sidebarOpen / sidebarClosed
   // Height and spacing are controlled by the parent <main> in page.tsx
   sidebar:
-    "transition-all duration-300 ease-in-out overflow-hidden overflow-y-auto bg-white border border-gray-200 rounded-r-lg shadow-sm flex-shrink-0 h-full",
+    "transition-all duration-300 ease-in-out overflow-hidden overflow-y-auto bg-[#fefcf3] border border-[#e8e0c8] rounded-r-lg shadow-sm flex-shrink-0 h-full",
   sidebarOpen: "w-80",
   sidebarClosed: "w-0",
 
@@ -26,9 +26,9 @@ export const sidebarStyles = {
   sectionTitle: "text-lg font-semibold text-gray-800",
   selectWrapper: "relative",
   textInput:
-    "w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400",
+    "w-full px-3 py-2 text-sm border border-[#e8e0c8] rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400",
   selectInput:
-    "w-full appearance-none bg-white px-3 py-2 pr-10 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400 cursor-pointer",
+    "w-full appearance-none bg-[#fefcf3] px-3 py-2 pr-10 text-sm border border-[#e8e0c8] rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400 cursor-pointer",
   customArrowIcon:
     "pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500",
   textArea:

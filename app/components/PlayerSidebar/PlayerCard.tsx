@@ -12,12 +12,12 @@ export default function PlayerCard({
   nameColor = "#9CA3AF", // default: gray
 }: PlayerCardProps) {
   return (
-    <div className="bg-gray-100 rounded-2xl flex flex-col items-center justify-center p-3 gap-2 aspect-square cursor-pointer hover:bg-gray-200 transition-colors">
+    <div className="bg-gray-100 rounded-2xl flex flex-col items-center justify-center p-2 sm:p-3 gap-1 sm:gap-2 aspect-square cursor-pointer hover:bg-gray-200 transition-colors">
       {/* Jersey SVG */}
       <svg
         viewBox="0 0 100 90"
         xmlns="http://www.w3.org/2000/svg"
-        className="w-16 h-16"
+        className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16"
       >
         {/* Jersey body */}
         <path
@@ -43,7 +43,7 @@ export default function PlayerCard({
 
       {/* Player name */}
       <p
-        className="text-sm font-semibold text-center leading-tight"
+        className="text-xs sm:text-sm font-semibold text-center leading-tight"
         style={{ color: nameColor }}
       >
         {name}

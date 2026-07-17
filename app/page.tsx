@@ -50,7 +50,7 @@ export default function DashboardPage() {
             <img
               src="/images/soccer_field.png"
               alt="Soccer field"
-              className="rounded-lg shadow-lg w-full h-auto object-contain"
+              className="rounded-lg w-full h-auto object-contain"
               style={{ maxHeight: "calc(100vh - 6rem)" }}
             />
             {/* Future: drag-and-drop player components will be layered here */}
