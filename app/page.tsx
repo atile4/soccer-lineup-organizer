@@ -40,7 +40,7 @@ export default function DashboardPage() {
 
         {/* Soccer Field */}
         <div className="flex-1 flex items-center justify-center h-full w-full min-w-0 px-4">
-          <div className="flex items-start">
+          <div className="flex items-start gap-4">
             <div className="relative flex-shrink-0">
               <img
                 src="/images/soccer_field.png"
