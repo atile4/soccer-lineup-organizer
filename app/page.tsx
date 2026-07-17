@@ -12,6 +12,7 @@ import { fetchCurrentIDs } from "@/services/profiles";
 import AppHeader from "./components/AppHeader/AppHeader";
 import ManageTeamSidebar from "./components/ManageTeamSidebar/ManageTeamSidebar";
 import PlayerSidebar from "./components/PlayerSidebar/PlayerSidebar";
+import Bench from "./components/Bench/Bench";
 
 type CurrentIds = {
   current_team_id: string | null;
@@ -39,22 +40,26 @@ export default function DashboardPage() {
 
         {/* Soccer Field */}
         <div className="flex-1 flex items-center justify-center h-full w-full min-w-0 px-4">
-          <div
-            className="relative w-full"
-            style={{
-              maxWidth: "900px",
-              maxHeight: "calc(100vh - 6rem)",
-            }}
-          >
-            <img
-              src="/images/soccer_field.png"
-              alt="Soccer field"
-              className="rounded-lg shadow-lg w-full h-auto object-contain"
-              style={{ maxHeight: "calc(100vh - 6rem)" }}
-            />
-            {/* Future: drag-and-drop player components will be layered here */}
+          <div className="flex items-start gap-4">
+            <div className="relative flex-shrink-0">
+              <img
+                src="/images/soccer_field.png"
+                alt="Soccer field"
+                className="rounded-lg block"
+                style={{
+                  maxHeight: "calc(100vh - 6rem)",
+                  maxWidth: "900px",
+                  width: "auto",
+                  height: "auto",
+                }}
+              />
+              {/* Future: drag-and-drop player components will be layered here */}
+            </div>
+
+            <Bench />
           </div>
         </div>
+
         <PlayerSidebar teamId={currentTeamId} />
       </main>
     </div>
