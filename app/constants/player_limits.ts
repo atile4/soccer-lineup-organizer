@@ -7,6 +7,7 @@
 	3. U12: A player can play goalkeeper for a maximum of 3 quarters per game.
 	*/
 
+// Maximum players on field (according to AYSO guidelines)
 export const MAX_PLAYERS = 11;
 
 export const MAX_PLAYERS_BY_DIV = {
