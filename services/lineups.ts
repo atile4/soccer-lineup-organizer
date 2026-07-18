@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { Lineup } from "@/app/types";
+import { Game, Lineup } from "@/app/types";
 
 export async function createLineup(
   gameId: string,
@@ -24,4 +24,30 @@ export async function fetchLineups(gameId: string): Promise<Lineup[]> {
 
   if (error) throw error;
   return data as Lineup[];
+}
+
+export async function switchLineup(
+  gameId: string,
+  lineupId: string,
+): Promise<Game> {
+  const { data: lineup, error: lineupError } = await supabase
+    .from("lineups")
+    .select("id, game_id")
+    .eq("id", lineupId)
+    .single();
+
+  if (lineupError) throw lineupError;
+  if (lineup.game_id !== gameId) {
+    throw new Error(`Lineup ${lineupId} does not belong to game ${gameId}`);
+  }
+
+  const { data, error } = await supabase
+    .from("games")
+    .update({ current_lineup_id: lineupId })
+    .eq("id", gameId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data as Game;
 }

@@ -1,4 +1,4 @@
-import { SplitBy, Game } from "@/app/types";
+import { SplitBy, Game, Lineup } from "@/app/types";
 import { supabase } from "@/lib/supabase";
 
 export async function fetchGames(teamId: string) {
@@ -23,7 +23,6 @@ export async function createGame(
     .single();
 
   if (error) throw error;
-  console.log("game created");
   return data as Game;
 }
 
@@ -54,14 +53,16 @@ export async function fetchSplit(gameId: string) {
   return data.split_by;
 }
 
-export async function updateSplit(gameId: string, splitType: SplitBy) {
-  const { data, error } = await supabase
-    .from("games")
-    .update({ split_by: splitType })
-    .eq("id", gameId)
-    .select()
-    .single();
+// Resizes the game's lineups to match the new split type
+export async function updateSplit(
+  gameId: string,
+  splitType: SplitBy,
+): Promise<Lineup[]> {
+  const { data, error } = await supabase.rpc("set_game_split", {
+    p_game_id: gameId,
+    p_split: splitType,
+  });
 
   if (error) throw error;
-  return data;
+  return data as Lineup[];
 }

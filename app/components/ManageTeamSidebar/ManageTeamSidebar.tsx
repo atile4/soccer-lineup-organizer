@@ -10,6 +10,9 @@ import { fetchGames, updateSplit } from "@/services/games";
 // types
 import { Game, SplitBy } from "@/app/types";
 
+// util
+import { SPLIT_PERIOD_COUNTS } from "@/app/utils/period";
+
 interface ManageTeamSidebarProps {
   teamId: string | null;
   maxPlayers?: number;
@@ -109,9 +112,24 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
       console.error("No game selected — cannot update split type");
       return;
     }
+
+    // Shrinking (e.g. quarter -> half) deletes lineup rows for periods
+    // that no longer exist, along with any player assignments on them.
+    // Confirm before doing anything destructive.
+    const isShrinking =
+      splitBy !== undefined &&
+      SPLIT_PERIOD_COUNTS[value] < SPLIT_PERIOD_COUNTS[splitBy];
+
+    if (isShrinking) {
+      const confirmed = window.confirm(
+        `Switching to "${value}" will permanently delete lineup data for periods that no longer exist. Continue?`,
+      );
+      if (!confirmed) return;
+    }
+
     try {
-      const updatedGame = await updateSplit(game.id, value);
-      setSplitBy(updatedGame.split_by);
+      await updateSplit(game.id, value);
+      setSplitBy(value);
     } catch (err) {
       console.error("Failed to save split type:", err);
     }

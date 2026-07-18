@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { Team, Division, Gender, TeamWithPlayerCount } from "@/app/types";
-import { createGame } from "./games";
+import { createGameWithLineups } from "./games";
 
 export async function fetchTeams(userId: string) {
   const { data, error } = await supabase
@@ -52,7 +52,7 @@ export async function createTeamWithDefaultGame(
   color: string,
 ): Promise<Team> {
   const team = await createTeam(userId, name, division, gender, color);
-  await createGame(team.id, "New Game", "", "none");
+  await createGameWithLineups(team.id, "New Game", "none", "");
   return team;
 }
 
