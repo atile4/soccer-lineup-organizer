@@ -18,3 +18,16 @@ export function formatPeriodLabel(period: number, splitBy: SplitBy): string {
       return "Full Game";
   }
 }
+
+export function getPeriodsToRemove(from: SplitBy, to: SplitBy): number[] {
+  const fromCount = SPLIT_PERIOD_COUNTS[from];
+  const toCount = SPLIT_PERIOD_COUNTS[to];
+
+  if (toCount >= fromCount) return [];
+
+  const removed: number[] = [];
+  for (let period = toCount + 1; period <= fromCount; period++) {
+    removed.push(period);
+  }
+  return removed;
+}
