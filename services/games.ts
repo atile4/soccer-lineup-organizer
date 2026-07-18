@@ -27,6 +27,22 @@ export async function createGame(
   return data as Game;
 }
 
+export async function createGameWithLineups(
+  teamId: string,
+  name: string,
+  split: SplitBy = "none",
+  notes?: string,
+): Promise<Game> {
+  const { data, error } = await supabase.rpc("create_game_with_lineups", {
+    p_team_id: teamId,
+    p_name: name,
+    p_split: split,
+    p_notes: notes ?? null,
+  });
+  if (error) throw error;
+  return data as Game;
+}
+
 export async function fetchSplit(gameId: string) {
   const { data, error } = await supabase
     .from("games")
