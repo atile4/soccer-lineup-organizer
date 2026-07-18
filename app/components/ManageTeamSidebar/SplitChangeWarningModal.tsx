@@ -10,8 +10,23 @@ const SPLIT_LABELS: Record<SplitBy, string> = {
   quarter: "Quarters",
 };
 
+const SPLIT_UNIT_LABELS: Record<SplitBy, string> = {
+  none: "period",
+  half: "half",
+  quarter: "quarter",
+};
+
+// "quarter 3 and quarter 4" / "half 2" / "quarter 2, quarter 3 and quarter 4"
+function describeRemovedPeriods(unit: string, periods: number[]): string {
+  const items = periods.map((p) => `${unit} ${p}`);
+  if (items.length <= 1) return items.join("");
+  if (items.length === 2) return `${items[0]} and ${items[1]}`;
+  return `${items.slice(0, -1).join(", ")}, and ${items[items.length - 1]}`;
+}
+
 interface SplitChangeWarningModalProps {
   open: boolean;
+  fromSplit: SplitBy;
   toSplit: SplitBy;
   periodsToRemove: number[];
   saving: boolean;
@@ -21,31 +36,35 @@ interface SplitChangeWarningModalProps {
 
 export default function SplitChangeWarningModal({
   open,
+  fromSplit,
   toSplit,
   periodsToRemove,
   saving,
   onConfirm,
   onCancel,
 }: SplitChangeWarningModalProps) {
+  const unit = SPLIT_UNIT_LABELS[fromSplit];
+  const removedDescription = describeRemovedPeriods(unit, periodsToRemove);
+
   return (
     <Modal open={open} onClose={onCancel}>
-      <h2 className="text-lg font-bold text-gray-900">
+      <h2 className="text-lg font-bold text-gray-900 pr-6">
         Switch to {SPLIT_LABELS[toSplit]}?
       </h2>
 
       <p className="mt-2 text-sm text-gray-600">
-        This will permanently delete the following period
-        {periodsToRemove.length > 1 ? "s" : ""}, along with any formation and
-        player assignments in them:
+        This will permanently delete {removedDescription}, along with any
+        formation and player assignments in{" "}
+        {periodsToRemove.length > 1 ? "them" : "it"}.
       </p>
 
       <ul className="mt-3 flex flex-wrap gap-2">
         {periodsToRemove.map((period) => (
           <li
             key={period}
-            className="rounded-full bg-red-50 px-3 py-1 text-sm font-semibold text-red-700"
+            className="rounded-full bg-red-50 px-3 py-1 text-sm font-semibold capitalize text-red-700"
           >
-            Period {period}
+            {unit} {period}
           </li>
         ))}
       </ul>

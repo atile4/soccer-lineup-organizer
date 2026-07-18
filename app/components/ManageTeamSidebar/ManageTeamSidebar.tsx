@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { ChevronDown, ChevronRight, X } from "lucide-react";
 import { sidebarStyles } from "./ManageTeamSidebar.styles";
 
-import { useTeam } from "@/context/TeamContext";
-
 // services
 import { fetchGames, updateSplit } from "@/services/games";
 
@@ -262,6 +260,7 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
         {pendingSplit && (
           <SplitChangeWarningModal
             open={pendingSplit !== null}
+            fromSplit={splitBy!}
             toSplit={pendingSplit}
             periodsToRemove={periodsToRemove}
             saving={savingSplit}
