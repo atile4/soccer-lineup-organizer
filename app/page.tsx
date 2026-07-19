@@ -21,6 +21,7 @@ import ManageTeamSidebar from "./components/ManageTeamSidebar/ManageTeamSidebar"
 import PlayerSidebar from "./components/PlayerSidebar/PlayerSidebar";
 import Bench from "./components/Bench/Bench";
 import { Field } from "./components/Field/Field";
+import LineupTabs from "./components/LineupTabs/LineupTabs";
 
 type CurrentIds = {
   current_team_id: string | null;
@@ -54,12 +55,17 @@ export default function DashboardPage() {
             {/* Soccer Field */}
             <div className="flex-1 flex items-center justify-center h-full w-full min-w-0 px-4">
               <div className="flex items-start gap-4">
-                <Field />
-                <Bench />
+                {/* Lineup period tabs — top-aligned to the left of the field */}
+                <LineupTabs />
+
+                <div className="flex items-start gap-4">
+                  <Field />
+                  <Bench />
+                </div>
               </div>
             </div>
 
-            <PlayerSidebar />
+            <PlayerSidebar teamId={currentTeamId} />
           </main>
         </LineupProvider>
       </DndProvider>

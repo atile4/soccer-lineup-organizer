@@ -19,6 +19,21 @@ export function formatPeriodLabel(period: number, splitBy: SplitBy): string {
   }
 }
 
+// Short label for the lineup-switching tabs, e.g. "Q1", "H2".
+// Periods are 0-indexed in the DB, so the display ordinal is period + 1.
+export function formatPeriodTab(period: number, splitBy: SplitBy): string {
+  const ordinal = period + 1;
+  switch (splitBy) {
+    case "quarter":
+      return `Q${ordinal}`;
+    case "half":
+      return `H${ordinal}`;
+    case "none":
+    default:
+      return "Full";
+  }
+}
+
 export function getPeriodsToRemove(from: SplitBy, to: SplitBy): number[] {
   const fromCount = SPLIT_PERIOD_COUNTS[from];
   const toCount = SPLIT_PERIOD_COUNTS[to];

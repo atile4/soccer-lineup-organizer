@@ -3,10 +3,13 @@ import { ChevronDown, ChevronRight, X } from "lucide-react";
 import { sidebarStyles } from "./ManageTeamSidebar.styles";
 
 // services
-import { fetchGames, updateSplit } from "@/services/games";
+import { updateSplit } from "@/services/games";
+
+// context
+import { useGame } from "@/context/GameContext";
 
 // types
-import { Game, SplitBy } from "@/app/types";
+import { SplitBy } from "@/app/types";
 
 // util
 import { getPeriodsToRemove } from "@/app/utils/period";
@@ -17,9 +20,9 @@ interface ManageTeamSidebarProps {
   maxPlayers?: number;
 }
 
-export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
-  teamId,
-}) => {
+export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = () => {
+  const { games, currentGame, switchGame, refreshGameData } = useGame();
+
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
   const [formation, setFormation] = useState(""); // @TODO figure out how to save formation
   const [formationError, setFormationError] = useState("");
@@ -28,29 +31,15 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
   const [pendingSplit, setPendingSplit] = useState<SplitBy | null>(null);
   const [savingSplit, setSavingSplit] = useState(false);
 
-  //@TODO save current game to db, load current game
-  const [games, setGames] = useState<Game[]>([]);
-  const [game, setGame] = useState<Game>();
-
   const periodsToRemove =
     splitBy && pendingSplit ? getPeriodsToRemove(splitBy, pendingSplit) : [];
 
-  // fetch games
+  // keep the split selector in sync with the active game
   useEffect(() => {
-    if (teamId) {
-      fetchGames(teamId).then((data) => {
-        setGames(data);
-        setGame(data[0]);
-      });
+    if (currentGame) {
+      setSplitBy(currentGame.split_by);
     }
-  }, [teamId]);
-
-  // fetch initial split
-  useEffect(() => {
-    if (game) {
-      setSplitBy(game.split_by);
-    }
-  }, [game]);
+  }, [currentGame]);
 
   const checkFormation = () => {
     // Empty input: no error, nothing to validate
@@ -112,11 +101,11 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
 
   // handling changing game split
   const handleSplitSelect = (value: SplitBy) => {
-    if (!game || !splitBy) return;
+    if (!currentGame || !splitBy) return;
 
     const removed = getPeriodsToRemove(splitBy, value);
     if (removed.length === 0) {
-      // Growing or unchanged — nothing destructive, just apply it
+      // Growing or unchanged, no rows removed
       applySplitChange(value);
       return;
     }
@@ -126,15 +115,14 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
   };
 
   const applySplitChange = async (value: SplitBy) => {
-    if (!game) return;
+    if (!currentGame) return;
     setSavingSplit(true);
     try {
-      await updateSplit(game.id, value);
+      await updateSplit(currentGame.id, value);
       setSplitBy(value);
+      await refreshGameData();
     } catch (err) {
-      console.error("Failed to save split type:", err);
-      // consider surfacing this to the coach — a silent console.error
-      // means they think it saved when it didn't
+      console.error("Failed to save split type:", err); // @TODO warning modal
     } finally {
       setSavingSplit(false);
       setPendingSplit(null);
@@ -184,12 +172,9 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
             <div className={sidebarStyles.selectWrapper}>
               <select
                 className={sidebarStyles.selectInput}
-                value={game?.id ?? ""}
+                value={currentGame?.id ?? ""}
                 aria-label="Select game"
-                onChange={(e) => {
-                  const selected = games.find((g) => g.id === e.target.value);
-                  setGame(selected);
-                }}
+                onChange={(e) => switchGame(e.target.value)}
               >
                 {games.map((g) => (
                   <option key={g.id} value={g.id}>

@@ -25,6 +25,7 @@ export interface Game {
   name: string;
   split_by: SplitBy;
   notes: string;
+  current_lineup_id: string | null;
 }
 
 export interface Lineup {
@@ -32,6 +33,15 @@ export interface Lineup {
   game_id: string;
   period: number;
   formation: string;
+}
+
+export interface FieldPosition {
+  id: string;
+  lineup_id: string;
+  player_id: string;
+  x: number | null; // percentage from left, 0-100
+  y: number | null; // percentage from top, 0-100
+  bench: boolean;
 }
 
 export type Gender = "Boys" | "Girls" | "Coed";

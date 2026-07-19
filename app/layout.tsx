@@ -5,6 +5,7 @@ import { Inter } from "next/font/google";
 // context providers
 import { AuthProvider } from "@/context/AuthContext";
 import { TeamProvider } from "@/context/TeamContext";
+import { GameProvider } from "@/context/GameContext";
 
 export const metadata: Metadata = {
   title: "Soccer Lineup Organizer",
@@ -25,7 +26,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthProvider>
-          <TeamProvider>{children}</TeamProvider>
+          <TeamProvider>
+            <GameProvider>{children}</GameProvider>
+          </TeamProvider>
         </AuthProvider>
       </body>
     </html>
