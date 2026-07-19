@@ -2,13 +2,15 @@ import React, { useEffect, useState } from "react";
 import { ChevronDown, ChevronRight, X } from "lucide-react";
 import { sidebarStyles } from "./ManageTeamSidebar.styles";
 
-import { useTeam } from "@/context/TeamContext";
-
 // services
 import { fetchGames, updateSplit } from "@/services/games";
 
 // types
 import { Game, SplitBy } from "@/app/types";
+
+// util
+import { getPeriodsToRemove } from "@/app/utils/period";
+import SplitChangeWarningModal from "./SplitChangeWarningModal";
 
 interface ManageTeamSidebarProps {
   teamId: string | null;
@@ -23,10 +25,15 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
   const [formationError, setFormationError] = useState("");
   const [splitBy, setSplitBy] = useState<SplitBy>();
   const [notes, setNotes] = useState(""); // @TODO save notes to db
+  const [pendingSplit, setPendingSplit] = useState<SplitBy | null>(null);
+  const [savingSplit, setSavingSplit] = useState(false);
 
   //@TODO save current game to db, load current game
   const [games, setGames] = useState<Game[]>([]);
   const [game, setGame] = useState<Game>();
+
+  const periodsToRemove =
+    splitBy && pendingSplit ? getPeriodsToRemove(splitBy, pendingSplit) : [];
 
   // fetch games
   useEffect(() => {
@@ -104,17 +111,42 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
   }, [formation]);
 
   // handling changing game split
-  const handleSplitByChange = async (value: SplitBy) => {
-    if (!game) {
-      console.error("No game selected — cannot update split type");
+  const handleSplitSelect = (value: SplitBy) => {
+    if (!game || !splitBy) return;
+
+    const removed = getPeriodsToRemove(splitBy, value);
+    if (removed.length === 0) {
+      // Growing or unchanged — nothing destructive, just apply it
+      applySplitChange(value);
       return;
     }
+
+    // Shrinking — stage it and let the modal confirm
+    setPendingSplit(value);
+  };
+
+  const applySplitChange = async (value: SplitBy) => {
+    if (!game) return;
+    setSavingSplit(true);
     try {
-      const updatedGame = await updateSplit(game.id, value);
-      setSplitBy(updatedGame.split_by);
+      await updateSplit(game.id, value);
+      setSplitBy(value);
     } catch (err) {
       console.error("Failed to save split type:", err);
+      // consider surfacing this to the coach — a silent console.error
+      // means they think it saved when it didn't
+    } finally {
+      setSavingSplit(false);
+      setPendingSplit(null);
     }
+  };
+
+  const handleConfirmSplitChange = () => {
+    if (pendingSplit) applySplitChange(pendingSplit);
+  };
+
+  const handleCancelSplitChange = () => {
+    setPendingSplit(null); // select snaps back to splitBy automatically
   };
 
   return (
@@ -197,9 +229,7 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
                   className={sidebarStyles.selectInput}
                   value={splitBy}
                   aria-label="Split by"
-                  onChange={(e) =>
-                    handleSplitByChange(e.target.value as SplitBy)
-                  }
+                  onChange={(e) => handleSplitSelect(e.target.value as SplitBy)}
                 >
                   <option value="none">None</option>
                   <option value="half">Half</option>
@@ -225,6 +255,19 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
             </div>
           </div>
         </div>
+
+        {/* Split-shrink confirmation */}
+        {pendingSplit && (
+          <SplitChangeWarningModal
+            open={pendingSplit !== null}
+            fromSplit={splitBy!}
+            toSplit={pendingSplit}
+            periodsToRemove={periodsToRemove}
+            saving={savingSplit}
+            onConfirm={handleConfirmSplitChange}
+            onCancel={handleCancelSplitChange}
+          />
+        )}
       </aside>
     </>
   );

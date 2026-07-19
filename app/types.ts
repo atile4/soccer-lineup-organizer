@@ -27,6 +27,13 @@ export interface Game {
   notes: string;
 }
 
+export interface Lineup {
+  id: string;
+  game_id: string;
+  period: number;
+  formation: string;
+}
+
 export type Gender = "Boys" | "Girls" | "Coed";
 
 export type Division = "U-8" | "U-10" | "U-12" | "U-14" | "U-16" | "U-18";
@@ -38,6 +45,7 @@ export interface Formation {
   positions: Position[];
 }
 
+// @TODO deprecated type, remove after player fielding implentation
 export interface Position {
   id: string;
   x: number; // percentage from left
@@ -46,6 +54,7 @@ export interface Position {
   playerId?: string;
 }
 
+//@TODO deprecated type, remove after lineup implementation
 export interface LineupState {
   formation: string;
   division: Division;
