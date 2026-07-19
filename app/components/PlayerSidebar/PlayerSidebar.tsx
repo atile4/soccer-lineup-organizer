@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, X } from "lucide-react";
 import { playerSidebarStyles } from "./PlayerSidebar.styles";
 
@@ -8,21 +8,57 @@ import { Player } from "../../types";
 import { PlayerList } from "./PlayerList";
 
 import { fetchPlayers } from "@/services/players";
+import { fetchFieldPositions } from "@/services/fieldPositions";
+import { useGame } from "@/context/GameContext";
 
 interface PlayerSidebarProps {
   teamId: string | null;
 }
 
 export const PlayerSidebar: React.FC<PlayerSidebarProps> = ({ teamId }) => {
-  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
-  const [players, setPlayers] = useState<Player[]>([]);
+  const { currentGame } = useGame();
+  const lineupId = currentGame?.current_lineup_id ?? null;
 
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const [roster, setRoster] = useState<Player[]>([]);
+  // Player ids already placed on the field or bench for the active lineup.
+  const [assignedIds, setAssignedIds] = useState<Set<string>>(new Set());
+
+  // The full team roster.
   useEffect(() => {
     if (teamId) {
-      console.log(teamId);
-      fetchPlayers(teamId).then(setPlayers);
+      fetchPlayers(teamId).then(setRoster);
     }
   }, [teamId]);
+
+  // Which players are already fielded/benched — scoped to the active lineup,
+  // so switching lineups re-scopes the sidebar. A player with a
+  // field_positions row (on field or bench) is excluded here; players with no
+  // row for this lineup remain available in the sidebar.
+  useEffect(() => {
+    if (!lineupId) {
+      setAssignedIds(new Set());
+      return;
+    }
+
+    let cancelled = false;
+    fetchFieldPositions(lineupId)
+      .then((positions) => {
+        if (!cancelled) {
+          setAssignedIds(new Set(positions.map((p) => p.player_id)));
+        }
+      })
+      .catch((err) => console.error("Failed to load field positions:", err));
+
+    return () => {
+      cancelled = true;
+    };
+  }, [lineupId]);
+
+  const players = useMemo(
+    () => roster.filter((p) => !assignedIds.has(p.id)),
+    [roster, assignedIds],
+  );
 
   return (
     <>
