@@ -12,7 +12,6 @@ import {
 
 import { Player, Placement } from "@/app/types";
 import { fetchPlayers } from "@/services/players";
-import { getOrCreateLineup } from "@/services/lineups";
 import {
   fetchFieldPositions,
   placePlayerOnField,
@@ -48,25 +47,20 @@ const LineupContext = createContext<LineupContextValue | undefined>(undefined);
 
 interface LineupProviderProps {
   teamId: string | null;
-  gameId: string | null;
+  lineupId: string | null;
   children: ReactNode;
 }
 
 export function LineupProvider({
   teamId,
-  gameId,
+  lineupId,
   children,
 }: LineupProviderProps) {
   const [players, setPlayers] = useState<Player[]>([]);
   const [placements, setPlacements] = useState<PlacementMap>({});
-  const [lineupId, setLineupId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   // Load the roster for the active team.
-  //
-  // @TODO The roster is team-wide today. Once lineup switching exists, the
-  //       sidebar list should be scoped per lineup so different lineups can
-  //       surface different sets of available players.
   useEffect(() => {
     if (!teamId) {
       setPlayers([]);
@@ -83,11 +77,11 @@ export function LineupProvider({
     };
   }, [teamId]);
 
-  // Resolve the active lineup and hydrate existing placements from the DB.
-  //
+  // Hydrate placements for the active lineup. Re-runs whenever the lineup
+  // changes (e.g. switching period tabs), so the field, bench, and sidebar
+  // always reflect the selected lineup rather than a stale one.
   useEffect(() => {
-    if (!gameId) {
-      setLineupId(null);
+    if (!lineupId) {
       setPlacements({});
       return;
     }
@@ -95,11 +89,8 @@ export function LineupProvider({
     let cancelled = false;
     setLoading(true);
 
-    getOrCreateLineup(gameId)
-      .then(async (lineup) => {
-        if (cancelled) return;
-        setLineupId(lineup.id);
-        const positions = await fetchFieldPositions(lineup.id);
+    fetchFieldPositions(lineupId)
+      .then((positions) => {
         if (cancelled) return;
         const map: PlacementMap = {};
         for (const p of positions) {
@@ -115,7 +106,7 @@ export function LineupProvider({
     return () => {
       cancelled = true;
     };
-  }, [gameId]);
+  }, [lineupId]);
 
   // Warn once per action if there's no lineup to persist to. Without a game,
   // there's no valid lineup FK, so changes stay local only.

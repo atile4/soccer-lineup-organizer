@@ -29,7 +29,7 @@ export default function DashboardPage() {
       <DndProvider backend={HTML5Backend}>
         <LineupProvider
           teamId={currentTeamId}
-          gameId={currentGame?.id ?? null}
+          lineupId={currentGame?.current_lineup_id ?? null}
         >
           <main className="flex-1 flex overflow-hidden py-4 gap-4">
             <ManageTeamSidebar teamId={currentTeamId} />
