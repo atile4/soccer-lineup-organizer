@@ -85,8 +85,6 @@ export function LineupProvider({
 
   // Resolve the active lineup and hydrate existing placements from the DB.
   //
-  // @TODO period is hard-coded to 1 (single-lineup assumption). This effect
-  //       should re-run whenever the selected lineup/period changes.
   useEffect(() => {
     if (!gameId) {
       setLineupId(null);
@@ -130,7 +128,10 @@ export function LineupProvider({
 
   const placeOnField = useCallback(
     (playerId: string, x: number, y: number) => {
-      setPlacements((prev) => ({ ...prev, [playerId]: { x, y, bench: false } }));
+      setPlacements((prev) => ({
+        ...prev,
+        [playerId]: { x, y, bench: false },
+      }));
       if (!lineupId) return warnNoLineup();
       placePlayerOnField(lineupId, playerId, x, y).catch((err) =>
         console.error("Failed to persist field placement:", err),
