@@ -3,7 +3,11 @@ import { ChevronDown, ChevronRight, Plus, X } from "lucide-react";
 import { sidebarStyles } from "./ManageTeamSidebar.styles";
 
 // services
-import { updateSplit, updateNotes } from "@/services/games";
+import {
+  updateSplit,
+  updateNotes,
+  createGameWithLineups,
+} from "@/services/games";
 
 // context
 import { useGame } from "@/context/GameContext";
@@ -21,7 +25,9 @@ interface ManageTeamSidebarProps {
   maxPlayers?: number;
 }
 
-export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = () => {
+export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
+  teamId,
+}) => {
   const { games, currentGame, switchGame, refreshGameData } = useGame();
 
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
@@ -30,12 +36,13 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = () => {
   // const [formation, setFormation] = useState("");
   // const [formationError, setFormationError] = useState("");
   const [splitBy, setSplitBy] = useState<SplitBy>();
-  const [notes, setNotes] = useState("");
+  const [notes, setNotes] = useState(""); // @TODO save notes to db
   const [pendingSplit, setPendingSplit] = useState<SplitBy | null>(null);
   const [savingSplit, setSavingSplit] = useState(false);
 
+  // --- new state for Create Game + Save Notes ---
   const [showCreateGameModal, setShowCreateGameModal] = useState(false);
-  const [creatingGame, setCreatingGame] = useState(false); // @TODO drive from backend call once wired
+  const [creatingGame, setCreatingGame] = useState(false);
   const [savingNotes, setSavingNotes] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
@@ -154,17 +161,18 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = () => {
     setPendingSplit(null); // select snaps back to splitBy automatically
   };
 
-  // --- Create Game: UI + modal only for now, no backend call yet ---
+  // --- Create Game ---
   const handleCreateGame = async (name: string) => {
+    if (!teamId) return;
     setCreatingGame(true);
     try {
-      // @TODO wire to backend, e.g.:
-      //   const newGame = await createGame(teamId, name);
-      //   await refreshGameData();
-      //   switchGame(newGame.id);
-      console.log("TODO: create game with name:", name);
-      showToast(`"${name}" will be created once this is wired up`);
+      const newGame = await createGameWithLineups(teamId, name);
+      await refreshGameData(); // pulls the new game (and its lineups) into `games`
+      switchGame(newGame.id);
+      showToast(`"${newGame.name}" created`);
       setShowCreateGameModal(false);
+    } catch (err) {
+      console.error("Failed to create game:", err); // @TODO surface this to the user instead of just the console
     } finally {
       setCreatingGame(false);
     }
@@ -236,11 +244,12 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = () => {
               />
             </div>
 
-            {/* Create Game button — opens CreateGameModal, not wired to backend yet */}
+            {/* Create Game button — opens CreateGameModal, disabled with no team selected */}
             <button
               type="button"
               onClick={() => setShowCreateGameModal(true)}
-              className={sidebarStyles.createGameButton}
+              disabled={!teamId}
+              className={`${sidebarStyles.createGameButton} disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <span className={sidebarStyles.createGamePlus}>
                 <Plus size={10} strokeWidth={4} />
