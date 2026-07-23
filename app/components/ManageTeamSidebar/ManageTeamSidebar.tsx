@@ -24,8 +24,10 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = () => {
   const { games, currentGame, switchGame, refreshGameData } = useGame();
 
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
-  const [formation, setFormation] = useState(""); // @TODO figure out how to save formation
-  const [formationError, setFormationError] = useState("");
+
+  // @TODO implement formation
+  // const [formation, setFormation] = useState("");
+  // const [formationError, setFormationError] = useState("");
   const [splitBy, setSplitBy] = useState<SplitBy>();
   const [notes, setNotes] = useState(""); // @TODO save notes to db
   const [pendingSplit, setPendingSplit] = useState<SplitBy | null>(null);
@@ -41,63 +43,63 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = () => {
     }
   }, [currentGame]);
 
-  const checkFormation = () => {
-    // Empty input: no error, nothing to validate
-    if (!formation) {
-      setFormationError("");
-      return;
-    }
+  // const checkFormation = () => {
+  //   // Empty input: no error, nothing to validate
+  //   if (!formation) {
+  //     setFormationError("");
+  //     return;
+  //   }
 
-    let error = "";
-    let total = 0;
-    let prevnum = 0;
+  //   let error = "";
+  //   let total = 0;
+  //   let prevnum = 0;
 
-    for (const c of formation) {
-      // invalid character (0, or not a digit/hyphen)
-      if (c === "0" || (c !== "-" && isNaN(+c))) {
-        error = "Error: must be a non-zero digit or hyphen.";
-        break;
-      }
+  //   for (const c of formation) {
+  //     // invalid character (0, or not a digit/hyphen)
+  //     if (c === "0" || (c !== "-" && isNaN(+c))) {
+  //       error = "Error: must be a non-zero digit or hyphen.";
+  //       break;
+  //     }
 
-      // start of string must be a digit
-      if (total === 0 && prevnum === 0) {
-        if (c === "-") {
-          error = "The formation must start with a digit";
-          break;
-        }
-      }
+  //     // start of string must be a digit
+  //     if (total === 0 && prevnum === 0) {
+  //       if (c === "-") {
+  //         error = "The formation must start with a digit";
+  //         break;
+  //       }
+  //     }
 
-      if (c === "-") {
-        // a hyphen with no preceding number => double hyphen / leading hyphen
-        if (prevnum === 0) {
-          error = "Error: double hyphens are not allowed";
-          break;
-        }
-        prevnum = 0;
-      } else {
-        // a digit
-        if (prevnum !== 0) {
-          error = "Error: double digits are not allowed";
-          break;
-        }
-        total += +c;
-        prevnum = +c;
-      }
-    }
+  //     if (c === "-") {
+  //       // a hyphen with no preceding number => double hyphen / leading hyphen
+  //       if (prevnum === 0) {
+  //         error = "Error: double hyphens are not allowed";
+  //         break;
+  //       }
+  //       prevnum = 0;
+  //     } else {
+  //       // a digit
+  //       if (prevnum !== 0) {
+  //         error = "Error: double digits are not allowed";
+  //         break;
+  //       }
+  //       total += +c;
+  //       prevnum = +c;
+  //     }
+  //   }
 
-    // formation cannot end with a hyphen
-    if (!error && prevnum === 0 && total !== 0) {
-      error = "Error: formation cannot end with a hyphen";
-    }
+  //   // formation cannot end with a hyphen
+  //   if (!error && prevnum === 0 && total !== 0) {
+  //     error = "Error: formation cannot end with a hyphen";
+  //   }
 
-    // @TODO check if total exceeds maxPlayers
+  //   // @TODO check if total exceeds maxPlayers
 
-    setFormationError(error);
-  };
+  //   setFormationError(error);
+  // };
 
-  useEffect(() => {
-    checkFormation();
-  }, [formation]);
+  // useEffect(() => {
+  //   checkFormation();
+  // }, [formation]);
 
   // handling changing game split
   const handleSplitSelect = (value: SplitBy) => {
@@ -191,7 +193,7 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = () => {
 
           <div className={sidebarStyles.manageSection}>
             {/* Formation */}
-            <div className={sidebarStyles.fieldGroup}>
+            {/* <div className={sidebarStyles.fieldGroup}>
               <h2 className={sidebarStyles.sectionTitle}>Formation:</h2>
               <input
                 type="text"
@@ -204,7 +206,7 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = () => {
               {formationError && (
                 <p className={sidebarStyles.errorText}>{formationError}</p>
               )}
-            </div>
+            </div> */}
 
             {/* Split by */}
             <div className={sidebarStyles.fieldGroup}>
