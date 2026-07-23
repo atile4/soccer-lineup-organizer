@@ -32,27 +32,21 @@ export default function CreateGameModal({
 
   return (
     <Modal open={open} onClose={handleClose}>
-      <h2 className="text-lg font-bold text-gray-900 pr-6">
-        Create a new game
-      </h2>
-      <p className="mt-2 text-sm text-gray-600">
-        Give this game plan a name. You can add formations and notes after
-        it&apos;s created.
-      </p>
+      <h2 className="text-lg font-bold text-gray-900 pr-6">New Game</h2>
 
       <form onSubmit={handleSubmit} className="mt-4">
         <label
           htmlFor="game-name"
           className="block text-sm font-medium text-gray-700 mb-1"
         >
-          Game name
+          Game Name
         </label>
         <input
           id="game-name"
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="e.g. vs. Riverside Rovers"
+          placeholder="vs. Golden Griffins"
           autoFocus
           className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400"
         />

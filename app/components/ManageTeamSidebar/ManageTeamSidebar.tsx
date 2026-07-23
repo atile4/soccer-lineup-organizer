@@ -25,6 +25,13 @@ interface ManageTeamSidebarProps {
   maxPlayers?: number;
 }
 
+type ToastVariant = "success" | "error";
+
+interface ToastState {
+  message: string;
+  variant: ToastVariant;
+}
+
 export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
   teamId,
 }) => {
@@ -40,17 +47,16 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
   const [pendingSplit, setPendingSplit] = useState<SplitBy | null>(null);
   const [savingSplit, setSavingSplit] = useState(false);
 
-  // --- new state for Create Game + Save Notes ---
   const [showCreateGameModal, setShowCreateGameModal] = useState(false);
   const [creatingGame, setCreatingGame] = useState(false);
   const [savingNotes, setSavingNotes] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
+  const [toast, setToast] = useState<ToastState | null>(null);
 
   // Dirty check: button only enabled once the draft differs from what's actually saved on currentGame.
   const notesDirty = notes !== (currentGame?.notes ?? "");
 
-  const showToast = (text: string) => {
-    setToast(text);
+  const showToast = (message: string, variant: ToastVariant = "success") => {
+    setToast({ message, variant });
     setTimeout(() => setToast(null), 2500);
   };
 
@@ -172,7 +178,8 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
       showToast(`"${newGame.name}" created`);
       setShowCreateGameModal(false);
     } catch (err) {
-      console.error("Failed to create game:", err); // @TODO surface this to the user instead of just the console
+      console.error("Failed to create game:", err);
+      showToast("Couldn't create the game. Try again.", "error");
     } finally {
       setCreatingGame(false);
     }
@@ -187,7 +194,8 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
       await refreshGameData(); // re-syncs currentGame.notes, which clears notesDirty via the effect above
       showToast("Note saved to this game");
     } catch (err) {
-      console.error("Failed to save notes:", err); // @TODO surface this to the user instead of just the console
+      console.error("Failed to save notes:", err);
+      showToast("Couldn't save the note. Try again.", "error");
     } finally {
       setSavingNotes(false);
     }
@@ -342,10 +350,16 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
         creating={creatingGame}
       />
 
-      {/* Toast — shared by Create Game and Save Notes for now */}
+      {/* Toast — shared by Create Game and Save Notes, styled per variant via TOAST_VARIANT_STYLES */}
       {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-lg z-50">
-          {toast}
+        <div
+          className={
+            sidebarStyles[
+              toast.variant === "error" ? "toastError" : "toastSuccess"
+            ]
+          }
+        >
+          {toast.message}
         </div>
       )}
     </>
