@@ -66,3 +66,18 @@ export async function updateSplit(
   if (error) throw error;
   return data as Lineup[];
 }
+
+export async function updateNotes(
+  gameId: string,
+  notes: string,
+): Promise<Game> {
+  const { data, error } = await supabase
+    .from("games")
+    .update({ notes })
+    .eq("id", gameId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data as Game;
+}

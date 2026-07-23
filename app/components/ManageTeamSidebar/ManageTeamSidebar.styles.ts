@@ -36,4 +36,16 @@ export const sidebarStyles = {
 
   errorText: "text-xs text-red-600 mt-1",
   extraSectionText: "text-xs text-gray-400",
+
+  // Create Game Button
+  createGameButton:
+    "mt-2 flex items-center gap-1.5 text-sm font-semibold text-green-700 hover:text-green-800",
+  createGamePlus:
+    "flex h-5 w-5 items-center justify-center rounded-full border-2 border-green-600 bg-transparent text-green-600",
+
+  // Toasts
+  toastSuccess:
+    "fixed bottom-6 left-1/2 -translate-x-1/2 text-sm font-semibold px-5 py-2.5 rounded-xl shadow-lg z-50 bg-gray-900 text-white",
+  toastError:
+    "fixed bottom-6 left-1/2 -translate-x-1/2 text-sm font-semibold px-5 py-2.5 rounded-xl shadow-lg z-50 bg-red-600 text-white",
 };
