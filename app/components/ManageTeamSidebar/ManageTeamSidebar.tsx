@@ -3,7 +3,7 @@ import { ChevronDown, ChevronRight, Plus, X } from "lucide-react";
 import { sidebarStyles } from "./ManageTeamSidebar.styles";
 
 // services
-import { updateSplit } from "@/services/games";
+import { updateSplit, updateNotes } from "@/services/games";
 
 // context
 import { useGame } from "@/context/GameContext";
@@ -30,15 +30,17 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = () => {
   // const [formation, setFormation] = useState("");
   // const [formationError, setFormationError] = useState("");
   const [splitBy, setSplitBy] = useState<SplitBy>();
-  const [notes, setNotes] = useState(""); // @TODO save notes to db
+  const [notes, setNotes] = useState("");
   const [pendingSplit, setPendingSplit] = useState<SplitBy | null>(null);
   const [savingSplit, setSavingSplit] = useState(false);
 
-  // --- new state for Create Game + Save Notes (UI-only for now) ---
   const [showCreateGameModal, setShowCreateGameModal] = useState(false);
   const [creatingGame, setCreatingGame] = useState(false); // @TODO drive from backend call once wired
-  const [savingNotes, setSavingNotes] = useState(false); // @TODO drive from backend call once wired
+  const [savingNotes, setSavingNotes] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+
+  // Dirty check: button only enabled once the draft differs from what's actually saved on currentGame.
+  const notesDirty = notes !== (currentGame?.notes ?? "");
 
   const showToast = (text: string) => {
     setToast(text);
@@ -168,16 +170,16 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = () => {
     }
   };
 
-  // --- Save Notes: UI only for now, no backend call yet ---
+  // --- Save Notes ---
   const handleSaveNotes = async () => {
-    if (!currentGame) return;
+    if (!currentGame || !notesDirty) return;
     setSavingNotes(true);
     try {
-      // @TODO save notes to db, e.g.:
-      //   await updateNotes(currentGame.id, notes);
-      //   await refreshGameData();
-      console.log("TODO: save notes:", notes);
+      await updateNotes(currentGame.id, notes);
+      await refreshGameData(); // re-syncs currentGame.notes, which clears notesDirty via the effect above
       showToast("Note saved to this game");
+    } catch (err) {
+      console.error("Failed to save notes:", err); // @TODO surface this to the user instead of just the console
     } finally {
       setSavingNotes(false);
     }
@@ -238,10 +240,10 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = () => {
             <button
               type="button"
               onClick={() => setShowCreateGameModal(true)}
-              className="mt-2 flex items-center gap-1.5 text-sm font-semibold text-green-700 hover:text-green-800"
+              className={sidebarStyles.createGameButton}
             >
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-green-600 text-white">
-                <Plus size={14} />
+              <span className={sidebarStyles.createGamePlus}>
+                <Plus size={10} strokeWidth={4} />
               </span>
               Create Game
             </button>
@@ -296,11 +298,11 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = () => {
                   setNotes(e.target.value)
                 }
               />
-              {/* Save Notes button — not wired to backend yet, see handleSaveNotes @TODO */}
+              {/* Save Notes button — disabled until notes actually differ from currentGame.notes */}
               <button
                 type="button"
                 onClick={handleSaveNotes}
-                disabled={savingNotes || !currentGame}
+                disabled={savingNotes || !currentGame || !notesDirty}
                 className="mt-2 self-start rounded-lg bg-green-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-700 disabled:opacity-50"
               >
                 {savingNotes ? "Saving…" : "Save Notes"}
