@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ChevronDown, ChevronRight, X } from "lucide-react";
+import { ChevronDown, ChevronRight, Plus, X } from "lucide-react";
 import { sidebarStyles } from "./ManageTeamSidebar.styles";
 
 // services
@@ -14,6 +14,7 @@ import { SplitBy } from "@/app/types";
 // util
 import { getPeriodsToRemove } from "@/app/utils/period";
 import SplitChangeWarningModal from "./SplitChangeWarningModal";
+import CreateGameModal from "./CreateGameModal";
 
 interface ManageTeamSidebarProps {
   teamId: string | null;
@@ -33,6 +34,17 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = () => {
   const [pendingSplit, setPendingSplit] = useState<SplitBy | null>(null);
   const [savingSplit, setSavingSplit] = useState(false);
 
+  // --- new state for Create Game + Save Notes (UI-only for now) ---
+  const [showCreateGameModal, setShowCreateGameModal] = useState(false);
+  const [creatingGame, setCreatingGame] = useState(false); // @TODO drive from backend call once wired
+  const [savingNotes, setSavingNotes] = useState(false); // @TODO drive from backend call once wired
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (text: string) => {
+    setToast(text);
+    setTimeout(() => setToast(null), 2500);
+  };
+
   const periodsToRemove =
     splitBy && pendingSplit ? getPeriodsToRemove(splitBy, pendingSplit) : [];
 
@@ -40,6 +52,7 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = () => {
   useEffect(() => {
     if (currentGame) {
       setSplitBy(currentGame.split_by);
+      setNotes(currentGame.notes ?? ""); // keep the notes box in sync when switching games
     }
   }, [currentGame]);
 
@@ -139,6 +152,37 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = () => {
     setPendingSplit(null); // select snaps back to splitBy automatically
   };
 
+  // --- Create Game: UI + modal only for now, no backend call yet ---
+  const handleCreateGame = async (name: string) => {
+    setCreatingGame(true);
+    try {
+      // @TODO wire to backend, e.g.:
+      //   const newGame = await createGame(teamId, name);
+      //   await refreshGameData();
+      //   switchGame(newGame.id);
+      console.log("TODO: create game with name:", name);
+      showToast(`"${name}" will be created once this is wired up`);
+      setShowCreateGameModal(false);
+    } finally {
+      setCreatingGame(false);
+    }
+  };
+
+  // --- Save Notes: UI only for now, no backend call yet ---
+  const handleSaveNotes = async () => {
+    if (!currentGame) return;
+    setSavingNotes(true);
+    try {
+      // @TODO save notes to db, e.g.:
+      //   await updateNotes(currentGame.id, notes);
+      //   await refreshGameData();
+      console.log("TODO: save notes:", notes);
+      showToast("Note saved to this game");
+    } finally {
+      setSavingNotes(false);
+    }
+  };
+
   return (
     <>
       {/* Open-sidebar arrow button (visible only when sidebar is collapsed) */}
@@ -189,6 +233,18 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = () => {
                 aria-hidden="true"
               />
             </div>
+
+            {/* Create Game button — opens CreateGameModal, not wired to backend yet */}
+            <button
+              type="button"
+              onClick={() => setShowCreateGameModal(true)}
+              className="mt-2 flex items-center gap-1.5 text-sm font-semibold text-green-700 hover:text-green-800"
+            >
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-green-600 text-white">
+                <Plus size={14} />
+              </span>
+              Create Game
+            </button>
           </div>
 
           <div className={sidebarStyles.manageSection}>
@@ -234,11 +290,21 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = () => {
               <h2 className={sidebarStyles.sectionTitle}>Notes:</h2>
               <textarea
                 placeholder="Add notes here..."
+                value={notes}
                 className={sidebarStyles.textArea}
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                   setNotes(e.target.value)
                 }
               />
+              {/* Save Notes button — not wired to backend yet, see handleSaveNotes @TODO */}
+              <button
+                type="button"
+                onClick={handleSaveNotes}
+                disabled={savingNotes || !currentGame}
+                className="mt-2 self-start rounded-lg bg-green-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-700 disabled:opacity-50"
+              >
+                {savingNotes ? "Saving…" : "Save Notes"}
+              </button>
             </div>
           </div>
         </div>
@@ -256,6 +322,21 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = () => {
           />
         )}
       </aside>
+
+      {/* Create Game modal — lives outside <aside> so it isn't clipped by the sidebar's overflow/collapse animation */}
+      <CreateGameModal
+        open={showCreateGameModal}
+        onClose={() => setShowCreateGameModal(false)}
+        onCreate={handleCreateGame}
+        creating={creatingGame}
+      />
+
+      {/* Toast — shared by Create Game and Save Notes for now */}
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-lg z-50">
+          {toast}
+        </div>
+      )}
     </>
   );
 };
