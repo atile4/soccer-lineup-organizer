@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { X } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { Player } from "@/app/types";
+import { playerInfoPopoverStyles as s } from "./PlayerInfoPopover.styles";
 
 interface PlayerInfoPopoverProps {
   player: Player;
@@ -14,9 +15,7 @@ const GAP = 8; // space between the anchor and the popover
 const MARGIN = 8; // keep the popover this far from the viewport edges
 
 // A small popover that displays a player's information, positioned just
-// below the clicked player (or above, if there isn't room below). It is
-// deliberately compact — it floats near the player rather than filling the
-// screen. Styling is intentionally minimal.
+// below the clicked player (or above, if there isn't room below).
 export default function PlayerInfoPopover({
   player,
   anchor,
@@ -42,11 +41,13 @@ export default function PlayerInfoPopover({
       ? anchorRect.bottom + GAP
       : Math.max(MARGIN, anchorRect.top - GAP - height);
 
-    const centered = anchorRect.left + anchorRect.width / 2 - width / 2;
-    const left = Math.max(
-      MARGIN,
-      Math.min(centered, window.innerWidth - width - MARGIN),
-    );
+    // Prefer bottom-right: popover's left edge starts at the anchor's left edge.
+    // Flip to bottom-left (popover's right edge ends at the anchor's right edge)
+    // if it would overflow the right side of the viewport.
+    const fitsRight = anchorRect.left + width + MARGIN <= window.innerWidth;
+    const left = fitsRight
+      ? anchorRect.left
+      : Math.max(MARGIN, anchorRect.right - width);
 
     setCoords({ top, left });
   }, [anchor]);
@@ -62,12 +63,12 @@ export default function PlayerInfoPopover({
 
   return (
     // Transparent full-screen layer to catch outside clicks.
-    <div className="fixed inset-0 z-50" onClick={onClose}>
+    <div className={s.overlay} onClick={onClose}>
       <div
         ref={popoverRef}
         role="dialog"
         aria-modal="true"
-        className="absolute w-56 rounded-xl border border-gray-200 bg-white p-4 shadow-xl"
+        className={s.popover}
         style={{
           top: coords?.top ?? 0,
           left: coords?.left ?? 0,
@@ -75,32 +76,55 @@ export default function PlayerInfoPopover({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Close"
-          className="absolute right-2 top-2 rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
-        >
-          <X size={16} />
-        </button>
+        <div className={s.headerRow}>
+          <div className={s.identitySection}>
+            <div className={s.nameRow}>
+              <h3 className={s.name}>{player.name}</h3>
+              {/* Edit handler not implemented yet — visual only */}
+              <span className={s.editIconButton} aria-hidden="true">
+                <Pencil size={13} />
+              </span>
+            </div>
 
-        <div className="pr-5">
-          <h3 className="text-base font-semibold text-gray-900">
-            {player.name}
-          </h3>
-          <dl className="mt-2 space-y-1 text-sm text-gray-600">
-            <div className="flex justify-between gap-2">
-              <dt className="text-gray-400">Number</dt>
-              <dd className="font-medium text-gray-800">#{player.number}</dd>
+            <div className={s.positionRow}>
+              <span className={s.position}>{player.position || "—"}</span>
+              <span className={s.editIconButton} aria-hidden="true">
+                <Pencil size={11} />
+              </span>
             </div>
-            <div className="flex justify-between gap-2">
-              <dt className="text-gray-400">Position</dt>
-              <dd className="font-medium text-gray-800">
-                {player.position || "—"}
-              </dd>
-            </div>
-          </dl>
+          </div>
+
+          {/* Jersey badge — same shape as PlayerToken, sized down */}
+          <div className={s.jerseyWrapper}>
+            <svg viewBox="0 0 100 90" width="44" height="40">
+              <path
+                d="M25 10 L10 30 L25 35 L25 80 L75 80 L75 35 L90 30 L75 10 C70 18 60 22 50 22 C40 22 30 18 25 10Z"
+                fill="#7C3AED"
+                stroke="#1a1a1a"
+                strokeWidth="3"
+                strokeLinejoin="round"
+              />
+              <text
+                x="50"
+                y="58"
+                textAnchor="middle"
+                fontSize="26"
+                fontWeight="bold"
+                fill="white"
+                fontFamily="Arial, sans-serif"
+              >
+                {player.number}
+              </text>
+            </svg>
+          </div>
         </div>
+
+        {/* Player notes — not wired to a save handler yet */}
+        <textarea
+          readOnly
+          placeholder="Player Notes..."
+          className={s.notesTextarea}
+        />
       </div>
     </div>
   );
