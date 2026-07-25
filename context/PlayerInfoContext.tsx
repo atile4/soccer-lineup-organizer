@@ -9,7 +9,7 @@ import {
 } from "react";
 
 import { Player } from "@/app/types";
-import PlayerInfoPopover from "@/app/components/PlayerInfo/PlayerInfoPopover";
+import PlayerInfoPopover from "@/app/components/PlayerPopover/PlayerPopover";
 
 interface PlayerInfoContextValue {
   // Open the info popover for a player, anchored to the clicked element.

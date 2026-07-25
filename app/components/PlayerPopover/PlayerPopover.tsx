@@ -3,7 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Pencil } from "lucide-react";
 import { Player } from "@/app/types";
-import { playerInfoPopoverStyles as s } from "./PlayerInfoPopover.styles";
+import { playerInfoPopoverStyles as s } from "./PlayerPopover.styles";
 import { useTeam } from "@/context/TeamContext";
 import { updatePlayer } from "@/services/players";
 
@@ -228,13 +228,6 @@ export default function PlayerInfoPopover({
             </svg>
           </div>
         </div>
-
-        {/* Player notes — not wired to a save handler yet */}
-        <textarea
-          readOnly
-          placeholder="Player Notes..."
-          className={s.notesTextarea}
-        />
       </div>
     </div>
   );
