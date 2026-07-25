@@ -5,6 +5,7 @@ import { DraggablePlayer } from "../dnd/DraggablePlayer";
 import PlayerToken from "../PlayerSidebar/PlayerToken";
 import { usePlayerInfo } from "@/context/PlayerInfoContext";
 import { useTeam } from "@/context/TeamContext";
+import { useLineup } from "@/context/LineupContext";
 
 interface FieldPlayerProps {
   player: Player;
@@ -18,12 +19,13 @@ interface FieldPlayerProps {
 export function FieldPlayer({ player, x, y }: FieldPlayerProps) {
   const { openPlayer } = usePlayerInfo();
   const { currentTeam } = useTeam();
+  const { applyPlayerUpdate } = useLineup();
   return (
     <DraggablePlayer
       playerId={player.id}
       className="absolute z-10 -translate-x-1/2 -translate-y-1/2"
       style={{ left: `${x}%`, top: `${y}%` }}
-      onClick={(e) => openPlayer(player, e.currentTarget)}
+      onClick={(e) => openPlayer(player, e.currentTarget, applyPlayerUpdate)}
     >
       <PlayerToken
         name={player.name}

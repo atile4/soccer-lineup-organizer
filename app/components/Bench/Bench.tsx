@@ -13,7 +13,7 @@ import { useTeam } from "@/context/TeamContext";
 
 export const Bench = () => {
   const [open, setOpen] = useState(true);
-  const { benchedPlayers, placeOnBench } = useLineup();
+  const { benchedPlayers, placeOnBench, applyPlayerUpdate } = useLineup();
   const { openPlayer } = usePlayerInfo();
   const { currentTeam } = useTeam();
 
@@ -47,7 +47,9 @@ export const Bench = () => {
                 <DraggablePlayer
                   key={player.id}
                   playerId={player.id}
-                  onClick={(e) => openPlayer(player, e.currentTarget)}
+                  onClick={(e) =>
+                    openPlayer(player, e.currentTarget, applyPlayerUpdate)
+                  }
                   className="rounded-lg bg-gray-100/80 py-1 hover:bg-gray-200 transition-colors"
                 >
                   <PlayerToken
