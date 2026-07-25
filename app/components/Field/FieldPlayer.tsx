@@ -4,6 +4,7 @@ import { Player } from "@/app/types";
 import { DraggablePlayer } from "../dnd/DraggablePlayer";
 import PlayerToken from "../PlayerSidebar/PlayerToken";
 import { usePlayerInfo } from "@/context/PlayerInfoContext";
+import { useTeam } from "@/context/TeamContext";
 
 interface FieldPlayerProps {
   player: Player;
@@ -16,6 +17,7 @@ interface FieldPlayerProps {
 // drop onto the bench / sidebar.
 export function FieldPlayer({ player, x, y }: FieldPlayerProps) {
   const { openPlayer } = usePlayerInfo();
+  const { currentTeam } = useTeam();
   return (
     <DraggablePlayer
       playerId={player.id}
@@ -23,7 +25,12 @@ export function FieldPlayer({ player, x, y }: FieldPlayerProps) {
       style={{ left: `${x}%`, top: `${y}%` }}
       onClick={(e) => openPlayer(player, e.currentTarget)}
     >
-      <PlayerToken name={player.name} number={player.number} variant="field" />
+      <PlayerToken
+        name={player.name}
+        number={player.number}
+        variant="field"
+        jerseyColor={currentTeam?.color}
+      />
     </DraggablePlayer>
   );
 }

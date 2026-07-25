@@ -19,6 +19,7 @@ import { TeamWithPlayerCount } from "@/app/types";
 interface TeamContextValue {
   teams: TeamWithPlayerCount[];
   currentTeamId: string | null;
+  currentTeam: TeamWithPlayerCount | null;
   loading: boolean;
   switchTeam: (teamId: string) => Promise<void>;
 }
@@ -76,8 +77,12 @@ export function TeamProvider({ children }: { children: ReactNode }) {
     [userId, currentTeamId],
   );
 
+  const currentTeam = teams.find((t) => t.id === currentTeamId) ?? null;
+
   return (
-    <TeamContext.Provider value={{ teams, currentTeamId, loading, switchTeam }}>
+    <TeamContext.Provider
+      value={{ teams, currentTeamId, currentTeam, loading, switchTeam }}
+    >
       {children}
     </TeamContext.Provider>
   );

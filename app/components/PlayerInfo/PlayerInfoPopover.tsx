@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Pencil } from "lucide-react";
 import { Player } from "@/app/types";
 import { playerInfoPopoverStyles as s } from "./PlayerInfoPopover.styles";
+import { useTeam } from "@/context/TeamContext";
 
 interface PlayerInfoPopoverProps {
   player: Player;
@@ -21,6 +22,7 @@ export default function PlayerInfoPopover({
   anchor,
   onClose,
 }: PlayerInfoPopoverProps) {
+  const { currentTeam } = useTeam();
   const popoverRef = useRef<HTMLDivElement | null>(null);
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(
     null,
@@ -99,7 +101,7 @@ export default function PlayerInfoPopover({
             <svg viewBox="0 0 100 90" width="44" height="40">
               <path
                 d="M25 10 L10 30 L25 35 L25 80 L75 80 L75 35 L90 30 L75 10 C70 18 60 22 50 22 C40 22 30 18 25 10Z"
-                fill="#7C3AED"
+                fill={currentTeam?.color ?? "#7C3AED"}
                 stroke="#1a1a1a"
                 strokeWidth="3"
                 strokeLinejoin="round"
