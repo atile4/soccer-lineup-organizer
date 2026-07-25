@@ -8,10 +8,12 @@ import { DraggablePlayer } from "../dnd/DraggablePlayer";
 import { ItemTypes, PlayerDragItem } from "../dnd/itemTypes";
 import PlayerToken from "../PlayerSidebar/PlayerToken";
 import { useLineup } from "@/context/LineupContext";
+import { usePlayerInfo } from "@/context/PlayerInfoContext";
 
 export const Bench = () => {
   const [open, setOpen] = useState(true);
   const { benchedPlayers, placeOnBench } = useLineup();
+  const { openPlayer } = usePlayerInfo();
 
   const [{ isOver }, drop] = useDrop(
     () => ({
@@ -43,6 +45,7 @@ export const Bench = () => {
                 <DraggablePlayer
                   key={player.id}
                   playerId={player.id}
+                  onClick={(e) => openPlayer(player, e.currentTarget)}
                   className="rounded-lg bg-gray-100/80 py-1 hover:bg-gray-200 transition-colors"
                 >
                   <PlayerToken

@@ -10,6 +10,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 
 // context
 import { LineupProvider } from "@/context/LineupContext";
+import { PlayerInfoProvider } from "@/context/PlayerInfoContext";
 
 // Components
 import AppHeader from "./components/AppHeader/AppHeader";
@@ -31,24 +32,26 @@ export default function DashboardPage() {
           teamId={currentTeamId}
           lineupId={currentGame?.current_lineup_id ?? null}
         >
-          <main className="flex-1 flex overflow-hidden py-4 gap-4">
-            <ManageTeamSidebar teamId={currentTeamId} />
+          <PlayerInfoProvider>
+            <main className="flex-1 flex overflow-hidden py-4 gap-4">
+              <ManageTeamSidebar teamId={currentTeamId} />
 
-            {/* Soccer Field */}
-            <div className="flex-1 flex items-center justify-center h-full w-full min-w-0 px-4">
-              <div className="flex items-start gap-4">
-                {/* Lineup period tabs — top-aligned to the left of the field */}
-                <LineupTabs />
-
+              {/* Soccer Field */}
+              <div className="flex-1 flex items-center justify-center h-full w-full min-w-0 px-4">
                 <div className="flex items-start gap-4">
-                  <Field />
-                  <Bench />
+                  {/* Lineup period tabs — top-aligned to the left of the field */}
+                  <LineupTabs />
+
+                  <div className="flex items-start gap-4">
+                    <Field />
+                    <Bench />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <PlayerSidebar teamId={currentTeamId} />
-          </main>
+              <PlayerSidebar teamId={currentTeamId} />
+            </main>
+          </PlayerInfoProvider>
         </LineupProvider>
       </DndProvider>
     </div>
