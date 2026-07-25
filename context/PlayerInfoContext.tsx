@@ -1,13 +1,26 @@
 "use client";
 
-import { createContext, useCallback, useContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useState,
+  ReactNode,
+} from "react";
 
 import { Player } from "@/app/types";
 import PlayerInfoPopover from "@/app/components/PlayerInfo/PlayerInfoPopover";
 
 interface PlayerInfoContextValue {
   // Open the info popover for a player, anchored to the clicked element.
-  openPlayer: (player: Player, anchor: HTMLElement) => void;
+  // onUpdate is optional: pass it if the caller holds its own copy of this
+  // player's data (a roster list, fieldedPlayers, etc.) that needs to stay
+  // in sync after a save, without waiting for a full refetch.
+  openPlayer: (
+    player: Player,
+    anchor: HTMLElement,
+    onUpdate?: (updated: Player) => void,
+  ) => void;
 }
 
 const PlayerInfoContext = createContext<PlayerInfoContextValue | undefined>(
@@ -17,19 +30,35 @@ const PlayerInfoContext = createContext<PlayerInfoContextValue | undefined>(
 interface SelectedPlayer {
   player: Player;
   anchor: HTMLElement;
+  onUpdate?: (updated: Player) => void;
 }
 
-// Holds the single "which player's info is showing" state and renders the
-// popover. Any player surface (sidebar, bench, field) can open it via
-// usePlayerInfo(), so there's exactly one popover shared across the app.
 export function PlayerInfoProvider({ children }: { children: ReactNode }) {
   const [selected, setSelected] = useState<SelectedPlayer | null>(null);
 
-  const openPlayer = useCallback((player: Player, anchor: HTMLElement) => {
-    setSelected({ player, anchor });
-  }, []);
+  const openPlayer = useCallback(
+    (
+      player: Player,
+      anchor: HTMLElement,
+      onUpdate?: (updated: Player) => void,
+    ) => {
+      setSelected({ player, anchor, onUpdate });
+    },
+    [],
+  );
 
   const close = useCallback(() => setSelected(null), []);
+
+  // Fired by the popover after a successful save. Updates what the popover
+  // itself is displaying, and tells the original caller (if it registered
+  // a callback) so their list reflects the change too.
+  const handlePlayerUpdate = useCallback(
+    (updated: Player) => {
+      setSelected((prev) => (prev ? { ...prev, player: updated } : prev));
+      selected?.onUpdate?.(updated);
+    },
+    [selected],
+  );
 
   return (
     <PlayerInfoContext.Provider value={{ openPlayer }}>
@@ -39,6 +68,7 @@ export function PlayerInfoProvider({ children }: { children: ReactNode }) {
           player={selected.player}
           anchor={selected.anchor}
           onClose={close}
+          onPlayerUpdate={handlePlayerUpdate}
         />
       )}
     </PlayerInfoContext.Provider>

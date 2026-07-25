@@ -33,3 +33,22 @@ export async function deletePlayer(playerId: string): Promise<void> {
   const { error } = await supabase.from("players").delete().eq("id", playerId);
   if (error) throw error;
 }
+
+export type PlayerUpdate = Partial<
+  Pick<Player, "name" | "number" | "position">
+>;
+
+export async function updatePlayer(
+  playerId: string,
+  updates: PlayerUpdate,
+): Promise<Player> {
+  const { data, error } = await supabase
+    .from("players")
+    .update(updates)
+    .eq("id", playerId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data as Player;
+}
