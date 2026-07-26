@@ -49,7 +49,7 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <PlayerSidebar teamId={currentTeamId} />
+              <PlayerSidebar />
             </main>
           </PlayerInfoProvider>
         </LineupProvider>
