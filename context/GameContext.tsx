@@ -45,9 +45,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   const currentGame = games.find((g) => g.id === currentGameId) ?? null;
 
-  // Load games whenever the active team changes. The initial game is taken
-  // from the profile's current_game_id when present, mirroring how
-  // TeamContext resolves the current team.
+  // Load games whenever the active team changes
   useEffect(() => {
     if (!currentTeamId) {
       setGames([]);
@@ -105,7 +103,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Optimistically point the game at the chosen lineup, then persist.
-  // Reverts on failure — same pattern as TeamContext.switchTeam.
+  // Reverts on failure
   const switchLineup = useCallback(
     async (lineupId: string) => {
       if (!currentGame || currentGame.current_lineup_id === lineupId) return;
@@ -133,8 +131,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     [currentGame],
   );
 
-  // Re-pull games + lineups for the active game. Used after a split change,
-  // which resizes lineups and may re-point current_lineup_id server-side.
+  // Re-pull games + lineups for the active game. Used after a split change
   const refreshGameData = useCallback(async () => {
     if (!currentTeamId || !currentGameId) return;
     try {

@@ -21,39 +21,47 @@ import { Field } from "./components/Field/Field";
 import LineupTabs from "./components/LineupTabs/LineupTabs";
 
 export default function DashboardPage() {
-  const { currentTeamId } = useTeam();
-  const { currentGame } = useGame();
+  const { currentTeamId, loading: teamLoading } = useTeam();
+  const { currentGame, loading: gameLoading } = useGame();
+
+  const appReady = !teamLoading && !gameLoading;
 
   return (
     <div className="h-screen flex flex-col">
       <AppHeader />
-      <DndProvider backend={HTML5Backend}>
-        <LineupProvider
-          teamId={currentTeamId}
-          lineupId={currentGame?.current_lineup_id ?? null}
-        >
-          <PlayerInfoProvider>
-            <main className="flex-1 flex overflow-hidden py-4 gap-4">
-              <ManageTeamSidebar teamId={currentTeamId} />
+      {!appReady ? (
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-sm text-gray-400">Loading...</p>
+        </div>
+      ) : (
+        <DndProvider backend={HTML5Backend}>
+          <LineupProvider
+            teamId={currentTeamId}
+            lineupId={currentGame?.current_lineup_id ?? null}
+          >
+            <PlayerInfoProvider>
+              <main className="flex-1 flex overflow-hidden py-4 gap-4">
+                <ManageTeamSidebar teamId={currentTeamId} />
 
-              {/* Soccer Field */}
-              <div className="flex-1 flex items-center justify-center h-full w-full min-w-0 px-4">
-                <div className="flex items-start gap-4">
-                  {/* Lineup period tabs — top-aligned to the left of the field */}
-                  <LineupTabs />
-
+                {/* Soccer Field */}
+                <div className="flex-1 flex items-center justify-center h-full w-full min-w-0 px-4">
                   <div className="flex items-start gap-4">
-                    <Field />
-                    <Bench />
+                    {/* Lineup period tabs — top-aligned to the left of the field */}
+                    <LineupTabs />
+
+                    <div className="flex items-start gap-4">
+                      <Field />
+                      <Bench />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <PlayerSidebar />
-            </main>
-          </PlayerInfoProvider>
-        </LineupProvider>
-      </DndProvider>
+                <PlayerSidebar />
+              </main>
+            </PlayerInfoProvider>
+          </LineupProvider>
+        </DndProvider>
+      )}
     </div>
   );
 }

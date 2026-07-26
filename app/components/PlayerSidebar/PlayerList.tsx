@@ -35,7 +35,14 @@ export const PlayerList = () => {
       }`}
     >
       {loading ? (
-        <p className="text-sm text-gray-400">Loading players...</p>
+        <div className="grid grid-cols-2 gap-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className="aspect-square rounded-2xl bg-gray-100 animate-pulse"
+            />
+          ))}
+        </div>
       ) : unplacedPlayers.length === 0 ? (
         <p className="text-sm text-gray-400">
           All players are on the field or bench.

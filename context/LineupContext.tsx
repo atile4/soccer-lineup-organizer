@@ -63,47 +63,38 @@ export function LineupProvider({
 }: LineupProviderProps) {
   const [players, setPlayers] = useState<Player[]>([]);
   const [placements, setPlacements] = useState<PlacementMap>({});
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Load the roster for the active team.
+  // Load the roster AND hydrate placements for the active lineup together,
+  // in a single effect keyed on both teamId and lineupId.
   useEffect(() => {
     if (!teamId) {
       setPlayers([]);
-      return;
-    }
-    let cancelled = false;
-    fetchPlayers(teamId)
-      .then((data) => {
-        if (!cancelled) setPlayers(data);
-      })
-      .catch((err) => console.error("Failed to load players:", err));
-    return () => {
-      cancelled = true;
-    };
-  }, [teamId]);
-
-  // Hydrate placements for the active lineup. Re-runs whenever the lineup
-  // changes (e.g. switching period tabs), so the field, bench, and sidebar
-  // always reflect the selected lineup rather than a stale one.
-  useEffect(() => {
-    if (!lineupId) {
       setPlacements({});
+      setLoading(false); // nothing to load — no team selected
       return;
     }
 
     let cancelled = false;
     setLoading(true);
 
-    fetchFieldPositions(lineupId)
-      .then((positions) => {
+    const rosterPromise = fetchPlayers(teamId);
+    // if no lineup selected, nothing is placed. Resolve with [] instead of skipping the fetch
+    const placementsPromise = lineupId
+      ? fetchFieldPositions(lineupId)
+      : Promise.resolve([]);
+
+    Promise.all([rosterPromise, placementsPromise])
+      .then(([playerData, positions]) => {
         if (cancelled) return;
+        setPlayers(playerData);
         const map: PlacementMap = {};
         for (const p of positions) {
           map[p.player_id] = { x: p.x, y: p.y, bench: p.bench };
         }
         setPlacements(map);
       })
-      .catch((err) => console.error("Failed to load lineup:", err))
+      .catch((err) => console.error("Failed to load lineup data:", err))
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
@@ -111,7 +102,7 @@ export function LineupProvider({
     return () => {
       cancelled = true;
     };
-  }, [lineupId]);
+  }, [teamId, lineupId]);
 
   // Warn once per action if there's no lineup to persist to. Without a game,
   // there's no valid lineup FK, so changes stay local only.
@@ -180,9 +171,7 @@ export function LineupProvider({
   }, [players, lineupId]);
 
   const applyPlayerUpdate = useCallback((updated: Player) => {
-    setPlayers((prev) =>
-      prev.map((p) => (p.id === updated.id ? updated : p)),
-    );
+    setPlayers((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
   }, []);
 
   const { unplacedPlayers, benchedPlayers, fieldedPlayers } = useMemo(() => {
