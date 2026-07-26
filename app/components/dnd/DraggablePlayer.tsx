@@ -9,6 +9,7 @@ interface DraggablePlayerProps {
   children: ReactNode;
   className?: string;
   style?: React.CSSProperties;
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 // Reusable drag source for a player. Wraps any content (sidebar card, bench
@@ -18,6 +19,7 @@ export function DraggablePlayer({
   children,
   className,
   style,
+  onClick,
 }: DraggablePlayerProps) {
   const [{ isDragging }, drag] = useDrag(
     () => ({
@@ -35,6 +37,7 @@ export function DraggablePlayer({
       }}
       className={className}
       style={{ opacity: isDragging ? 0.4 : 1, cursor: "grab", ...style }}
+      onClick={onClick}
     >
       {children}
     </div>

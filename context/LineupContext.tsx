@@ -41,6 +41,11 @@ interface LineupContextValue {
   placeOnBench: (playerId: string) => void;
   unplace: (playerId: string) => void;
   benchAll: () => void;
+
+  // Reflect an edited player (name/position/etc.) back into the roster so
+  // every surface — sidebar, bench, field — shows the new info. Persistence
+  // is handled by whoever performed the edit (e.g. the info popover).
+  applyPlayerUpdate: (updated: Player) => void;
 }
 
 const LineupContext = createContext<LineupContextValue | undefined>(undefined);
@@ -174,6 +179,12 @@ export function LineupProvider({
     );
   }, [players, lineupId]);
 
+  const applyPlayerUpdate = useCallback((updated: Player) => {
+    setPlayers((prev) =>
+      prev.map((p) => (p.id === updated.id ? updated : p)),
+    );
+  }, []);
+
   const { unplacedPlayers, benchedPlayers, fieldedPlayers } = useMemo(() => {
     const unplaced: Player[] = [];
     const benched: Player[] = [];
@@ -202,6 +213,7 @@ export function LineupProvider({
     placeOnBench,
     unplace,
     benchAll,
+    applyPlayerUpdate,
   };
 
   return (

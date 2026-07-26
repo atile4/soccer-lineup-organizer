@@ -3,6 +3,9 @@
 import { Player } from "@/app/types";
 import { DraggablePlayer } from "../dnd/DraggablePlayer";
 import PlayerToken from "../PlayerSidebar/PlayerToken";
+import { usePlayerInfo } from "@/context/PlayerInfoContext";
+import { useTeam } from "@/context/TeamContext";
+import { useLineup } from "@/context/LineupContext";
 
 interface FieldPlayerProps {
   player: Player;
@@ -14,13 +17,22 @@ interface FieldPlayerProps {
 // absolutely positioned and centered on (x, y). Draggable to reposition, or to
 // drop onto the bench / sidebar.
 export function FieldPlayer({ player, x, y }: FieldPlayerProps) {
+  const { openPlayer } = usePlayerInfo();
+  const { currentTeam } = useTeam();
+  const { applyPlayerUpdate } = useLineup();
   return (
     <DraggablePlayer
       playerId={player.id}
       className="absolute z-10 -translate-x-1/2 -translate-y-1/2"
       style={{ left: `${x}%`, top: `${y}%` }}
+      onClick={(e) => openPlayer(player, e.currentTarget, applyPlayerUpdate)}
     >
-      <PlayerToken name={player.name} number={player.number} variant="field" />
+      <PlayerToken
+        name={player.name}
+        number={player.number}
+        variant="field"
+        jerseyColor={currentTeam?.color}
+      />
     </DraggablePlayer>
   );
 }

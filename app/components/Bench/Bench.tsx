@@ -8,10 +8,14 @@ import { DraggablePlayer } from "../dnd/DraggablePlayer";
 import { ItemTypes, PlayerDragItem } from "../dnd/itemTypes";
 import PlayerToken from "../PlayerSidebar/PlayerToken";
 import { useLineup } from "@/context/LineupContext";
+import { usePlayerInfo } from "@/context/PlayerInfoContext";
+import { useTeam } from "@/context/TeamContext";
 
 export const Bench = () => {
   const [open, setOpen] = useState(true);
-  const { benchedPlayers, placeOnBench } = useLineup();
+  const { benchedPlayers, placeOnBench, applyPlayerUpdate } = useLineup();
+  const { openPlayer } = usePlayerInfo();
+  const { currentTeam } = useTeam();
 
   const [{ isOver }, drop] = useDrop(
     () => ({
@@ -43,12 +47,16 @@ export const Bench = () => {
                 <DraggablePlayer
                   key={player.id}
                   playerId={player.id}
+                  onClick={(e) =>
+                    openPlayer(player, e.currentTarget, applyPlayerUpdate)
+                  }
                   className="rounded-lg bg-gray-100/80 py-1 hover:bg-gray-200 transition-colors"
                 >
                   <PlayerToken
                     name={player.name}
                     number={player.number}
                     variant="bench"
+                    jerseyColor={currentTeam?.color}
                   />
                 </DraggablePlayer>
               ))

@@ -6,11 +6,15 @@ import { playerSidebarStyles } from "./PlayerSidebar.styles";
 import { DraggablePlayer } from "../dnd/DraggablePlayer";
 import { ItemTypes, PlayerDragItem } from "../dnd/itemTypes";
 import { useLineup } from "@/context/LineupContext";
+import { usePlayerInfo } from "@/context/PlayerInfoContext";
+import { useTeam } from "@/context/TeamContext";
 
 // The sidebar list shows only players that aren't yet placed for the active
 // lineup. Dropping a placed player back here removes them from the lineup.
 export const PlayerList = () => {
-  const { unplacedPlayers, unplace } = useLineup();
+  const { unplacedPlayers, unplace, applyPlayerUpdate } = useLineup();
+  const { openPlayer } = usePlayerInfo();
+  const { currentTeam } = useTeam();
 
   const [{ isOver }, drop] = useDrop(
     () => ({
@@ -37,8 +41,18 @@ export const PlayerList = () => {
       ) : (
         <div className="grid grid-cols-2 gap-3">
           {unplacedPlayers.map((player) => (
-            <DraggablePlayer key={player.id} playerId={player.id}>
-              <PlayerCard name={player.name} number={player.number} />
+            <DraggablePlayer
+              key={player.id}
+              playerId={player.id}
+              onClick={(e) =>
+                openPlayer(player, e.currentTarget, applyPlayerUpdate)
+              }
+            >
+              <PlayerCard
+                name={player.name}
+                number={player.number}
+                jerseyColor={currentTeam?.color}
+              />
             </DraggablePlayer>
           ))}
         </div>
