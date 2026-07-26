@@ -12,7 +12,7 @@ import { useTeam } from "@/context/TeamContext";
 // The sidebar list shows only players that aren't yet placed for the active
 // lineup. Dropping a placed player back here removes them from the lineup.
 export const PlayerList = () => {
-  const { unplacedPlayers, unplace, applyPlayerUpdate } = useLineup();
+  const { unplacedPlayers, unplace, applyPlayerUpdate, loading } = useLineup();
   const { openPlayer } = usePlayerInfo();
   const { currentTeam } = useTeam();
 
@@ -34,7 +34,16 @@ export const PlayerList = () => {
         isOver ? "ring-2 ring-[#318e2a] rounded-lg" : ""
       }`}
     >
-      {unplacedPlayers.length === 0 ? (
+      {loading ? (
+        <div className="grid grid-cols-2 gap-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className="aspect-square rounded-2xl bg-gray-100 animate-pulse"
+            />
+          ))}
+        </div>
+      ) : unplacedPlayers.length === 0 ? (
         <p className="text-sm text-gray-400">
           All players are on the field or bench.
         </p>
