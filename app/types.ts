@@ -75,7 +75,7 @@ export interface Lineup {
   id: string;
   game_id: string;
   period: number;
-  formation: string | null;
+  formation: string;
 }
 
 // One row per player, per lineup. See supabase migration create_field_pos.sql.
