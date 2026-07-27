@@ -12,6 +12,7 @@ import { useAuth } from "./AuthContext";
 import {
   fetchTeamsWithPlayerCount,
   setCurrentTeam as persistCurrentTeam,
+  deleteTeam as deleteTeamService,
 } from "@/services/teams";
 import { fetchCurrentIDs } from "@/services/profiles";
 import { TeamWithPlayerCount } from "@/app/types";
@@ -22,6 +23,7 @@ interface TeamContextValue {
   currentTeam: TeamWithPlayerCount | null;
   loading: boolean;
   switchTeam: (teamId: string) => Promise<void>;
+  deleteTeam: (teamId: string) => Promise<void>;
   refreshTeams: () => Promise<void>;
 }
 
@@ -83,6 +85,16 @@ export function TeamProvider({ children }: { children: ReactNode }) {
     [userId, currentTeamId],
   );
 
+  const deleteTeam = useCallback(
+    async (teamId: string) => {
+      // Guard: the active team must never be deleted.
+      if (teamId === currentTeamId) return;
+      await deleteTeamService(teamId);
+      setTeams((prev) => prev.filter((t) => t.id !== teamId));
+    },
+    [currentTeamId],
+  );
+
   const currentTeam = teams.find((t) => t.id === currentTeamId) ?? null;
 
   return (
@@ -93,6 +105,7 @@ export function TeamProvider({ children }: { children: ReactNode }) {
         currentTeam,
         loading,
         switchTeam,
+        deleteTeam,
         refreshTeams,
       }}
     >

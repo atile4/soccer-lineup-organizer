@@ -2,10 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronDown, Check, Plus } from "lucide-react";
+import { ChevronDown, Check, Plus, Trash2 } from "lucide-react";
 import { teamSwitcherStyles as styles } from "./TeamSwitcher.styles";
 import { useTeam } from "@/context/TeamContext";
 import { TeamWithPlayerCount } from "@/app/types";
+import DeleteTeamWarningModal from "./DeleteTeamWarningModal";
 
 // One line of "division · gender · player count" text
 const teamMeta = (team: TeamWithPlayerCount) =>
@@ -18,8 +19,12 @@ const teamMeta = (team: TeamWithPlayerCount) =>
     .join(" · ");
 
 export default function TeamSwitcher() {
-  const { teams, currentTeamId, loading, switchTeam } = useTeam();
+  const { teams, currentTeamId, loading, switchTeam, deleteTeam } = useTeam();
   const [isOpen, setIsOpen] = useState(false);
+  const [teamToDelete, setTeamToDelete] = useState<TeamWithPlayerCount | null>(
+    null,
+  );
+  const [deleting, setDeleting] = useState(false);
   const router = useRouter();
 
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -54,6 +59,23 @@ export default function TeamSwitcher() {
   const handleCreateTeam = () => {
     setIsOpen(false);
     router.push("/create");
+  };
+
+  const handleRequestDelete = (team: TeamWithPlayerCount) => {
+    setTeamToDelete(team);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!teamToDelete) return;
+    setDeleting(true);
+    try {
+      await deleteTeam(teamToDelete.id);
+      setTeamToDelete(null);
+    } catch (err) {
+      console.error("Failed to delete team:", err);
+    } finally {
+      setDeleting(false);
+    }
   };
 
   // No teams yet — point the user straight at team creation
@@ -106,27 +128,41 @@ export default function TeamSwitcher() {
           {teams.map((team) => {
             const isSelected = team.id === currentTeam.id;
             return (
-              <button
+              <div
                 key={team.id}
-                type="button"
-                role="option"
-                aria-selected={isSelected}
-                onClick={() => handleSelect(team.id)}
-                className={`${styles.option} ${isSelected ? styles.optionSelected : ""}`}
+                className={`${styles.optionRow} ${isSelected ? styles.optionRowSelected : ""}`}
               >
-                <span
-                  className={styles.swatch}
-                  style={{ backgroundColor: team.color }}
-                  aria-hidden="true"
-                />
-                <span className={styles.optionText}>
-                  <span className={styles.optionName}>{team.name}</span>
-                  <span className={styles.optionMeta}>{teamMeta(team)}</span>
-                </span>
-                {isSelected && (
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={isSelected}
+                  onClick={() => handleSelect(team.id)}
+                  className={styles.option}
+                >
+                  <span
+                    className={styles.swatch}
+                    style={{ backgroundColor: team.color }}
+                    aria-hidden="true"
+                  />
+                  <span className={styles.optionText}>
+                    <span className={styles.optionName}>{team.name}</span>
+                    <span className={styles.optionMeta}>{teamMeta(team)}</span>
+                  </span>
+                </button>
+                {isSelected ? (
                   <Check className={styles.checkIcon} aria-hidden="true" />
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => handleRequestDelete(team)}
+                    className={styles.deleteButton}
+                    aria-label={`Delete ${team.name}`}
+                    title={`Delete ${team.name}`}
+                  >
+                    <Trash2 className={styles.deleteIcon} aria-hidden="true" />
+                  </button>
                 )}
-              </button>
+              </div>
             );
           })}
 
@@ -144,6 +180,16 @@ export default function TeamSwitcher() {
           </button>
         </div>
       )}
+
+      <DeleteTeamWarningModal
+        open={teamToDelete !== null}
+        team={teamToDelete}
+        deleting={deleting}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => {
+          if (!deleting) setTeamToDelete(null);
+        }}
+      />
     </div>
   );
 }
