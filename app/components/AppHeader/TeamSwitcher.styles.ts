@@ -28,4 +28,13 @@ export const teamSwitcherStyles = {
   optionMeta: "text-xs text-gray-500 truncate",
 
   checkIcon: "h-4 w-4 text-green-600 flex-shrink-0",
+
+  // Divider + "Create team" row
+  divider: "my-1 border-t border-gray-100",
+  createOption:
+    "w-full flex items-center gap-3 px-3 py-2.5 hover:bg-gray-50 transition-colors text-left",
+  createIconWrap:
+    "w-8 h-8 rounded-full border-2 border-dashed border-green-400 flex items-center justify-center flex-shrink-0 text-green-600",
+  createIcon: "h-4 w-4",
+  createText: "text-sm font-semibold text-green-700",
 };

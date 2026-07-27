@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Check } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ChevronDown, Check, Plus } from "lucide-react";
 import { teamSwitcherStyles as styles } from "./TeamSwitcher.styles";
 import { useTeam } from "@/context/TeamContext";
 import { TeamWithPlayerCount } from "@/app/types";
@@ -19,6 +20,7 @@ const teamMeta = (team: TeamWithPlayerCount) =>
 export default function TeamSwitcher() {
   const { teams, currentTeamId, loading, switchTeam } = useTeam();
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -49,6 +51,11 @@ export default function TeamSwitcher() {
   const handleSelect = (teamId: string) => {
     switchTeam(teamId);
     setIsOpen(false);
+  };
+
+  const handleCreateTeam = () => {
+    setIsOpen(false);
+    router.push("/create");
   };
 
   return (
@@ -106,6 +113,19 @@ export default function TeamSwitcher() {
               </button>
             );
           })}
+
+          {/* Create Team Button */}
+          <div className={styles.divider} />
+          <button
+            type="button"
+            onClick={handleCreateTeam}
+            className={styles.createOption}
+          >
+            <span className={styles.createIconWrap} aria-hidden="true">
+              <Plus className={styles.createIcon} />
+            </span>
+            <span className={styles.createText}>Create team</span>
+          </button>
         </div>
       )}
     </div>
