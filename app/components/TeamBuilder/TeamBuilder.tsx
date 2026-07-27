@@ -1,18 +1,18 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { ChevronDown, Users, UserPlus, X } from "lucide-react";
 import { teamBuilderStyles as s, themeVars } from "./TeamBuilder.styles";
 import { Division, Gender } from "@/app/types";
 import { DIVISIONS } from "@/app/formations";
 import { useAuth } from "@/context/AuthContext";
-import { createTeam, createTeamWithDefaultGame } from "@/services/teams";
+import { createTeamWithDefaultGame } from "@/services/teams";
 import { createPlayers, NewPlayer } from "@/services/players";
+import { useRouter } from "next/navigation";
 
 const GENDER_OPTIONS: Gender[] = ["Boys", "Girls", "Coed"];
 
-// Matches the swatches from the original design. Must be valid 6-digit
-// hex, since the DB's teams_color_check constraint will reject anything else.
+// Matches the swatches from the original design. Must be valid 6-digit hex
 const COLOR_SWATCHES = [
   "#dc2626",
   "#f97316",
@@ -41,7 +41,6 @@ type DraftPlayer = {
 export default function TeamBuilder() {
   const { session } = useAuth();
 
-  const [theme, setTheme] = useState<"notebook" | "turf">("notebook");
   const [teamName, setTeamName] = useState("");
   const [division, setDivision] = useState<Division>("U-12");
   const [gender, setGender] = useState<Gender>("Coed");
@@ -54,8 +53,12 @@ export default function TeamBuilder() {
   const [number, setNumber] = useState("");
   const [position, setPosition] = useState("");
 
+  const firstNameRef = useRef<HTMLInputElement>(null);
+
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+
+  const router = useRouter();
 
   const showToast = (text: string) => {
     setToast(text);
@@ -101,6 +104,7 @@ export default function TeamBuilder() {
     setLastName("");
     setNumber("");
     setPosition("");
+    firstNameRef.current?.focus();
   };
 
   const handleRemovePlayer = (draftId: string) => {
@@ -144,11 +148,12 @@ export default function TeamBuilder() {
       showToast("Something went wrong saving your team. Try again.");
     } finally {
       setSaving(false);
+      router.push("/");
     }
   };
 
   return (
-    <div className={s.page} style={themeVars[theme] as React.CSSProperties}>
+    <div className={s.page} style={themeVars.notebook as React.CSSProperties}>
       <div className={s.container}>
         {/* Heading */}
         <div className={s.headingRow}>
@@ -156,15 +161,6 @@ export default function TeamBuilder() {
             <h2 className={s.title}>Team Builder</h2>
           </div>
           <div className={s.headingActions}>
-            <button
-              type="button"
-              className={s.themeToggle}
-              onClick={() =>
-                setTheme((t) => (t === "notebook" ? "turf" : "notebook"))
-              }
-            >
-              {theme === "notebook" ? "Notebook" : "Turf"}
-            </button>
             <span className={s.playerCountLabel}>{players.length} players</span>
             <button
               type="button"
@@ -285,14 +281,11 @@ export default function TeamBuilder() {
             {/* Add player */}
             <div className={s.addCard}>
               <h3 className={s.addCardTitle}>Add players</h3>
-              <p className={s.addCardHint}>
-                First &amp; last name required. Number and position are
-                optional.
-              </p>
               <form onSubmit={handleAddPlayer} className={s.addForm}>
                 <div className={s.formField}>
                   <label className={s.formLabel}>First name</label>
                   <input
+                    ref={firstNameRef}
                     type="text"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
@@ -311,7 +304,7 @@ export default function TeamBuilder() {
                   />
                 </div>
                 <div className={s.formField}>
-                  <label className={s.formLabel}>#</label>
+                  <label className={s.formLabel}># (optional)</label>
                   <input
                     type="text"
                     inputMode="numeric"
@@ -326,7 +319,7 @@ export default function TeamBuilder() {
                   />
                 </div>
                 <div className={s.formField}>
-                  <label className={s.formLabel}>Position</label>
+                  <label className={s.formLabel}>Position (optional)</label>
                   <input
                     type="text"
                     value={position}
