@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, Users, UserPlus, X } from "lucide-react";
 import { teamBuilderStyles as s, themeVars } from "./TeamBuilder.styles";
 import { Division, Gender } from "@/app/types";
@@ -57,6 +57,18 @@ export default function TeamBuilder() {
   const [toast, setToast] = useState<string | null>(null);
 
   const router = useRouter();
+
+  const isDirty =
+    teamName.trim() !== "" || color !== "#2563eb" || players.length > 0;
+
+  useEffect(() => {
+    if (!isDirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [isDirty]);
 
   const showToast = (text: string) => {
     setToast(text);
