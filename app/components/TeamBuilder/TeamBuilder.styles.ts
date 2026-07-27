@@ -101,7 +101,7 @@ export const teamBuilderStyles = {
   addCardTitle: "text-base font-bold mb-1",
   addCardHint: "text-xs text-[var(--muted)] mb-3",
   addForm:
-    "grid grid-cols-2 sm:grid-cols-[1fr_1fr_78px_1.2fr_auto] gap-2.5 items-end",
+    "grid grid-cols-2 sm:grid-cols-[1fr_78px_1.2fr_auto] gap-2.5 items-end",
   formField: "flex flex-col gap-1",
   formLabel: "text-xs font-semibold text-[var(--muted)]",
   formInput:

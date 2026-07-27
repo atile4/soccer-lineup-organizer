@@ -32,8 +32,7 @@ const COLOR_SWATCHES = [
 // Only exists in this component's state until "Save team" is clicked.
 type DraftPlayer = {
   draftId: string; // client-side only, not a DB id
-  firstName: string;
-  lastName: string;
+  name: string;
   number: string; // kept as string while editing, parsed to int on save
   position: string;
 };
@@ -48,12 +47,11 @@ export default function TeamBuilder() {
   const [players, setPlayers] = useState<DraftPlayer[]>([]);
 
   // Add-player form fields
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [playerName, setPlayerName] = useState("");
   const [number, setNumber] = useState("");
   const [position, setPosition] = useState("");
 
-  const firstNameRef = useRef<HTMLInputElement>(null);
+  const playerNameRef = useRef<HTMLInputElement>(null);
 
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -86,7 +84,7 @@ export default function TeamBuilder() {
 
   const handleAddPlayer = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!firstName.trim() && !lastName.trim()) {
+    if (!playerName.trim()) {
       showToast("Enter a player name first");
       return;
     }
@@ -94,17 +92,15 @@ export default function TeamBuilder() {
       ...prev,
       {
         draftId: crypto.randomUUID(),
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
+        name: playerName.trim(),
         number: number.trim(),
         position: position.trim(),
       },
     ]);
-    setFirstName("");
-    setLastName("");
+    setPlayerName("");
     setNumber("");
     setPosition("");
-    firstNameRef.current?.focus();
+    playerNameRef.current?.focus();
   };
 
   const handleRemovePlayer = (draftId: string) => {
@@ -133,7 +129,7 @@ export default function TeamBuilder() {
 
       if (players.length > 0) {
         const newPlayers: NewPlayer[] = players.map((p) => ({
-          name: `${p.firstName} ${p.lastName}`.trim() || "Unnamed player",
+          name: p.name || "Unnamed player",
           number: p.number ? parseInt(p.number, 10) : 0,
           position: p.position,
         }));
@@ -283,23 +279,13 @@ export default function TeamBuilder() {
               <h3 className={s.addCardTitle}>Add players</h3>
               <form onSubmit={handleAddPlayer} className={s.addForm}>
                 <div className={s.formField}>
-                  <label className={s.formLabel}>First name</label>
+                  <label className={s.formLabel}>Name</label>
                   <input
-                    ref={firstNameRef}
+                    ref={playerNameRef}
                     type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="First"
-                    className={s.formInput}
-                  />
-                </div>
-                <div className={s.formField}>
-                  <label className={s.formLabel}>Last name</label>
-                  <input
-                    type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Last"
+                    value={playerName}
+                    onChange={(e) => setPlayerName(e.target.value)}
+                    placeholder="e.g. Alex Morgan"
                     className={s.formInput}
                   />
                 </div>
@@ -365,8 +351,7 @@ export default function TeamBuilder() {
                   {players.map((p) => {
                     const isDupe =
                       p.number && duplicateNumbers.includes(p.number);
-                    const name =
-                      `${p.firstName} ${p.lastName}`.trim() || "Unnamed player";
+                    const name = p.name || "Unnamed player";
                     return (
                       <li
                         key={p.draftId}
