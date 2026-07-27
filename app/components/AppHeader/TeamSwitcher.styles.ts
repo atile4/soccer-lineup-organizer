@@ -15,6 +15,14 @@ export const teamSwitcherStyles = {
     "h-4 w-4 text-white/80 transition-transform duration-150 flex-shrink-0",
   chevronOpen: "rotate-180",
 
+  // Empty state — shown when the user has no teams yet
+  emptyTrigger:
+    "flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-left",
+  emptyIconWrap:
+    "w-8 h-8 rounded-full border-2 border-dashed border-white/70 flex items-center justify-center flex-shrink-0 text-white",
+  emptyIcon: "h-4 w-4",
+  emptyText: "text-sm font-semibold text-white",
+
   // Dropdown panel — lists every team with the same details
   dropdown:
     "absolute right-0 mt-2 w-72 rounded-lg shadow-xl border border-gray-200 bg-white z-50 py-1 max-h-80 overflow-y-auto",

@@ -44,9 +44,7 @@ export default function TeamSwitcher() {
     }
   }, [isOpen]);
 
-  if (loading || teams.length === 0) return null;
-
-  const currentTeam = teams.find((t) => t.id === currentTeamId) ?? teams[0];
+  if (loading) return null;
 
   const handleSelect = (teamId: string) => {
     switchTeam(teamId);
@@ -57,6 +55,24 @@ export default function TeamSwitcher() {
     setIsOpen(false);
     router.push("/create");
   };
+
+  // No teams yet — point the user straight at team creation
+  if (teams.length === 0) {
+    return (
+      <button
+        type="button"
+        className={styles.emptyTrigger}
+        onClick={handleCreateTeam}
+      >
+        <span className={styles.emptyIconWrap} aria-hidden="true">
+          <Plus className={styles.emptyIcon} />
+        </span>
+        <span className={styles.emptyText}>Create your first team</span>
+      </button>
+    );
+  }
+
+  const currentTeam = teams.find((t) => t.id === currentTeamId) ?? teams[0];
 
   return (
     <div className={styles.wrapper}>

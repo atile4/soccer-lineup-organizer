@@ -6,6 +6,7 @@ import { teamBuilderStyles as s, themeVars } from "./TeamBuilder.styles";
 import { Division, Gender } from "@/app/types";
 import { DIVISIONS } from "@/app/formations";
 import { useAuth } from "@/context/AuthContext";
+import { useTeam } from "@/context/TeamContext";
 import { createTeamWithDefaultGame } from "@/services/teams";
 import { createPlayers, NewPlayer } from "@/services/players";
 import { useRouter } from "next/navigation";
@@ -39,6 +40,7 @@ type DraftPlayer = {
 
 export default function TeamBuilder() {
   const { session } = useAuth();
+  const { refreshTeams } = useTeam();
 
   const [teamName, setTeamName] = useState("");
   const [division, setDivision] = useState<Division>("U-12");
@@ -151,6 +153,9 @@ export default function TeamBuilder() {
       showToast(`Saved "${team.name}" · ${players.length} players`);
       setTeamName("");
       setPlayers([]);
+      // Pull the new team into shared state so the header/switcher reflect it
+      // once we navigate back to "/".
+      await refreshTeams();
     } catch (err) {
       console.error("Failed to save team:", err);
       showToast("Something went wrong saving your team. Try again.");
