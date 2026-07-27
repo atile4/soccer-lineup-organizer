@@ -12,7 +12,11 @@ import ProfileMenu from "./ProfileMenu";
 import LogoAndTitle from "./LogoAndTitle";
 import TeamSwitcher from "./TeamSwitcher";
 
-export default function AppHeader() {
+interface AppHeaderProps {
+  page: string;
+}
+
+export default function AppHeader({ page = "dash" }: AppHeaderProps) {
   const { session, loading } = useAuth();
   const router = useRouter();
 
@@ -35,7 +39,7 @@ export default function AppHeader() {
             <p>Loading...</p>
           ) : (
             <div className={`${styles.user.wrapper} flex items-center gap-3`}>
-              {session && <TeamSwitcher />}
+              {session && page == "dash" && <TeamSwitcher />}
 
               {session ? (
                 <ProfileMenu onLogout={handleLogout} />

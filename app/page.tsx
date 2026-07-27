@@ -28,7 +28,7 @@ export default function DashboardPage() {
 
   return (
     <div className="h-screen flex flex-col">
-      <AppHeader />
+      <AppHeader page="dash" />
       {!appReady ? (
         <div className="flex-1 flex items-center justify-center">
           <p className="text-sm text-gray-400">Loading...</p>
