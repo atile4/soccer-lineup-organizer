@@ -32,7 +32,7 @@ export interface Lineup {
   id: string;
   game_id: string;
   period: number;
-  formation: string;
+  formation: string | null;
 }
 
 export interface FieldPosition {
@@ -49,34 +49,6 @@ export type Gender = "Boys" | "Girls" | "Coed";
 export type Division = "U-8" | "U-10" | "U-12" | "U-14" | "U-16" | "U-18";
 
 export type SplitBy = "none" | "half" | "quarter";
-
-export interface Formation {
-  name: string;
-  positions: Position[];
-}
-
-// @TODO deprecated type, remove after player fielding implentation
-export interface Position {
-  id: string;
-  x: number; // percentage from left
-  y: number; // percentage from top
-  label: string;
-  playerId?: string;
-}
-
-//@TODO deprecated type, remove after lineup implementation
-export interface LineupState {
-  formation: string;
-  division: Division;
-  positions: Position[];
-}
-
-// export interface Lineup {
-//   id: string;
-//   game_id: string;
-//   period: number;
-//   formation: string | null;
-// }
 
 // One row per player, per lineup. See supabase migration create_field_pos.sql.
 export interface FieldPosition {
