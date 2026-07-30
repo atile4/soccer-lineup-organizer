@@ -8,17 +8,17 @@ export const appHeaderStyles = {
   },
 
   centerSection: {
-    wrapper: "flex items-center space-x-3",
+    wrapper: "flex items-center space-x-2 sm:space-x-3 min-w-0",
   },
 
   logo: {
     container:
-      "w-10 h-10 bg-primary rounded-lg flex items-center justify-center",
-    icon: "w-6 h-6 text-white",
+      "w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0 bg-primary rounded-lg flex items-center justify-center",
+    icon: "w-5 h-5 sm:w-6 sm:h-6 text-white",
   },
 
   text: {
-    title: "text-xl font-bold text-gray-100",
+    title: "text-base sm:text-lg lg:text-xl font-bold text-gray-100 truncate",
     subtitle: "text-sm text-gray-500 text-center",
   },
 

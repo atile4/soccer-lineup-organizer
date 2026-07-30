@@ -4,7 +4,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, Users, UserPlus, X } from "lucide-react";
 import { teamBuilderStyles as s, themeVars } from "./TeamBuilder.styles";
 import { Division, Gender } from "@/app/types";
-import { DIVISIONS } from "@/app/formations";
 import { useAuth } from "@/context/AuthContext";
 import { useTeam } from "@/context/TeamContext";
 import { createTeamWithDefaultGame } from "@/services/teams";
@@ -27,6 +26,15 @@ const COLOR_SWATCHES = [
   "#111827",
   "#e5e7eb",
   "#6b7280",
+];
+
+export const DIVISIONS: Division[] = [
+  "U-8",
+  "U-10",
+  "U-12",
+  "U-14",
+  "U-16",
+  "U-18",
 ];
 
 // A player the coach has added to the roster but hasn't saved yet.

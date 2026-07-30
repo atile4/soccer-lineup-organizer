@@ -1,12 +1,18 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { PanelLeft, Users } from "lucide-react";
+
 // hooks
 import { useTeam } from "@/context/TeamContext";
 import { useGame } from "@/context/GameContext";
+import { useIsDesktop } from "./hooks/useIsDesktop";
 
 // drag-and-drop
 import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
+import { MultiBackend } from "react-dnd-multi-backend";
+import { HTML5toTouch } from "rdndmb-html5-to-touch";
+import { CustomDragLayer } from "./components/dnd/CustomDragLayer";
 
 // context
 import { LineupProvider } from "@/context/LineupContext";
@@ -26,37 +32,79 @@ export default function DashboardPage() {
 
   const appReady = !teamLoading && !gameLoading;
 
+  // Sidebar open state is lifted here so the mobile toolbar toggles and the
+  // desktop collapse chevrons drive the same source of truth. On desktop the
+  // columns default open; on mobile the drawers default closed.
+  const isDesktop = useIsDesktop();
+  const [manageOpen, setManageOpen] = useState(true);
+  const [playersOpen, setPlayersOpen] = useState(true);
+
+  useEffect(() => {
+    setManageOpen(isDesktop);
+    setPlayersOpen(isDesktop);
+  }, [isDesktop]);
+
   return (
-    <div className="h-screen flex flex-col">
-      <AppHeader page="dash" />
+    <div className="min-h-screen lg:h-screen flex flex-col">
+      <AppHeader page={"dash"} />
       {!appReady ? (
         <div className="flex-1 flex items-center justify-center">
           <p className="text-sm text-gray-400">Loading...</p>
         </div>
       ) : (
-        <DndProvider backend={HTML5Backend}>
+        <DndProvider backend={MultiBackend} options={HTML5toTouch}>
+          <CustomDragLayer />
           <LineupProvider
             teamId={currentTeamId}
             lineupId={currentGame?.current_lineup_id ?? null}
           >
             <PlayerInfoProvider>
-              <main className="flex-1 flex overflow-hidden py-4 gap-4">
-                <ManageTeamSidebar teamId={currentTeamId} />
+              {/* Mobile-only toolbar to open each drawer */}
+              <div className="lg:hidden flex items-center gap-2 px-4 py-2 border-b border-[#e8e0c8] bg-[#fdf8e3]">
+                <button
+                  type="button"
+                  onClick={() => setManageOpen(true)}
+                  className="flex items-center gap-1.5 rounded-lg border border-[#e8e0c8] bg-[#fefcf3] px-3 py-1.5 text-sm font-semibold text-gray-700 shadow-sm hover:bg-[#f5edd4] transition-colors"
+                >
+                  <PanelLeft className="h-4 w-4" />
+                  Manage
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPlayersOpen(true)}
+                  className="flex items-center gap-1.5 rounded-lg border border-[#e8e0c8] bg-[#fefcf3] px-3 py-1.5 text-sm font-semibold text-gray-700 shadow-sm hover:bg-[#f5edd4] transition-colors"
+                >
+                  <Users className="h-4 w-4" />
+                  Players
+                </button>
+              </div>
 
-                {/* Soccer Field */}
-                <div className="flex-1 flex items-center justify-center h-full w-full min-w-0 px-4">
-                  <div className="flex items-start gap-4">
-                    {/* Lineup period tabs — top-aligned to the left of the field */}
+              <main className="flex-1 flex flex-col lg:flex-row lg:overflow-hidden py-4 gap-4">
+                <ManageTeamSidebar
+                  teamId={currentTeamId}
+                  open={manageOpen}
+                  onOpenChange={setManageOpen}
+                  isDesktop={isDesktop}
+                />
+
+                {/* Soccer Field zone — field-first, stacks vertically on mobile */}
+                <div className="flex-1 flex flex-col lg:flex-row lg:items-center lg:justify-center lg:h-full w-full min-w-0 px-2 lg:px-4">
+                  <div className="flex flex-col items-center lg:flex-row lg:items-start gap-3 lg:gap-4 w-full lg:w-auto">
+                    {/* Lineup period tabs — above the field on mobile, left on desktop */}
                     <LineupTabs />
 
-                    <div className="flex items-start gap-4">
+                    <div className="flex flex-col items-center lg:flex-row lg:items-start gap-3 lg:gap-4 w-full lg:w-auto">
                       <Field />
                       <Bench />
                     </div>
                   </div>
                 </div>
 
-                <PlayerSidebar />
+                <PlayerSidebar
+                  open={playersOpen}
+                  onOpenChange={setPlayersOpen}
+                  isDesktop={isDesktop}
+                />
               </main>
             </PlayerInfoProvider>
           </LineupProvider>

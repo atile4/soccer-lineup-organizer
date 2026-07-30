@@ -16,6 +16,14 @@ body {
 
 body {
   background: #fdf8e3;
-  height: 100vh;
-  overflow: hidden;
+}
+
+/* Lock the viewport to a single non-scrolling screen only on desktop (lg+).
+   Below lg the dashboard is allowed to scroll vertically so stacked content
+   (field, bench, tabs) stays reachable instead of being clipped. */
+@media (min-width: 1024px) {
+  body {
+    height: 100vh;
+    overflow: hidden;
+  }
 }
