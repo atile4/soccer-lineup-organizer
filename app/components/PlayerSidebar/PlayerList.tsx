@@ -32,20 +32,17 @@ export const PlayerList = () => {
       ref={(node) => {
         drop(node);
       }}
-      className={`${playerSidebarStyles.playerList} ${
-        isOver ? "ring-2 ring-[#318e2a] rounded-lg" : ""
+      className={`${playerSidebarStyles.playerListAside} ${
+        isOver ? playerSidebarStyles.playerListAsideIsOver : ""
       }`}
     >
-      <div className="grid grid-cols-2 gap-3">
+      <div className={playerSidebarStyles.playerListGrid}>
         {loading ? (
           Array.from({ length: 6 }).map((_, i) => (
-            <div
-              key={i}
-              className="aspect-square rounded-2xl bg-gray-100 animate-pulse"
-            />
+            <div key={i} className={playerSidebarStyles.playerListSkeleton} />
           ))
         ) : unplacedPlayers.length === 0 ? (
-          <p className="col-span-2 text-sm text-gray-400 text-center py-8">
+          <p className={playerSidebarStyles.playerListEmptyMessage}>
             All players are on the field or bench.
           </p>
         ) : (
@@ -76,11 +73,11 @@ export const PlayerList = () => {
         )}
         <button
           type="button"
-          className="bg-gray-100 rounded-2xl flex flex-col items-center justify-center gap-1 aspect-square hover:bg-gray-200 transition-colors"
+          className={playerSidebarStyles.playerListCreateButton}
           aria-label="Create player"
         >
-          <Plus className="h-8 w-8 text-gray-400" />
-          <span className="text-xs text-gray-400 font-medium">Create Player</span>
+          <Plus className={playerSidebarStyles.playerListCreateIcon} />
+          <span className={playerSidebarStyles.playerListCreateLabel}>Create Player</span>
         </button>
       </div>
     </aside>
