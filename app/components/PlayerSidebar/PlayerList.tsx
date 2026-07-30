@@ -1,5 +1,6 @@
 "use client";
 
+import { Plus } from "lucide-react";
 import { useDrop } from "react-dnd";
 import PlayerCard from "./PlayerCard";
 import { playerSidebarStyles } from "./PlayerSidebar.styles";
@@ -35,22 +36,20 @@ export const PlayerList = () => {
         isOver ? "ring-2 ring-[#318e2a] rounded-lg" : ""
       }`}
     >
-      {loading ? (
-        <div className="grid grid-cols-2 gap-3">
-          {Array.from({ length: 6 }).map((_, i) => (
+      <div className="grid grid-cols-2 gap-3">
+        {loading ? (
+          Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
               className="aspect-square rounded-2xl bg-gray-100 animate-pulse"
             />
-          ))}
-        </div>
-      ) : unplacedPlayers.length === 0 ? (
-        <p className="text-sm text-gray-400">
-          All players are on the field or bench.
-        </p>
-      ) : (
-        <div className="grid grid-cols-2 gap-3">
-          {unplacedPlayers.map((player) => (
+          ))
+        ) : unplacedPlayers.length === 0 ? (
+          <p className="col-span-2 text-sm text-gray-400 text-center py-8">
+            All players are on the field or bench.
+          </p>
+        ) : (
+          unplacedPlayers.map((player) => (
             <DraggablePlayer
               key={player.id}
               playerId={player.id}
@@ -73,9 +72,17 @@ export const PlayerList = () => {
                 jerseyColor={currentTeam?.color}
               />
             </DraggablePlayer>
-          ))}
-        </div>
-      )}
+          ))
+        )}
+        <button
+          type="button"
+          className="bg-gray-100 rounded-2xl flex flex-col items-center justify-center gap-1 aspect-square hover:bg-gray-200 transition-colors"
+          aria-label="Create player"
+        >
+          <Plus className="h-8 w-8 text-gray-400" />
+          <span className="text-xs text-gray-400 font-medium">Create Player</span>
+        </button>
+      </div>
     </aside>
   );
 };
