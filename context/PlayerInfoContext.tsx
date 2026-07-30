@@ -16,10 +16,13 @@ interface PlayerInfoContextValue {
   // onUpdate is optional: pass it if the caller holds its own copy of this
   // player's data (a roster list, fieldedPlayers, etc.) that needs to stay
   // in sync after a save, without waiting for a full refetch.
+  // onDelete is likewise optional: pass it so the caller's copy drops the
+  // player after they're deleted from the popover.
   openPlayer: (
     player: Player,
     anchor: HTMLElement,
     onUpdate?: (updated: Player) => void,
+    onDelete?: (playerId: string) => void,
   ) => void;
 }
 
@@ -31,6 +34,7 @@ interface SelectedPlayer {
   player: Player;
   anchor: HTMLElement;
   onUpdate?: (updated: Player) => void;
+  onDelete?: (playerId: string) => void;
 }
 
 export function PlayerInfoProvider({ children }: { children: ReactNode }) {
@@ -41,8 +45,9 @@ export function PlayerInfoProvider({ children }: { children: ReactNode }) {
       player: Player,
       anchor: HTMLElement,
       onUpdate?: (updated: Player) => void,
+      onDelete?: (playerId: string) => void,
     ) => {
-      setSelected({ player, anchor, onUpdate });
+      setSelected({ player, anchor, onUpdate, onDelete });
     },
     [],
   );
@@ -60,6 +65,17 @@ export function PlayerInfoProvider({ children }: { children: ReactNode }) {
     [selected],
   );
 
+  // Fired by the popover after a successful delete. Tells the original caller
+  // (if it registered a callback) to drop the player from its list, then
+  // tears the popover down.
+  const handlePlayerDelete = useCallback(
+    (playerId: string) => {
+      selected?.onDelete?.(playerId);
+      close();
+    },
+    [selected, close],
+  );
+
   return (
     <PlayerInfoContext.Provider value={{ openPlayer }}>
       {children}
@@ -69,6 +85,7 @@ export function PlayerInfoProvider({ children }: { children: ReactNode }) {
           anchor={selected.anchor}
           onClose={close}
           onPlayerUpdate={handlePlayerUpdate}
+          onPlayerDelete={handlePlayerDelete}
         />
       )}
     </PlayerInfoContext.Provider>

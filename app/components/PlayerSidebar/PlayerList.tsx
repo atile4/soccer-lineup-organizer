@@ -12,7 +12,8 @@ import { useTeam } from "@/context/TeamContext";
 // The sidebar list shows only players that aren't yet placed for the active
 // lineup. Dropping a placed player back here removes them from the lineup.
 export const PlayerList = () => {
-  const { unplacedPlayers, unplace, applyPlayerUpdate, loading } = useLineup();
+  const { unplacedPlayers, unplace, applyPlayerUpdate, removePlayer, loading } =
+    useLineup();
   const { openPlayer } = usePlayerInfo();
   const { currentTeam } = useTeam();
 
@@ -58,7 +59,12 @@ export const PlayerList = () => {
               jerseyColor={currentTeam?.color}
               previewVariant="default"
               onClick={(e) =>
-                openPlayer(player, e.currentTarget, applyPlayerUpdate)
+                openPlayer(
+                  player,
+                  e.currentTarget,
+                  applyPlayerUpdate,
+                  removePlayer,
+                )
               }
             >
               <PlayerCard

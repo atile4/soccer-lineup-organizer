@@ -13,7 +13,8 @@ import { useTeam } from "@/context/TeamContext";
 
 export const Bench = () => {
   const [open, setOpen] = useState(true);
-  const { benchedPlayers, placeOnBench, applyPlayerUpdate } = useLineup();
+  const { benchedPlayers, placeOnBench, applyPlayerUpdate, removePlayer } =
+    useLineup();
   const { openPlayer } = usePlayerInfo();
   const { currentTeam } = useTeam();
 
@@ -52,7 +53,12 @@ export const Bench = () => {
                   jerseyColor={currentTeam?.color}
                   previewVariant="bench"
                   onClick={(e) =>
-                    openPlayer(player, e.currentTarget, applyPlayerUpdate)
+                    openPlayer(
+                      player,
+                      e.currentTarget,
+                      applyPlayerUpdate,
+                      removePlayer,
+                    )
                   }
                   className="flex-shrink-0 rounded-lg bg-gray-100/80 py-1 px-1 hover:bg-gray-200 transition-colors"
                 >

@@ -46,6 +46,11 @@ interface LineupContextValue {
   // every surface — sidebar, bench, field — shows the new info. Persistence
   // is handled by whoever performed the edit (e.g. the info popover).
   applyPlayerUpdate: (updated: Player) => void;
+
+  // Drop a deleted player out of the roster (and any placement) so they
+  // disappear from every surface. Persistence is handled by the caller
+  // (the info popover deletes the DB row before calling this).
+  removePlayer: (playerId: string) => void;
 }
 
 const LineupContext = createContext<LineupContextValue | undefined>(undefined);
@@ -174,6 +179,16 @@ export function LineupProvider({
     setPlayers((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
   }, []);
 
+  const removePlayer = useCallback((playerId: string) => {
+    setPlayers((prev) => prev.filter((p) => p.id !== playerId));
+    setPlacements((prev) => {
+      if (!(playerId in prev)) return prev;
+      const next = { ...prev };
+      delete next[playerId];
+      return next;
+    });
+  }, []);
+
   const { unplacedPlayers, benchedPlayers, fieldedPlayers } = useMemo(() => {
     const unplaced: Player[] = [];
     const benched: Player[] = [];
@@ -203,6 +218,7 @@ export function LineupProvider({
     unplace,
     benchAll,
     applyPlayerUpdate,
+    removePlayer,
   };
 
   return (
