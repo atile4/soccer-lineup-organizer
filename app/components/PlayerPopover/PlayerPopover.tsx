@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { Player } from "@/app/types";
 import { playerInfoPopoverStyles as s } from "./PlayerPopover.styles";
 import { useTeam } from "@/context/TeamContext";
@@ -228,6 +228,15 @@ export default function PlayerInfoPopover({
             </svg>
           </div>
         </div>
+
+        {/* Delete action — bottom-right corner, UI only for now */}
+        <button
+          type="button"
+          className={s.deleteButton}
+          aria-label="Delete player"
+        >
+          <Trash2 size={16} />
+        </button>
       </div>
     </div>
   );

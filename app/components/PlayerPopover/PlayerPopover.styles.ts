@@ -29,6 +29,9 @@ export const playerInfoPopoverStyles = {
 
   errorText: "text-xs text-red-600 mt-1",
 
+  deleteButton:
+    "absolute bottom-2 right-2 text-gray-500 hover:text-red-600 cursor-pointer transition-colors",
+
   jerseyWrapper: "flex-shrink-0",
 
   jerseyPath: "stroke-[#1a1a1a] stroke-[3] [stroke-linejoin:round]",
