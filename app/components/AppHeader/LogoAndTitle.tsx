@@ -27,7 +27,7 @@ export default function LogoAndTitle({
         </svg>
       </div>
 
-      <div className="text-center">
+      <div className="text-center min-w-0">
         <h1 className={styles.text.title}>{title}</h1>
       </div>
     </div>

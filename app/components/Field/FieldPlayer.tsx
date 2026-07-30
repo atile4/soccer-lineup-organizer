@@ -23,6 +23,10 @@ export function FieldPlayer({ player, x, y }: FieldPlayerProps) {
   return (
     <DraggablePlayer
       playerId={player.id}
+      name={player.name}
+      number={player.number}
+      jerseyColor={currentTeam?.color}
+      previewVariant="field"
       className="absolute z-10 -translate-x-1/2 -translate-y-1/2"
       style={{ left: `${x}%`, top: `${y}%` }}
       onClick={(e) => openPlayer(player, e.currentTarget, applyPlayerUpdate)}

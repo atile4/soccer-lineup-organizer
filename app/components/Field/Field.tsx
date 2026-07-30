@@ -42,21 +42,17 @@ export function Field() {
   return (
     <div
       ref={setRefs}
-      className={`relative flex-shrink-0 rounded-lg ${
+      className={`relative flex-shrink-0 rounded-lg max-w-full ${
         isOver ? "ring-2 ring-[#318e2a]" : ""
       }`}
     >
       <img
         src="/images/soccer_field.png"
         alt="Soccer field"
-        className="rounded-lg block select-none pointer-events-none"
+        // Mobile: fill available width, cap height so bench/tabs stay reachable.
+        // Desktop (lg+): original 900px / calc(100vh - 6rem) caps, unchanged.
+        className="rounded-lg block select-none pointer-events-none w-auto h-auto max-w-full max-h-[65vh] lg:max-w-[900px] lg:max-h-[calc(100vh-6rem)]"
         draggable={false}
-        style={{
-          maxHeight: "calc(100vh - 6rem)",
-          maxWidth: "900px",
-          width: "auto",
-          height: "auto",
-        }}
       />
 
       {fieldedPlayers.map((player) => {

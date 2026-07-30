@@ -8,8 +8,8 @@ export const teamSwitcherStyles = {
   swatch: "w-8 h-8 rounded-full border-2 border-white/70 flex-shrink-0",
 
   triggerText: "flex flex-col leading-tight min-w-0",
-  triggerName: "text-sm font-semibold text-white truncate max-w-[10rem]",
-  triggerMeta: "text-xs text-white/70 truncate max-w-[10rem]",
+  triggerName: "text-sm font-semibold text-white truncate max-w-[8rem] sm:max-w-[10rem]",
+  triggerMeta: "hidden sm:block text-xs text-white/70 truncate max-w-[10rem]",
 
   chevron:
     "h-4 w-4 text-white/80 transition-transform duration-150 flex-shrink-0",
