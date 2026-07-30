@@ -23,6 +23,9 @@ import CreateGameModal from "./CreateGameModal";
 interface ManageTeamSidebarProps {
   teamId: string | null;
   maxPlayers?: number;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  isDesktop: boolean;
 }
 
 type ToastVariant = "success" | "error";
@@ -34,10 +37,11 @@ interface ToastState {
 
 export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
   teamId,
+  open: sidebarOpen,
+  onOpenChange: setSidebarOpen,
+  isDesktop,
 }) => {
   const { games, currentGame, switchGame, refreshGameData } = useGame();
-
-  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 
   // @TODO implement formation
   // const [formation, setFormation] = useState("");
@@ -214,7 +218,16 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
         </button>
       )}
 
-      {/* Collapsible Sidebar */}
+      {/* Backdrop — closes the drawer on tap (mobile only) */}
+      {sidebarOpen && !isDesktop && (
+        <div
+          className={sidebarStyles.backdrop}
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Collapsible sidebar (desktop column) / off-canvas drawer (mobile) */}
       <aside
         className={`${sidebarStyles.sidebar} ${sidebarOpen ? sidebarStyles.sidebarOpen : sidebarStyles.sidebarClosed}`}
       >

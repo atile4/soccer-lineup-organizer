@@ -1,14 +1,23 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { ChevronLeft, X } from "lucide-react";
 import { playerSidebarStyles } from "./PlayerSidebar.styles";
 
 import { PlayerList } from "./PlayerList";
 import { useLineup } from "@/context/LineupContext";
 
-export const PlayerSidebar = () => {
-  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+interface PlayerSidebarProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  isDesktop: boolean;
+}
+
+export const PlayerSidebar = ({
+  open: sidebarOpen,
+  onOpenChange: setSidebarOpen,
+  isDesktop,
+}: PlayerSidebarProps) => {
   const { benchAll } = useLineup();
 
   return (
@@ -24,7 +33,16 @@ export const PlayerSidebar = () => {
         </button>
       )}
 
-      {/* Collapsible Sidebar */}
+      {/* Backdrop — closes the drawer on tap (mobile only) */}
+      {sidebarOpen && !isDesktop && (
+        <div
+          className={playerSidebarStyles.backdrop}
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Collapsible sidebar (desktop column) / off-canvas drawer (mobile) */}
       <aside
         className={`${playerSidebarStyles.sidebar} ${
           sidebarOpen

@@ -47,10 +47,14 @@ export const Bench = () => {
                 <DraggablePlayer
                   key={player.id}
                   playerId={player.id}
+                  name={player.name}
+                  number={player.number}
+                  jerseyColor={currentTeam?.color}
+                  previewVariant="bench"
                   onClick={(e) =>
                     openPlayer(player, e.currentTarget, applyPlayerUpdate)
                   }
-                  className="rounded-lg bg-gray-100/80 py-1 hover:bg-gray-200 transition-colors"
+                  className="flex-shrink-0 rounded-lg bg-gray-100/80 py-1 px-1 hover:bg-gray-200 transition-colors"
                 >
                   <PlayerToken
                     name={player.name}

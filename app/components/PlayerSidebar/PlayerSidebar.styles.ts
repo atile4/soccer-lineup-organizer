@@ -1,15 +1,20 @@
 export const playerSidebarStyles = {
-  // Arrow button visible when sidebar is collapsed
+  // Arrow button visible when sidebar is collapsed (desktop only — mobile uses
+  // the toolbar toggle in page.tsx).
   openButton:
-    "fixed top-20 right-0 z-40 bg-[#fefcf3] border border-r-0 border-[#e8e0c8] rounded-l-lg p-2 shadow-md hover:bg-[#f5edd4] transition-colors",
+    "hidden lg:block fixed top-20 right-0 z-40 bg-[#fefcf3] border border-r-0 border-[#e8e0c8] rounded-l-lg p-2 shadow-md hover:bg-[#f5edd4] transition-colors",
   openButtonIcon: "h-5 w-5 text-gray-600",
 
-  // Collapsible <aside> — width toggles between sidebarOpen / sidebarClosed
-  // Height and spacing are controlled by the parent <main> in page.tsx
+  // Backdrop behind the mobile drawer (below lg only).
+  backdrop: "fixed inset-0 z-40 bg-black/40 lg:hidden",
+
+  // Below lg: off-canvas drawer sliding in from the right over a backdrop.
+  // At lg+: the original in-flow collapsible column (width toggles between
+  // sidebarOpen / sidebarClosed), rendering identically to before.
   sidebar:
-    "transition-all duration-300 ease-in-out overflow-hidden overflow-y-auto bg-[#fefcf3] border border-[#e8e0c8] rounded-l-lg shadow-sm flex-shrink-0 h-full",
-  sidebarOpen: "w-80",
-  sidebarClosed: "w-0",
+    "fixed inset-y-0 right-0 z-50 w-[85vw] max-w-sm rounded-l-lg shadow-xl transition-transform duration-300 ease-in-out overflow-hidden overflow-y-auto bg-[#fefcf3] border border-[#e8e0c8] lg:static lg:inset-auto lg:z-auto lg:h-full lg:max-w-none lg:shadow-sm lg:flex-shrink-0 lg:translate-x-0 lg:transition-[width]",
+  sidebarOpen: "translate-x-0 lg:w-80",
+  sidebarClosed: "translate-x-full lg:w-0",
 
   // Fixed-width wrapper — prevents content from reflowing during animation
   innerWrapper: "w-full min-w-72 p-4 flex h-full flex-col",

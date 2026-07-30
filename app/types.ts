@@ -71,12 +71,12 @@ export interface LineupState {
   positions: Position[];
 }
 
-export interface Lineup {
-  id: string;
-  game_id: string;
-  period: number;
-  formation: string | null;
-}
+// export interface Lineup {
+//   id: string;
+//   game_id: string;
+//   period: number;
+//   formation: string | null;
+// }
 
 // One row per player, per lineup. See supabase migration create_field_pos.sql.
 export interface FieldPosition {

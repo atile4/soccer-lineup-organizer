@@ -53,6 +53,10 @@ export const PlayerList = () => {
             <DraggablePlayer
               key={player.id}
               playerId={player.id}
+              name={player.name}
+              number={player.number}
+              jerseyColor={currentTeam?.color}
+              previewVariant="default"
               onClick={(e) =>
                 openPlayer(player, e.currentTarget, applyPlayerUpdate)
               }
