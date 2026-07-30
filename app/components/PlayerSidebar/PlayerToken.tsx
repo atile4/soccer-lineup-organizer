@@ -18,8 +18,8 @@ const SIZES: Record<
   { svg: string; name: string; gap: string }
 > = {
   default: {
-    svg: "w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16",
-    name: "text-xs sm:text-sm",
+    svg: "w-20 h-20 sm:w-14 sm:h-14 md:w-16 md:h-16",
+    name: "text-lg sm:text-sm",
     gap: "gap-1 sm:gap-2",
   },
   field: {
