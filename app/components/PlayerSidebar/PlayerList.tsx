@@ -16,8 +16,15 @@ import Modal from "../Modal";
 // The sidebar list shows only players that aren't yet placed for the active
 // lineup. Dropping a placed player back here removes them from the lineup.
 export const PlayerList = () => {
-  const { players, unplacedPlayers, unplace, applyPlayerUpdate, removePlayer, loading, addPlayer } =
-    useLineup();
+  const {
+    players,
+    unplacedPlayers,
+    unplace,
+    applyPlayerUpdate,
+    removePlayer,
+    loading,
+    addPlayer,
+  } = useLineup();
   const { openPlayer } = usePlayerInfo();
   const { currentTeam } = useTeam();
 
@@ -79,40 +86,34 @@ export const PlayerList = () => {
       }`}
     >
       <div className={playerSidebarStyles.playerListGrid}>
-        {loading ? (
-          Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className={playerSidebarStyles.playerListSkeleton} />
-          ))
-        ) : unplacedPlayers.length === 0 ? (
-          <p className={playerSidebarStyles.playerListEmptyMessage}>
-            All players are on the field or bench.
-          </p>
-        ) : (
-          unplacedPlayers.map((player) => (
-            <DraggablePlayer
-              key={player.id}
-              playerId={player.id}
-              name={player.name}
-              number={player.number}
-              jerseyColor={currentTeam?.color}
-              previewVariant="default"
-              onClick={(e) =>
-                openPlayer(
-                  player,
-                  e.currentTarget,
-                  applyPlayerUpdate,
-                  removePlayer,
-                )
-              }
-            >
-              <PlayerCard
+        {loading
+          ? Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className={playerSidebarStyles.playerListSkeleton} />
+            ))
+          : unplacedPlayers.map((player) => (
+              <DraggablePlayer
+                key={player.id}
+                playerId={player.id}
                 name={player.name}
                 number={player.number}
                 jerseyColor={currentTeam?.color}
-              />
-            </DraggablePlayer>
-          ))
-        )}
+                previewVariant="default"
+                onClick={(e) =>
+                  openPlayer(
+                    player,
+                    e.currentTarget,
+                    applyPlayerUpdate,
+                    removePlayer,
+                  )
+                }
+              >
+                <PlayerCard
+                  name={player.name}
+                  number={player.number}
+                  jerseyColor={currentTeam?.color}
+                />
+              </DraggablePlayer>
+            ))}
         <button
           type="button"
           className={playerSidebarStyles.playerListCreateButton}
@@ -120,18 +121,26 @@ export const PlayerList = () => {
           onClick={() => setShowCreateModal(true)}
         >
           <Plus className={playerSidebarStyles.playerListCreateIcon} />
-          <span className={playerSidebarStyles.playerListCreateLabel}>Create Player</span>
+          <span className={playerSidebarStyles.playerListCreateLabel}>
+            Create Player
+          </span>
         </button>
       </div>
 
       <Modal open={showCreateModal} onClose={closeCreateModal}>
-        <h2 className="text-lg font-bold text-gray-800 mb-4">Create Player</h2>
+        <h2 className={playerSidebarStyles.createModalTitle}>Create Player</h2>
         <form
-          onSubmit={(e) => { e.preventDefault(); handleCreate(); }}
-          className="space-y-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleCreate();
+          }}
+          className={playerSidebarStyles.createModalForm}
         >
           <div>
-            <label htmlFor="player-name" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="player-name"
+              className={playerSidebarStyles.createModalLabel}
+            >
               Name
             </label>
             <input
@@ -139,14 +148,19 @@ export const PlayerList = () => {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#318e2a]"
+              className={playerSidebarStyles.createModalInput}
               placeholder="Player name"
               autoFocus
             />
-            {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+            {error && (
+              <p className={playerSidebarStyles.createModalError}>{error}</p>
+            )}
           </div>
           <div>
-            <label htmlFor="player-number" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="player-number"
+              className={playerSidebarStyles.createModalLabel}
+            >
               Number
             </label>
             <input
@@ -157,20 +171,20 @@ export const PlayerList = () => {
               value={number}
               onChange={(e) => setNumber(e.target.value)}
               placeholder={String(nextNumber)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#318e2a]"
+              className={playerSidebarStyles.createModalInput}
             />
           </div>
-          <div className="flex justify-end gap-2">
+          <div className={playerSidebarStyles.createModalActions}>
             <button
               type="button"
               onClick={closeCreateModal}
-              className="rounded-md px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+              className={playerSidebarStyles.createModalCancelButton}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="rounded-md bg-[#318e2a] px-4 py-2 text-sm font-medium text-white hover:bg-[#2d7b26] transition-colors"
+              className={playerSidebarStyles.createModalSubmitButton}
             >
               Create
             </button>
