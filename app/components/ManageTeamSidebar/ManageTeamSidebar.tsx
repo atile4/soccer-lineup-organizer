@@ -7,18 +7,21 @@ import {
   updateSplit,
   updateNotes,
   createGameWithLineups,
+  deleteGame,
 } from "@/services/games";
 
 // context
 import { useGame } from "@/context/GameContext";
 
 // types
-import { SplitBy } from "@/app/types";
+import { SplitBy, Game } from "@/app/types";
 
 // util
 import { getPeriodsToRemove } from "@/app/utils/period";
 import SplitChangeWarningModal from "./SplitChangeWarningModal";
 import CreateGameModal from "./CreateGameModal";
+import DeleteGameModal from "./DeleteGameModal";
+import GameSelectDropdown from "./GameSelectDropdown";
 
 interface ManageTeamSidebarProps {
   teamId: string | null;
@@ -53,6 +56,8 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
 
   const [showCreateGameModal, setShowCreateGameModal] = useState(false);
   const [creatingGame, setCreatingGame] = useState(false);
+  const [gameToDelete, setGameToDelete] = useState<Game | null>(null);
+  const [deletingGame, setDeletingGame] = useState(false);
   const [savingNotes, setSavingNotes] = useState(false);
   const [toast, setToast] = useState<ToastState | null>(null);
 
@@ -189,6 +194,23 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
     }
   };
 
+  // Delete Game Logic
+  const handleConfirmDeleteGame = async () => {
+    if (!gameToDelete) return;
+    setDeletingGame(true);
+    try {
+      await deleteGame(gameToDelete.id);
+      await refreshGameData();
+      showToast(`"${gameToDelete.name}" deleted`);
+      setGameToDelete(null);
+    } catch (err) {
+      console.error("Failed to delete game:", err);
+      showToast("Couldn't delete the game. Try again.", "error");
+    } finally {
+      setDeletingGame(false);
+    }
+  };
+
   // --- Save Notes ---
   const handleSaveNotes = async () => {
     if (!currentGame || !notesDirty) return;
@@ -246,24 +268,12 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
           </div>
           {/* Game Selection */}
           <div className={sidebarStyles.fieldGroup}>
-            <div className={sidebarStyles.selectWrapper}>
-              <select
-                className={sidebarStyles.selectInput}
-                value={currentGame?.id ?? ""}
-                aria-label="Select game"
-                onChange={(e) => switchGame(e.target.value)}
-              >
-                {games.map((g) => (
-                  <option key={g.id} value={g.id}>
-                    {g.name}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown
-                className={sidebarStyles.customArrowIcon}
-                aria-hidden="true"
-              />
-            </div>
+            <GameSelectDropdown
+              games={games}
+              currentGameId={currentGame?.id ?? null}
+              onSelect={switchGame}
+              onRequestDelete={setGameToDelete}
+            />
 
             {/* Create Game button — opens CreateGameModal, disabled with no team selected */}
             <button
@@ -361,6 +371,17 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
         onClose={() => setShowCreateGameModal(false)}
         onCreate={handleCreateGame}
         creating={creatingGame}
+      />
+
+      {/* Delete Game confirmation */}
+      <DeleteGameModal
+        open={gameToDelete !== null}
+        gameName={gameToDelete?.name ?? ""}
+        deleting={deletingGame}
+        onConfirm={handleConfirmDeleteGame}
+        onCancel={() => {
+          if (!deletingGame) setGameToDelete(null);
+        }}
       />
 
       {/* Toast — shared by Create Game and Save Notes, styled per variant via TOAST_VARIANT_STYLES */}
