@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Plus } from "lucide-react";
 import { useDrop } from "react-dnd";
 import PlayerCard from "./PlayerCard";
@@ -9,14 +10,55 @@ import { ItemTypes, PlayerDragItem } from "../dnd/itemTypes";
 import { useLineup } from "@/context/LineupContext";
 import { usePlayerInfo } from "@/context/PlayerInfoContext";
 import { useTeam } from "@/context/TeamContext";
+import { createPlayer } from "@/services/players";
+import Modal from "../Modal";
 
 // The sidebar list shows only players that aren't yet placed for the active
 // lineup. Dropping a placed player back here removes them from the lineup.
 export const PlayerList = () => {
-  const { unplacedPlayers, unplace, applyPlayerUpdate, removePlayer, loading } =
+  const { players, unplacedPlayers, unplace, applyPlayerUpdate, removePlayer, loading, addPlayer } =
     useLineup();
   const { openPlayer } = usePlayerInfo();
   const { currentTeam } = useTeam();
+
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [name, setName] = useState("");
+  const [number, setNumber] = useState("");
+  const [error, setError] = useState("");
+
+  const nextNumber = Math.max(...players.map((p) => p.number), 0) + 1;
+
+  const closeCreateModal = () => {
+    setShowCreateModal(false);
+    setName("");
+    setNumber("");
+    setError("");
+  };
+
+  const handleCreate = async () => {
+    const trimmed = name.trim();
+    if (!trimmed) {
+      setError("Name is required");
+      return;
+    }
+    const parsedNumber = number === "" ? nextNumber : Number(number);
+    if (!Number.isInteger(parsedNumber) || parsedNumber < 0) {
+      setError("Number must be a valid whole number");
+      return;
+    }
+    setError("");
+    try {
+      const player = await createPlayer(currentTeam!.id, {
+        name: trimmed,
+        number: parsedNumber,
+        position: "",
+      });
+      addPlayer(player);
+      closeCreateModal();
+    } catch {
+      setError("Failed to create player");
+    }
+  };
 
   const [{ isOver }, drop] = useDrop(
     () => ({
@@ -75,11 +117,66 @@ export const PlayerList = () => {
           type="button"
           className={playerSidebarStyles.playerListCreateButton}
           aria-label="Create player"
+          onClick={() => setShowCreateModal(true)}
         >
           <Plus className={playerSidebarStyles.playerListCreateIcon} />
           <span className={playerSidebarStyles.playerListCreateLabel}>Create Player</span>
         </button>
       </div>
+
+      <Modal open={showCreateModal} onClose={closeCreateModal}>
+        <h2 className="text-lg font-bold text-gray-800 mb-4">Create Player</h2>
+        <form
+          onSubmit={(e) => { e.preventDefault(); handleCreate(); }}
+          className="space-y-4"
+        >
+          <div>
+            <label htmlFor="player-name" className="block text-sm font-medium text-gray-700 mb-1">
+              Name
+            </label>
+            <input
+              id="player-name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#318e2a]"
+              placeholder="Player name"
+              autoFocus
+            />
+            {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+          </div>
+          <div>
+            <label htmlFor="player-number" className="block text-sm font-medium text-gray-700 mb-1">
+              Number
+            </label>
+            <input
+              id="player-number"
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={number}
+              onChange={(e) => setNumber(e.target.value)}
+              placeholder={String(nextNumber)}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#318e2a]"
+            />
+          </div>
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={closeCreateModal}
+              className="rounded-md px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="rounded-md bg-[#318e2a] px-4 py-2 text-sm font-medium text-white hover:bg-[#2d7b26] transition-colors"
+            >
+              Create
+            </button>
+          </div>
+        </form>
+      </Modal>
     </aside>
   );
 };

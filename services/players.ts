@@ -17,6 +17,20 @@ export type NewPlayer = {
   position: string;
 };
 
+export async function createPlayer(
+  teamId: string,
+  player: NewPlayer,
+): Promise<Player> {
+  const { data, error } = await supabase
+    .from("players")
+    .insert({ ...player, team_id: teamId })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data as Player;
+}
+
 export async function createPlayers(
   teamId: string,
   players: NewPlayer[],

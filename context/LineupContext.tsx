@@ -51,6 +51,10 @@ interface LineupContextValue {
   // disappear from every surface. Persistence is handled by the caller
   // (the info popover deletes the DB row before calling this).
   removePlayer: (playerId: string) => void;
+
+  // Add a newly-created player to the roster. The caller is responsible
+  // for persisting to the DB first; this only updates local state.
+  addPlayer: (player: Player) => void;
 }
 
 const LineupContext = createContext<LineupContextValue | undefined>(undefined);
@@ -189,6 +193,10 @@ export function LineupProvider({
     });
   }, []);
 
+  const addPlayer = useCallback((player: Player) => {
+    setPlayers((prev) => [...prev, player]);
+  }, []);
+
   const { unplacedPlayers, benchedPlayers, fieldedPlayers } = useMemo(() => {
     const unplaced: Player[] = [];
     const benched: Player[] = [];
@@ -219,6 +227,7 @@ export function LineupProvider({
     benchAll,
     applyPlayerUpdate,
     removePlayer,
+    addPlayer,
   };
 
   return (
