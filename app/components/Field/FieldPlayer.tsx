@@ -19,7 +19,7 @@ interface FieldPlayerProps {
 export function FieldPlayer({ player, x, y }: FieldPlayerProps) {
   const { openPlayer } = usePlayerInfo();
   const { currentTeam } = useTeam();
-  const { applyPlayerUpdate } = useLineup();
+  const { applyPlayerUpdate, removePlayer } = useLineup();
   return (
     <DraggablePlayer
       playerId={player.id}
@@ -29,7 +29,9 @@ export function FieldPlayer({ player, x, y }: FieldPlayerProps) {
       previewVariant="field"
       className="absolute z-10 -translate-x-1/2 -translate-y-1/2"
       style={{ left: `${x}%`, top: `${y}%` }}
-      onClick={(e) => openPlayer(player, e.currentTarget, applyPlayerUpdate)}
+      onClick={(e) =>
+        openPlayer(player, e.currentTarget, applyPlayerUpdate, removePlayer)
+      }
     >
       <PlayerToken
         name={player.name}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
 interface ModalProps {
@@ -22,7 +23,10 @@ export default function Modal({ open, onClose, children }: ModalProps) {
 
   if (!open) return null;
 
-  return (
+  // Render at the body level so fixed positioning covers the whole viewport
+  // regardless of where the modal is mounted (sidebars use overflow + transform,
+  // which otherwise clip/contain fixed descendants).
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
       onClick={onClose}
@@ -43,6 +47,7 @@ export default function Modal({ open, onClose, children }: ModalProps) {
         </button>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

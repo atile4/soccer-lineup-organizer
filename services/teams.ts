@@ -56,6 +56,12 @@ export async function createTeamWithDefaultGame(
   return team;
 }
 
+export async function deleteTeam(teamId: string) {
+  // Players and games cascade-delete via their team_id FK.
+  const { error } = await supabase.from("teams").delete().eq("id", teamId);
+  if (error) throw error;
+}
+
 export async function setCurrentTeam(userId: string, teamId: string) {
   const { data, error } = await supabase
     .from("profiles")

@@ -1,17 +1,20 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { Player } from "@/app/types";
 import { playerInfoPopoverStyles as s } from "./PlayerPopover.styles";
 import { useTeam } from "@/context/TeamContext";
-import { updatePlayer } from "@/services/players";
+import { useLineup } from "@/context/LineupContext";
+import { deletePlayer, updatePlayer } from "@/services/players";
+import DeletePlayerModal from "./DeletePlayerModal";
 
 interface PlayerInfoPopoverProps {
   player: Player;
   anchor: HTMLElement;
   onClose: () => void;
   onPlayerUpdate: (updated: Player) => void;
+  onPlayerDelete: (playerId: string) => void;
 }
 
 const GAP = 8; // space between the anchor and the popover
@@ -24,8 +27,10 @@ export default function PlayerInfoPopover({
   anchor,
   onClose,
   onPlayerUpdate,
+  onPlayerDelete,
 }: PlayerInfoPopoverProps) {
   const { currentTeam } = useTeam();
+  const { placements } = useLineup();
   const popoverRef = useRef<HTMLDivElement | null>(null);
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(
     null,
@@ -37,6 +42,20 @@ export default function PlayerInfoPopover({
   const [positionDraft, setPositionDraft] = useState(player.position);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // --- delete state ---
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  // Where this player currently sits in the active lineup — shown in the
+  // delete confirmation so the coach knows what they're removing.
+  const placement = placements[player.id];
+  const lineupStatus = !placement
+    ? "Not in lineup"
+    : placement.bench
+      ? "On the bench"
+      : "On the field";
 
   // If a different player gets passed in while the popover is still open
   // (e.g. clicking straight from one player to another), reset local
@@ -76,6 +95,9 @@ export default function PlayerInfoPopover({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
+        // The delete modal owns Escape while it's open — let it dismiss
+        // itself rather than tearing down the whole popover behind it.
+        if (confirmingDelete) return;
         if (editingField) {
           setEditingField(null);
           setNameDraft(player.name);
@@ -87,7 +109,7 @@ export default function PlayerInfoPopover({
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [onClose, editingField, player.name, player.position]);
+  }, [onClose, editingField, confirmingDelete, player.name, player.position]);
 
   const handleSave = async (field: EditableField) => {
     const draft = field === "name" ? nameDraft.trim() : positionDraft.trim();
@@ -131,9 +153,25 @@ export default function PlayerInfoPopover({
     }
   };
 
+  const handleConfirmDelete = async () => {
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      await deletePlayer(player.id);
+      // Drops the player from the roster and closes the popover. Because this
+      // unmounts us, there's no state to reset afterwards.
+      onPlayerDelete(player.id);
+    } catch (err) {
+      console.error("Failed to delete player:", err);
+      setDeleteError("Couldn't delete. Try again.");
+      setDeleting(false);
+    }
+  };
+
   return (
-    // Transparent full-screen layer to catch outside clicks.
-    <div className={s.overlay} onClick={onClose}>
+    <>
+      {/* Transparent full-screen layer to catch outside clicks. */}
+      <div className={s.overlay} onClick={onClose}>
       <div
         ref={popoverRef}
         role="dialog"
@@ -228,7 +266,35 @@ export default function PlayerInfoPopover({
             </svg>
           </div>
         </div>
+
+        {/* Delete action — bottom-right corner */}
+        <button
+          type="button"
+          className={s.deleteButton}
+          aria-label="Delete player"
+          onClick={() => {
+            setDeleteError(null);
+            setConfirmingDelete(true);
+          }}
+        >
+          <Trash2 size={16} />
+        </button>
+        </div>
       </div>
-    </div>
+
+      <DeletePlayerModal
+        open={confirmingDelete}
+        player={player}
+        status={lineupStatus}
+        deleting={deleting}
+        error={deleteError}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => {
+          if (deleting) return; // don't bail out mid-delete
+          setConfirmingDelete(false);
+          setDeleteError(null);
+        }}
+      />
+    </>
   );
 }

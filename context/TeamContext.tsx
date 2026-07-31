@@ -12,6 +12,7 @@ import { useAuth } from "./AuthContext";
 import {
   fetchTeamsWithPlayerCount,
   setCurrentTeam as persistCurrentTeam,
+  deleteTeam as deleteTeamService,
 } from "@/services/teams";
 import { fetchCurrentIDs } from "@/services/profiles";
 import { TeamWithPlayerCount } from "@/app/types";
@@ -22,6 +23,8 @@ interface TeamContextValue {
   currentTeam: TeamWithPlayerCount | null;
   loading: boolean;
   switchTeam: (teamId: string) => Promise<void>;
+  deleteTeam: (teamId: string) => Promise<void>;
+  refreshTeams: () => Promise<void>;
 }
 
 const TeamContext = createContext<TeamContextValue | undefined>(undefined);
@@ -34,7 +37,7 @@ export function TeamProvider({ children }: { children: ReactNode }) {
   const [currentTeamId, setCurrentTeamId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const refreshTeams = useCallback(async () => {
     if (!userId) {
       setTeams([]);
       setCurrentTeamId(null);
@@ -42,25 +45,30 @@ export function TeamProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    let cancelled = false;
     setLoading(true);
-
-    Promise.all([fetchTeamsWithPlayerCount(userId), fetchCurrentIDs(userId)])
-      .then(([teamList, current]) => {
-        if (cancelled) return;
-        setTeams(teamList);
-        const valid = teamList.find((t) => t.id === current.current_team_id);
-        setCurrentTeamId(valid?.id ?? teamList[0]?.id ?? null);
-      })
-      .catch((err) => console.error("Failed to load teams:", err))
-      .finally(() => {
-        if (!cancelled) setLoading(false);
+    try {
+      const [teamList, current] = await Promise.all([
+        fetchTeamsWithPlayerCount(userId),
+        fetchCurrentIDs(userId),
+      ]);
+      setTeams(teamList);
+      setCurrentTeamId((prev) => {
+        const persisted = teamList.find((t) => t.id === current.current_team_id);
+        const kept = teamList.find((t) => t.id === prev);
+        // Prefer the persisted selection, then keep a still-valid in-session
+        // selection, otherwise fall back to the first team.
+        return persisted?.id ?? kept?.id ?? teamList[0]?.id ?? null;
       });
-
-    return () => {
-      cancelled = true;
-    };
+    } catch (err) {
+      console.error("Failed to load teams:", err);
+    } finally {
+      setLoading(false);
+    }
   }, [userId]);
+
+  useEffect(() => {
+    refreshTeams();
+  }, [refreshTeams]);
 
   const switchTeam = useCallback(
     async (teamId: string) => {
@@ -77,11 +85,29 @@ export function TeamProvider({ children }: { children: ReactNode }) {
     [userId, currentTeamId],
   );
 
+  const deleteTeam = useCallback(
+    async (teamId: string) => {
+      // Guard: the active team must never be deleted.
+      if (teamId === currentTeamId) return;
+      await deleteTeamService(teamId);
+      setTeams((prev) => prev.filter((t) => t.id !== teamId));
+    },
+    [currentTeamId],
+  );
+
   const currentTeam = teams.find((t) => t.id === currentTeamId) ?? null;
 
   return (
     <TeamContext.Provider
-      value={{ teams, currentTeamId, currentTeam, loading, switchTeam }}
+      value={{
+        teams,
+        currentTeamId,
+        currentTeam,
+        loading,
+        switchTeam,
+        deleteTeam,
+        refreshTeams,
+      }}
     >
       {children}
     </TeamContext.Provider>

@@ -27,7 +27,27 @@ export const playerSidebarStyles = {
   closeButtonIcon: "h-5 w-5 text-gray-500",
 
   // Player List
-playerList: "w-full flex-1 min-h-0 bg-[#fefcf3] px-4 pt-2 pb-0 flex flex-col overflow-y-auto max-h-[87%]",
+  playerListAside: "w-full flex-1 min-h-0 bg-[#fefcf3] px-4 pt-2 pb-0 flex flex-col overflow-y-auto max-h-[87%]",
+  playerListAsideIsOver: "ring-2 ring-[#318e2a] rounded-lg",
+  playerListGrid: "grid grid-cols-2 gap-3",
+  playerListSkeleton: "aspect-square rounded-2xl bg-gray-100 animate-pulse",
+  playerListCreateButton:
+    "bg-gray-100 rounded-2xl flex flex-col items-center justify-center gap-1 aspect-square hover:bg-gray-200 transition-colors",
+  playerListCreateIcon: "h-8 w-8 text-gray-400",
+  playerListCreateLabel: "text-xs text-gray-400 font-medium",
+
+  // Create Player Modal
+  createModalTitle: "text-lg font-bold text-gray-800 mb-4",
+  createModalForm: "space-y-4",
+  createModalLabel: "block text-sm font-medium text-gray-700 mb-1",
+  createModalInput:
+    "w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#318e2a]",
+  createModalError: "text-sm text-red-500 mt-1",
+  createModalActions: "flex justify-end gap-2",
+  createModalCancelButton:
+    "rounded-md px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors",
+  createModalSubmitButton:
+    "rounded-md bg-[#318e2a] px-4 py-2 text-sm font-medium text-white hover:bg-[#2d7b26] transition-colors",
 
   // Bench All Players Button
   sendAllButton: "mt-auto mb-1 w-2/3 mx-auto rounded-md bg-[#318e2a] px-4 py-1 text-white font-semibold shadow-sm hover:bg-[#2d7b26] transition-colors"

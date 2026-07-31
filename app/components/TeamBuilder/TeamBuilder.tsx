@@ -1,17 +1,18 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, Users, UserPlus, X } from "lucide-react";
 import { teamBuilderStyles as s, themeVars } from "./TeamBuilder.styles";
 import { Division, Gender } from "@/app/types";
 import { useAuth } from "@/context/AuthContext";
+import { useTeam } from "@/context/TeamContext";
 import { createTeamWithDefaultGame } from "@/services/teams";
 import { createPlayers, NewPlayer } from "@/services/players";
+import { useRouter } from "next/navigation";
 
 const GENDER_OPTIONS: Gender[] = ["Boys", "Girls", "Coed"];
 
-// Matches the swatches from the original design. Must be valid 6-digit
-// hex, since the DB's teams_color_check constraint will reject anything else.
+// Matches the swatches from the original design. Must be valid 6-digit hex
 const COLOR_SWATCHES = [
   "#dc2626",
   "#f97316",
@@ -40,16 +41,15 @@ export const DIVISIONS: Division[] = [
 // Only exists in this component's state until "Save team" is clicked.
 type DraftPlayer = {
   draftId: string; // client-side only, not a DB id
-  firstName: string;
-  lastName: string;
+  name: string;
   number: string; // kept as string while editing, parsed to int on save
   position: string;
 };
 
 export default function TeamBuilder() {
   const { session } = useAuth();
+  const { refreshTeams } = useTeam();
 
-  const [theme, setTheme] = useState<"notebook" | "turf">("notebook");
   const [teamName, setTeamName] = useState("");
   const [division, setDivision] = useState<Division>("U-12");
   const [gender, setGender] = useState<Gender>("Coed");
@@ -57,13 +57,28 @@ export default function TeamBuilder() {
   const [players, setPlayers] = useState<DraftPlayer[]>([]);
 
   // Add-player form fields
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [playerName, setPlayerName] = useState("");
   const [number, setNumber] = useState("");
   const [position, setPosition] = useState("");
 
+  const playerNameRef = useRef<HTMLInputElement>(null);
+
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+
+  const router = useRouter();
+
+  const isDirty =
+    teamName.trim() !== "" || color !== "#2563eb" || players.length > 0;
+
+  useEffect(() => {
+    if (!isDirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [isDirty]);
 
   const showToast = (text: string) => {
     setToast(text);
@@ -91,7 +106,7 @@ export default function TeamBuilder() {
 
   const handleAddPlayer = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!firstName.trim() && !lastName.trim()) {
+    if (!playerName.trim()) {
       showToast("Enter a player name first");
       return;
     }
@@ -99,16 +114,15 @@ export default function TeamBuilder() {
       ...prev,
       {
         draftId: crypto.randomUUID(),
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
+        name: playerName.trim(),
         number: number.trim(),
         position: position.trim(),
       },
     ]);
-    setFirstName("");
-    setLastName("");
+    setPlayerName("");
     setNumber("");
     setPosition("");
+    playerNameRef.current?.focus();
   };
 
   const handleRemovePlayer = (draftId: string) => {
@@ -137,7 +151,7 @@ export default function TeamBuilder() {
 
       if (players.length > 0) {
         const newPlayers: NewPlayer[] = players.map((p) => ({
-          name: `${p.firstName} ${p.lastName}`.trim() || "Unnamed player",
+          name: p.name || "Unnamed player",
           number: p.number ? parseInt(p.number, 10) : 0,
           position: p.position,
         }));
@@ -147,16 +161,20 @@ export default function TeamBuilder() {
       showToast(`Saved "${team.name}" · ${players.length} players`);
       setTeamName("");
       setPlayers([]);
+      // Pull the new team into shared state so the header/switcher reflect it
+      // once we navigate back to "/".
+      await refreshTeams();
     } catch (err) {
       console.error("Failed to save team:", err);
       showToast("Something went wrong saving your team. Try again.");
     } finally {
       setSaving(false);
+      router.push("/");
     }
   };
 
   return (
-    <div className={s.page} style={themeVars[theme] as React.CSSProperties}>
+    <div className={s.page} style={themeVars.notebook as React.CSSProperties}>
       <div className={s.container}>
         {/* Heading */}
         <div className={s.headingRow}>
@@ -164,15 +182,6 @@ export default function TeamBuilder() {
             <h2 className={s.title}>Team Builder</h2>
           </div>
           <div className={s.headingActions}>
-            <button
-              type="button"
-              className={s.themeToggle}
-              onClick={() =>
-                setTheme((t) => (t === "notebook" ? "turf" : "notebook"))
-              }
-            >
-              {theme === "notebook" ? "Notebook" : "Turf"}
-            </button>
             <span className={s.playerCountLabel}>{players.length} players</span>
             <button
               type="button"
@@ -293,33 +302,20 @@ export default function TeamBuilder() {
             {/* Add player */}
             <div className={s.addCard}>
               <h3 className={s.addCardTitle}>Add players</h3>
-              <p className={s.addCardHint}>
-                First &amp; last name required. Number and position are
-                optional.
-              </p>
               <form onSubmit={handleAddPlayer} className={s.addForm}>
                 <div className={s.formField}>
-                  <label className={s.formLabel}>First name</label>
+                  <label className={s.formLabel}>Name</label>
                   <input
+                    ref={playerNameRef}
                     type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="First"
+                    value={playerName}
+                    onChange={(e) => setPlayerName(e.target.value)}
+                    placeholder="e.g. Alex Morgan"
                     className={s.formInput}
                   />
                 </div>
                 <div className={s.formField}>
-                  <label className={s.formLabel}>Last name</label>
-                  <input
-                    type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Last"
-                    className={s.formInput}
-                  />
-                </div>
-                <div className={s.formField}>
-                  <label className={s.formLabel}>#</label>
+                  <label className={s.formLabel}># (optional)</label>
                   <input
                     type="text"
                     inputMode="numeric"
@@ -334,7 +330,7 @@ export default function TeamBuilder() {
                   />
                 </div>
                 <div className={s.formField}>
-                  <label className={s.formLabel}>Position</label>
+                  <label className={s.formLabel}>Position (optional)</label>
                   <input
                     type="text"
                     value={position}
@@ -380,8 +376,7 @@ export default function TeamBuilder() {
                   {players.map((p) => {
                     const isDupe =
                       p.number && duplicateNumbers.includes(p.number);
-                    const name =
-                      `${p.firstName} ${p.lastName}`.trim() || "Unnamed player";
+                    const name = p.name || "Unnamed player";
                     return (
                       <li
                         key={p.draftId}

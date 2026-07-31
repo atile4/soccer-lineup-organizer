@@ -36,6 +36,20 @@ export const sidebarStyles = {
     "w-full appearance-none bg-[#fefcf3] px-3 py-2 pr-10 text-sm border border-[#e8e0c8] rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400 cursor-pointer",
   customArrowIcon:
     "pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500",
+
+  // Custom game dropdown (replaces the native <select> so each game can carry a
+  // delete button — currently selected game can't be deleted).
+  gameSelectButton:
+    "flex w-full items-center justify-between bg-[#fefcf3] px-3 py-2 text-sm border border-[#e8e0c8] rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400 cursor-pointer",
+  gameSelectButtonLabel: "truncate text-left text-gray-800",
+  gameSelectMenu:
+    "absolute left-0 right-0 top-full z-10 mt-1 max-h-60 overflow-y-auto rounded-lg border border-[#e8e0c8] bg-[#fefcf3] py-1 shadow-lg",
+  gameSelectOption:
+    "group flex items-center justify-between gap-2 px-3 py-2 text-sm hover:bg-[#f5edd4]",
+  gameSelectOptionActive: "bg-[#f5edd4] font-semibold",
+  gameSelectOptionLabel: "flex-1 truncate text-left text-gray-800",
+  gameSelectDeleteButton:
+    "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors",
   textArea:
     "w-full px-3 py-2 text-sm border border-gray-300 rounded-lg resize-y min-h-[80px] focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400",
 

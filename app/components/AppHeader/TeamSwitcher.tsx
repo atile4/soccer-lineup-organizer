@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Check } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ChevronDown, Check, Plus, Trash2 } from "lucide-react";
 import { teamSwitcherStyles as styles } from "./TeamSwitcher.styles";
 import { useTeam } from "@/context/TeamContext";
 import { TeamWithPlayerCount } from "@/app/types";
+import DeleteTeamWarningModal from "./DeleteTeamWarningModal";
 
 // One line of "division · gender · player count" text
 const teamMeta = (team: TeamWithPlayerCount) =>
@@ -17,8 +19,13 @@ const teamMeta = (team: TeamWithPlayerCount) =>
     .join(" · ");
 
 export default function TeamSwitcher() {
-  const { teams, currentTeamId, loading, switchTeam } = useTeam();
+  const { teams, currentTeamId, loading, switchTeam, deleteTeam } = useTeam();
   const [isOpen, setIsOpen] = useState(false);
+  const [teamToDelete, setTeamToDelete] = useState<TeamWithPlayerCount | null>(
+    null,
+  );
+  const [deleting, setDeleting] = useState(false);
+  const router = useRouter();
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -42,14 +49,52 @@ export default function TeamSwitcher() {
     }
   }, [isOpen]);
 
-  if (loading || teams.length === 0) return null;
-
-  const currentTeam = teams.find((t) => t.id === currentTeamId) ?? teams[0];
+  if (loading) return null;
 
   const handleSelect = (teamId: string) => {
     switchTeam(teamId);
     setIsOpen(false);
   };
+
+  const handleCreateTeam = () => {
+    setIsOpen(false);
+    router.push("/create");
+  };
+
+  const handleRequestDelete = (team: TeamWithPlayerCount) => {
+    setTeamToDelete(team);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!teamToDelete) return;
+    setDeleting(true);
+    try {
+      await deleteTeam(teamToDelete.id);
+      setTeamToDelete(null);
+    } catch (err) {
+      console.error("Failed to delete team:", err);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  // No teams yet — point the user straight at team creation
+  if (teams.length === 0) {
+    return (
+      <button
+        type="button"
+        className={styles.emptyTrigger}
+        onClick={handleCreateTeam}
+      >
+        <span className={styles.emptyIconWrap} aria-hidden="true">
+          <Plus className={styles.emptyIcon} />
+        </span>
+        <span className={styles.emptyText}>Create your first team</span>
+      </button>
+    );
+  }
+
+  const currentTeam = teams.find((t) => t.id === currentTeamId) ?? teams[0];
 
   return (
     <div className={styles.wrapper}>
@@ -83,31 +128,68 @@ export default function TeamSwitcher() {
           {teams.map((team) => {
             const isSelected = team.id === currentTeam.id;
             return (
-              <button
+              <div
                 key={team.id}
-                type="button"
-                role="option"
-                aria-selected={isSelected}
-                onClick={() => handleSelect(team.id)}
-                className={`${styles.option} ${isSelected ? styles.optionSelected : ""}`}
+                className={`${styles.optionRow} ${isSelected ? styles.optionRowSelected : ""}`}
               >
-                <span
-                  className={styles.swatch}
-                  style={{ backgroundColor: team.color }}
-                  aria-hidden="true"
-                />
-                <span className={styles.optionText}>
-                  <span className={styles.optionName}>{team.name}</span>
-                  <span className={styles.optionMeta}>{teamMeta(team)}</span>
-                </span>
-                {isSelected && (
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={isSelected}
+                  onClick={() => handleSelect(team.id)}
+                  className={styles.option}
+                >
+                  <span
+                    className={styles.swatch}
+                    style={{ backgroundColor: team.color }}
+                    aria-hidden="true"
+                  />
+                  <span className={styles.optionText}>
+                    <span className={styles.optionName}>{team.name}</span>
+                    <span className={styles.optionMeta}>{teamMeta(team)}</span>
+                  </span>
+                </button>
+                {isSelected ? (
                   <Check className={styles.checkIcon} aria-hidden="true" />
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => handleRequestDelete(team)}
+                    className={styles.deleteButton}
+                    aria-label={`Delete ${team.name}`}
+                    title={`Delete ${team.name}`}
+                  >
+                    <Trash2 className={styles.deleteIcon} aria-hidden="true" />
+                  </button>
                 )}
-              </button>
+              </div>
             );
           })}
+
+          {/* Create Team Button */}
+          <div className={styles.divider} />
+          <button
+            type="button"
+            onClick={handleCreateTeam}
+            className={styles.createOption}
+          >
+            <span className={styles.createIconWrap} aria-hidden="true">
+              <Plus className={styles.createIcon} />
+            </span>
+            <span className={styles.createText}>Create team</span>
+          </button>
         </div>
       )}
+
+      <DeleteTeamWarningModal
+        open={teamToDelete !== null}
+        team={teamToDelete}
+        deleting={deleting}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => {
+          if (!deleting) setTeamToDelete(null);
+        }}
+      />
     </div>
   );
 }

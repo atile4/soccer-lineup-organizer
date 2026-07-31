@@ -67,6 +67,12 @@ export async function updateSplit(
   return data as Lineup[];
 }
 
+// Deletes a game. Its lineups are removed via the ON DELETE CASCADE FK.
+export async function deleteGame(gameId: string): Promise<void> {
+  const { error } = await supabase.from("games").delete().eq("id", gameId);
+  if (error) throw error;
+}
+
 export async function updateNotes(
   gameId: string,
   notes: string,
