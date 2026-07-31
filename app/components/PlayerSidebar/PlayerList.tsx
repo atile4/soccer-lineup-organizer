@@ -31,6 +31,7 @@ export const PlayerList = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
+  const [position, setPosition] = useState("");
   const [error, setError] = useState("");
 
   const nextNumber = Math.max(...players.map((p) => p.number), 0) + 1;
@@ -39,6 +40,7 @@ export const PlayerList = () => {
     setShowCreateModal(false);
     setName("");
     setNumber("");
+    setPosition("");
     setError("");
   };
 
@@ -58,7 +60,7 @@ export const PlayerList = () => {
       const player = await createPlayer(currentTeam!.id, {
         name: trimmed,
         number: parsedNumber,
-        position: "",
+        position: position.trim(),
       });
       addPlayer(player);
       closeCreateModal();
@@ -172,6 +174,22 @@ export const PlayerList = () => {
               onChange={(e) => setNumber(e.target.value)}
               placeholder={String(nextNumber)}
               className={playerSidebarStyles.createModalInput}
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="player-position"
+              className={playerSidebarStyles.createModalLabel}
+            >
+              Position
+            </label>
+            <input
+              id="player-position"
+              type="text"
+              value={position}
+              onChange={(e) => setPosition(e.target.value)}
+              className={playerSidebarStyles.createModalInput}
+              placeholder="e.g FWD, DMF, LW"
             />
           </div>
           <div className={playerSidebarStyles.createModalActions}>
