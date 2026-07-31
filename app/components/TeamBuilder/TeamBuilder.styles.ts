@@ -1,21 +1,24 @@
 // Two color themes
 // Applied as CSS custom properties on the root wrapper, then referenced
 // by Tailwind's arbitrary-value syntax, e.g. bg-[var(--card)].
+// The notebook theme now aliases the global design tokens in globals.css
+// (--color-*) so TeamBuilder renders through the same palette as the rest
+// of the app. The turf theme is retained but unused.
 export const themeVars = {
   notebook: {
-    "--paper": "#fdf8e3",
-    "--ink": "#26312b",
-    "--muted": "#6f776b",
-    "--line": "#e6dcb6",
-    "--field-bg": "#fffdf6",
-    "--card": "#fffdf6",
-    "--green": "#177e3e",
-    "--green-d": "#0f5c2c",
-    "--send": "#2f8a29",
-    "--send-d": "#2a7a25",
-    "--warn": "#dc2626",
-    "--warn-bg": "#fdecec",
-    "--chip": "#eef1e9",
+    "--paper": "var(--color-paper)",
+    "--ink": "var(--color-ink)",
+    "--muted": "var(--color-muted)",
+    "--line": "var(--color-border)",
+    "--field-bg": "var(--color-surface)",
+    "--card": "var(--color-surface)",
+    "--green": "var(--color-accent)",
+    "--green-d": "var(--color-accent-hover)",
+    "--send": "var(--color-accent)",
+    "--send-d": "var(--color-accent-hover)",
+    "--warn": "var(--color-danger)",
+    "--warn-bg": "var(--color-danger-fill)",
+    "--chip": "var(--color-surface-subtle)",
   },
   turf: {
     "--paper": "#0a2e18",

@@ -2,6 +2,123 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ------------------------------------------------------------------ */
+/* Design tokens — single source of truth.                             */
+/* Tailwind theme keys (tailwind.config.js) reference these variables, */
+/* so utilities like bg-paper / text-ink / border-border / shadow-sm   */
+/* / rounded-lg resolve through them.                                  */
+/* ------------------------------------------------------------------ */
+:root {
+  /* Typography — Inter via next/font (set on body via --font-inter).
+     Hierarchy is weight + tracking + size; prefer these over raw
+     size-only utilities. */
+  --text-display: 30px;
+  --text-display-lh: 1.15;
+  --text-display-w: 700;
+  --text-display-ls: -0.02em;
+
+  --text-h1: 24px;
+  --text-h1-lh: 1.2;
+  --text-h1-w: 700;
+  --text-h1-ls: -0.02em;
+
+  --text-h2: 20px;
+  --text-h2-lh: 1.3;
+  --text-h2-w: 600;
+  --text-h2-ls: -0.015em;
+
+  --text-h3: 16px;
+  --text-h3-lh: 1.4;
+  --text-h3-w: 600;
+  --text-h3-ls: -0.01em;
+
+  --text-body: 15px;
+  --text-body-lh: 1.55;
+  --text-body-w: 400;
+  --text-body-ls: 0;
+
+  --text-body-sm: 14px;
+  --text-body-sm-lh: 1.5;
+  --text-body-sm-w: 400;
+  --text-body-sm-ls: 0;
+
+  --text-label: 13px;
+  --text-label-lh: 1.4;
+  --text-label-w: 500;
+  --text-label-ls: 0;
+
+  --text-caption: 12px;
+  --text-caption-lh: 1.4;
+  --text-caption-w: 500;
+  --text-caption-ls: 0;
+
+  --text-overline: 12px;
+  --text-overline-lh: 1.2;
+  --text-overline-w: 600;
+  --text-overline-ls: 0.06em;
+
+  /* Neutrals — warm-neutral ramp. paper is the app background. */
+  --color-paper: #faf6ec;
+  --color-surface: #ffffff;
+  --color-surface-subtle: #f5f1e6;
+  --color-border: #e7e1d2;
+  --color-border-strong: #d8d0bc;
+  --color-ink: #1c1b18;
+  --color-ink-2: #45443f;
+  --color-muted: #78766e;
+  --color-faint: #a8a69c;
+
+  /* Accent green — white text on accent = 5.0:1, passes WCAG AA. */
+  --color-accent: #15803d;
+  --color-accent-hover: #166534;
+  --color-accent-subtle: #ecfdf3;
+  --color-accent-border: #a7e8c0;
+
+  /* Semantic — AA text on light fills. Success reuses the accent green. */
+  --color-danger: #b91c1c;
+  --color-danger-fill: #fef2f2;
+  --color-danger-border: #fecaca;
+
+  --color-warning: #b45309;
+  --color-warning-fill: #fffbeb;
+  --color-warning-border: #fde68a;
+
+  /* Shadows — warm-tinted, subtle. */
+  --shadow-xs: 0 1px 2px rgba(28, 27, 24, 0.05);
+  --shadow-sm:
+    0 1px 3px rgba(28, 27, 24, 0.06),
+    0 1px 2px rgba(28, 27, 24, 0.04);
+  --shadow-md: 0 4px 12px rgba(28, 27, 24, 0.08);
+  --shadow-lg: 0 12px 32px rgba(28, 27, 24, 0.12);
+
+  /* Radius. */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* ------------------------------------------------------------------ */
+  /* Legacy aliases — keep var(--paper) / var(--ink) / etc. working.    */
+  /* Deprecated: use the --color-* tokens (or the mapped Tailwind       */
+  /* utilities) in new code. The TeamBuilder notebook theme repoints     */
+  /* onto these so it renders through the same palette.                  */
+  /* ------------------------------------------------------------------ */
+  --paper: var(--color-paper);
+  --ink: var(--color-ink);
+  --muted: var(--color-muted);
+  --line: var(--color-border);
+  --field-bg: var(--color-surface);
+  --card: var(--color-surface);
+  --green: var(--color-accent);
+  --green-d: var(--color-accent-hover);
+  --send: var(--color-accent);
+  --send-d: var(--color-accent-hover);
+  --warn: var(--color-danger);
+  --warn-bg: var(--color-danger-fill);
+  --chip: var(--color-surface-subtle);
+}
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -15,7 +132,32 @@ body {
 }
 
 body {
-  background: #fdf8e3;
+  background: var(--color-paper);
+  color: var(--color-ink-2);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer base {
+  /* Headings sit at near-black ink rather than body text color. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--color-ink);
+  }
+}
+
+@layer components {
+  /* Overline is defined in the type scale (size/weight/tracking); the
+     uppercase transform is applied here. */
+  .text-overline {
+    text-transform: uppercase;
+  }
 }
 
 /* Lock the viewport to a single non-scrolling screen only on desktop (lg+).

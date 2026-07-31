@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Inter } from "next/font/google";
+import { Caveat, Inter } from "next/font/google";
 
 // context providers
 import { AuthProvider } from "@/context/AuthContext";
@@ -15,6 +15,13 @@ export const metadata: Metadata = {
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
+  variable: "--font-inter",
+});
+
+const caveat = Caveat({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-caveat",
 });
 
 export default function RootLayout({
@@ -24,7 +31,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body
+        className={`${inter.variable} ${caveat.variable} ${inter.className}`}
+      >
         <AuthProvider>
           <TeamProvider>
             <GameProvider>{children}</GameProvider>
