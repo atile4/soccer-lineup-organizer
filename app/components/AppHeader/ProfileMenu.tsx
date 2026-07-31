@@ -26,6 +26,8 @@ export default function ProfileMenu({
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const reportIssuesUrl =
+    "https://github.com/atile4/soccer-lineup-organizer/issues";
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -58,7 +60,12 @@ export default function ProfileMenu({
 
   const handleReportClick = () => {
     setIsOpen(false);
-    onReportClick?.();
+    if (onReportClick) {
+      onReportClick();
+      return;
+    }
+
+    window.open(reportIssuesUrl, "_blank", "noopener,noreferrer");
   };
 
   const handleLogoutClick = () => {
