@@ -1,6 +1,8 @@
 "use client";
 
 import Modal from "../Modal";
+import { modalStyles } from "../modal.styles";
+import { Button } from "../ui/Button";
 import { Player } from "@/app/types";
 
 interface DeletePlayerModalProps {
@@ -25,56 +27,54 @@ export default function DeletePlayerModal({
 }: DeletePlayerModalProps) {
   return (
     <Modal open={open} onClose={onCancel}>
-      <h2 className="text-lg font-bold text-gray-900 pr-6">
-        Delete {player.name}?
-      </h2>
+      <h2 className={modalStyles.title}>Delete {player.name}?</h2>
 
-      <p className="mt-2 text-sm text-gray-600">
+      <p className={modalStyles.body}>
         This permanently removes this player from your roster and every lineup
         they appear in. This can’t be undone.
       </p>
 
       {/* Quick snapshot of the player before they’re gone */}
       <dl className="mt-4 grid grid-cols-3 gap-2">
-        <div className="rounded-lg bg-gray-50 px-3 py-2 text-center">
-          <dt className="text-xs font-medium text-gray-500">Number</dt>
-          <dd className="mt-0.5 text-base font-semibold text-gray-900">
+        <div className="rounded-lg bg-surface-subtle px-3 py-2 text-center">
+          <dt className="text-caption font-medium text-muted">Number</dt>
+          <dd className="mt-0.5 text-body font-semibold text-ink">
             #{player.number}
           </dd>
         </div>
-        <div className="rounded-lg bg-gray-50 px-3 py-2 text-center">
-          <dt className="text-xs font-medium text-gray-500">Position</dt>
-          <dd className="mt-0.5 text-base font-semibold text-gray-900">
+        <div className="rounded-lg bg-surface-subtle px-3 py-2 text-center">
+          <dt className="text-caption font-medium text-muted">Position</dt>
+          <dd className="mt-0.5 text-body font-semibold text-ink">
             {player.position || "—"}
           </dd>
         </div>
-        <div className="rounded-lg bg-gray-50 px-3 py-2 text-center">
-          <dt className="text-xs font-medium text-gray-500">Status</dt>
-          <dd className="mt-0.5 text-sm font-semibold text-gray-900">
+        <div className="rounded-lg bg-surface-subtle px-3 py-2 text-center">
+          <dt className="text-caption font-medium text-muted">Status</dt>
+          <dd className="mt-0.5 text-body-sm font-semibold text-ink">
             {status}
           </dd>
         </div>
       </dl>
 
-      {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-3 text-body-sm text-danger">{error}</p>}
 
-      <div className="mt-6 flex justify-end gap-3">
-        <button
+      <div className={modalStyles.actions}>
+        <Button
           type="button"
+          variant="ghost"
           onClick={onCancel}
           disabled={deleting}
-          className="rounded-lg px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100 disabled:opacity-50"
         >
           Cancel
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
+          variant="danger"
           onClick={onConfirm}
-          disabled={deleting}
-          className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+          loading={deleting}
         >
           {deleting ? "Deleting…" : "Delete player"}
-        </button>
+        </Button>
       </div>
     </Modal>
   );
