@@ -7,7 +7,7 @@ export const benchStyles = {
   // on the cream paper — surface-subtle fill with a soft inset shadow.
   benchArea:
     "bg-surface-subtle border border-border shadow-inner overflow-hidden flex flex-row lg:flex-col w-full lg:h-full rounded-lg lg:rounded-l-none transition-[width] duration-300 ease-in-out",
-  benchAreaOpen: "lg:w-28",
+  benchAreaOpen: "min-h-20 lg:w-28 lg:min-h-0",
   benchAreaClosed: "lg:w-0 lg:border-0 lg:shadow-none",
   // Drop-target highlight when a player is dragged over the bench.
   benchAreaOver: "ring-2 ring-accent",
