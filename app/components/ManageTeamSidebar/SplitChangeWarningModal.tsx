@@ -2,6 +2,8 @@
 "use client";
 
 import Modal from "../Modal";
+import { modalStyles } from "../modal.styles";
+import { Button } from "../ui/Button";
 import { SplitBy } from "@/app/types";
 
 const SPLIT_LABELS: Record<SplitBy, string> = {
@@ -48,44 +50,41 @@ export default function SplitChangeWarningModal({
 
   return (
     <Modal open={open} onClose={onCancel}>
-      <h2 className="text-lg font-bold text-gray-900 pr-6">
+      <h2 className={modalStyles.title}>
         Switch to {SPLIT_LABELS[toSplit]}?
       </h2>
 
-      <p className="mt-2 text-sm text-gray-600">
+      <p className={modalStyles.body}>
         This will permanently delete {removedDescription}, along with any
         formation and player assignments in{" "}
         {periodsToRemove.length > 1 ? "them" : "it"}.
       </p>
 
-      <ul className="mt-3 flex flex-wrap gap-2">
+      <ul className={modalStyles.chipList}>
         {periodsToRemove.map((period) => (
-          <li
-            key={period}
-            className="rounded-full bg-red-50 px-3 py-1 text-sm font-semibold capitalize text-red-700"
-          >
+          <li key={period} className={modalStyles.chipDanger}>
             {unit} {period}
           </li>
         ))}
       </ul>
 
-      <div className="mt-6 flex justify-end gap-3">
-        <button
+      <div className={modalStyles.actions}>
+        <Button
           type="button"
+          variant="ghost"
           onClick={onCancel}
           disabled={saving}
-          className="rounded-lg px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100 disabled:opacity-50"
         >
           Cancel
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
+          variant="danger"
           onClick={onConfirm}
-          disabled={saving}
-          className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+          loading={saving}
         >
           {saving ? "Deleting…" : "Delete & switch"}
-        </button>
+        </Button>
       </div>
     </Modal>
   );

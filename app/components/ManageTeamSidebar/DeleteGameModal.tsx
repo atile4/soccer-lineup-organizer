@@ -1,6 +1,8 @@
 "use client";
 
 import Modal from "../Modal";
+import { modalStyles } from "../modal.styles";
+import { Button } from "../ui/Button";
 
 interface DeleteGameModalProps {
   open: boolean;
@@ -19,31 +21,31 @@ export default function DeleteGameModal({
 }: DeleteGameModalProps) {
   return (
     <Modal open={open} onClose={onCancel}>
-      <h2 className="text-lg font-bold text-gray-900 pr-6">Delete game?</h2>
+      <h2 className={modalStyles.title}>Delete game?</h2>
 
-      <p className="mt-2 text-sm text-gray-600">
+      <p className={modalStyles.body}>
         This will permanently delete{" "}
-        <span className="font-semibold text-gray-900">{gameName}</span> and all
-        of its lineups. This can&apos;t be undone.
+        <span className={modalStyles.bodyStrong}>{gameName}</span> and all of its
+        lineups. This can&apos;t be undone.
       </p>
 
-      <div className="mt-6 flex justify-end gap-3">
-        <button
+      <div className={modalStyles.actions}>
+        <Button
           type="button"
+          variant="ghost"
           onClick={onCancel}
           disabled={deleting}
-          className="rounded-lg px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100 disabled:opacity-50"
         >
           Cancel
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
+          variant="danger"
           onClick={onConfirm}
-          disabled={deleting}
-          className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+          loading={deleting}
         >
           {deleting ? "Deleting…" : "Delete game"}
-        </button>
+        </Button>
       </div>
     </Modal>
   );
