@@ -1,4 +1,5 @@
 import PlayerToken from "./PlayerToken";
+import { playerCardStyles as styles } from "./PlayerCard.styles";
 
 type PlayerCardProps = {
   name: string;
@@ -17,7 +18,7 @@ export default function PlayerCard({
   nameColor,
 }: PlayerCardProps) {
   return (
-    <div className="bg-gray-100 rounded-2xl flex items-center justify-center p-2 sm:p-3 aspect-square hover:bg-gray-200 transition-colors">
+    <div className={styles.card}>
       <PlayerToken
         name={name}
         number={number}

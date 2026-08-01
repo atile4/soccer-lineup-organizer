@@ -280,7 +280,7 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
               type="button"
               onClick={() => setShowCreateGameModal(true)}
               disabled={!teamId}
-              className={`${sidebarStyles.createGameButton} disabled:opacity-50 disabled:cursor-not-allowed`}
+              className={sidebarStyles.createGameButton}
             >
               <span className={sidebarStyles.createGamePlus}>
                 <Plus size={10} strokeWidth={4} />
@@ -343,7 +343,7 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
                 type="button"
                 onClick={handleSaveNotes}
                 disabled={savingNotes || !currentGame || !notesDirty}
-                className="mt-2 self-start rounded-lg bg-green-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-700 disabled:opacity-50"
+                className={sidebarStyles.saveNotesButton}
               >
                 {savingNotes ? "Saving…" : "Save Notes"}
               </button>
