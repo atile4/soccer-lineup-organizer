@@ -5,6 +5,7 @@ import { useDrop } from "react-dnd";
 import { useLineup } from "@/context/LineupContext";
 import { ItemTypes, PlayerDragItem } from "../dnd/itemTypes";
 import { FieldPlayer } from "./FieldPlayer";
+import { fieldStyles as styles } from "./Field.styles";
 
 const clamp = (n: number) => Math.max(0, Math.min(100, n));
 
@@ -42,16 +43,12 @@ export function Field() {
   return (
     <div
       ref={setRefs}
-      className={`relative flex-shrink-0 rounded-lg max-w-full ${
-        isOver ? "ring-2 ring-[#318e2a]" : ""
-      }`}
+      className={`${styles.wrapper} ${isOver ? styles.wrapperOver : ""}`}
     >
       <img
         src="/images/soccer_field.png"
         alt="Soccer field"
-        // Mobile: fill available width, cap height so bench/tabs stay reachable.
-        // Desktop (lg+): original 900px / calc(100vh - 6rem) caps, unchanged.
-        className="rounded-lg block select-none pointer-events-none w-auto h-auto max-w-full max-h-[65vh] lg:max-w-[900px] lg:max-h-[calc(100vh-6rem)]"
+        className={styles.image}
         draggable={false}
       />
 

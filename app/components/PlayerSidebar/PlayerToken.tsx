@@ -38,8 +38,8 @@ export default function PlayerToken({
   name,
   number,
   variant = "default",
-  jerseyColor = "#7C3AED", // default: purple
-  nameColor = "#9CA3AF", // default: gray
+  jerseyColor = "#7C3AED", // default jersey fill (user-selectable color data)
+  nameColor = "var(--color-ink-2)", // default: body ink
 }: PlayerTokenProps) {
   const size = SIZES[variant];
   const isField = variant === "field";
@@ -56,7 +56,7 @@ export default function PlayerToken({
         <path
           d="M25 10 L10 30 L25 35 L25 80 L75 80 L75 35 L90 30 L75 10 C70 18 60 22 50 22 C40 22 30 18 25 10Z"
           fill={jerseyColor}
-          stroke="#1a1a1a"
+          stroke="var(--color-ink)"
           strokeWidth="3"
           strokeLinejoin="round"
         />

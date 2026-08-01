@@ -3,6 +3,7 @@
 import { Player } from "@/app/types";
 import { DraggablePlayer } from "../dnd/DraggablePlayer";
 import PlayerToken from "../PlayerSidebar/PlayerToken";
+import { fieldStyles as styles } from "./Field.styles";
 import { usePlayerInfo } from "@/context/PlayerInfoContext";
 import { useTeam } from "@/context/TeamContext";
 import { useLineup } from "@/context/LineupContext";
@@ -27,7 +28,7 @@ export function FieldPlayer({ player, x, y }: FieldPlayerProps) {
       number={player.number}
       jerseyColor={currentTeam?.color}
       previewVariant="field"
-      className="absolute z-10 -translate-x-1/2 -translate-y-1/2"
+      className={styles.player}
       style={{ left: `${x}%`, top: `${y}%` }}
       onClick={(e) =>
         openPlayer(player, e.currentTarget, applyPlayerUpdate, removePlayer)
