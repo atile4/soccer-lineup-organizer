@@ -2,9 +2,9 @@
 
 export const appHeaderStyles = {
   header: {
-    container: "bg-green-600 shadow-sm border-b border-gray-200",
+    container: "bg-accent border-b border-black/10 shadow-sm",
     inner: "w-full mx-auto px-4 sm:px-6 lg:px-8",
-    layout: "relative flex items-center justify-between py-2",
+    layout: "relative flex items-center justify-between py-2.5",
   },
 
   centerSection: {
@@ -13,20 +13,17 @@ export const appHeaderStyles = {
 
   logo: {
     container:
-      "w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0 bg-primary rounded-lg flex items-center justify-center",
-    icon: "w-5 h-5 sm:w-6 sm:h-6 text-white",
+      "w-8 h-8 sm:w-9 sm:h-9 flex-shrink-0 bg-white rounded-lg flex items-center justify-center",
+    icon: "w-4 h-4 sm:w-5 sm:h-5 text-accent",
   },
 
   text: {
-    title: "text-base sm:text-lg lg:text-xl font-bold text-gray-100 truncate",
-    subtitle: "text-sm text-gray-500 text-center",
+    title:
+      "text-base sm:text-lg lg:text-xl font-semibold tracking-tight text-white truncate",
+    subtitle: "text-caption text-white/60",
   },
 
   user: {
     wrapper: "",
-    button:
-      "flex items-center space-x-2 px-4 py-2 text-white font-medium border border-white/70 rounded-lg hover:bg-white hover:text-green-700 transition-colors duration-150",
-    icon: "w-5 h-5",
-    name: "text-sm font-medium",
   },
 };

@@ -27,6 +27,7 @@ module.exports = {
         danger: 'var(--color-danger)',
         'danger-fill': 'var(--color-danger-fill)',
         'danger-border': 'var(--color-danger-border)',
+        'danger-hover': 'var(--color-danger-hover)',
         warning: 'var(--color-warning)',
         'warning-fill': 'var(--color-warning-fill)',
         'warning-border': 'var(--color-warning-border)',
