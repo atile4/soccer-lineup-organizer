@@ -22,7 +22,7 @@ export const benchStyles = {
   list: "flex flex-row gap-2 overflow-x-auto flex-1 min-h-0 pr-0.5 lg:flex-col lg:gap-0 lg:space-y-2 lg:overflow-x-visible lg:overflow-y-auto",
 
   emptyText:
-    "text-caption text-muted text-center whitespace-nowrap px-1 lg:mt-2",
+    "text-caption text-muted text-center px-1 lg:mt-2",
 
   // Wrapper around each benched player token (the DraggablePlayer).
   playerWrapper:
