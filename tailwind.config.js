@@ -14,7 +14,7 @@ module.exports = {
         'surface-subtle': 'var(--color-surface-subtle)',
         border: 'var(--color-border)',
         'border-strong': 'var(--color-border-strong)',
-        ink: 'var(--color-ink)',
+        ink: 'rgb(var(--color-ink-rgb) / <alpha-value>)',
         'ink-2': 'var(--color-ink-2)',
         muted: 'var(--color-muted)',
         faint: 'var(--color-faint)',

@@ -1,7 +1,7 @@
 // Shared chrome for the Modal wrapper and its dialog contents, on tokens.
 export const modalStyles = {
   // Modal.tsx wrapper
-  overlay: "fixed inset-0 z-50 flex items-center justify-center bg-ink/40 px-4",
+  overlay: "fixed inset-0 z-50 flex items-center justify-center bg-ink/60 px-4",
   panel: "relative w-full max-w-md rounded-xl bg-surface p-6 shadow-lg",
   close:
     "absolute right-3 top-3 rounded-md p-1 text-faint hover:bg-surface-subtle hover:text-muted transition-colors",
