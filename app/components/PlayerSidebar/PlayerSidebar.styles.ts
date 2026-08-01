@@ -32,11 +32,12 @@ export const playerSidebarStyles = {
     "w-full flex-1 min-h-0 bg-surface px-4 pt-2 pb-0 flex flex-col overflow-y-auto max-h-[87%]",
   playerListAsideIsOver: "ring-2 ring-accent rounded-lg",
   playerListGrid: "grid grid-cols-2 gap-3",
-  playerListSkeleton: "aspect-square rounded-xl bg-surface-subtle animate-pulse",
+  playerListSkeleton:
+    "aspect-square rounded-xl bg-surface-subtle animate-pulse",
   playerListCreateButton:
     "bg-surface-subtle rounded-xl flex flex-col items-center justify-center gap-1 aspect-square hover:bg-border transition-colors",
-  playerListCreateIcon: "h-8 w-8 text-faint",
-  playerListCreateLabel: "text-caption text-muted",
+  playerListCreateIcon: "h-20 w-20 sm:h-12 sm:w-12 md:h-14 md:w-14 text-faint",
+  playerListCreateLabel: "text-lg sm:text-sm text-muted",
 
   // Create Player Modal
   createModalTitle: "text-h2 text-ink mb-4",
