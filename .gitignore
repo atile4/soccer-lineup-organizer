@@ -36,3 +36,6 @@ next-env.d.ts
 # mock data
 /data
 *.json
+
+# agents
+AGENTS.md
