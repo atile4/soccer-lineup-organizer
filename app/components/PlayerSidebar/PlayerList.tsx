@@ -116,17 +116,19 @@ export const PlayerList = () => {
                 />
               </DraggablePlayer>
             ))}
-        <button
-          type="button"
-          className={playerSidebarStyles.playerListCreateButton}
-          aria-label="Create player"
-          onClick={() => setShowCreateModal(true)}
-        >
-          <Plus className={playerSidebarStyles.playerListCreateIcon} />
-          <span className={playerSidebarStyles.playerListCreateLabel}>
-            Create Player
-          </span>
-        </button>
+        {!loading && (
+          <button
+            type="button"
+            className={playerSidebarStyles.playerListCreateButton}
+            aria-label="Create player"
+            onClick={() => setShowCreateModal(true)}
+          >
+            <Plus className={playerSidebarStyles.playerListCreateIcon} />
+            <span className={playerSidebarStyles.playerListCreateLabel}>
+              Create Player
+            </span>
+          </button>
+        )}
       </div>
 
       <Modal open={showCreateModal} onClose={closeCreateModal}>

@@ -5,7 +5,7 @@ import AppHeader from "../components/AppHeader/AppHeader";
 export default function ManagePage() {
   return (
     <div className="h-screen flex flex-col">
-      <AppHeader page={"manage"} />
+      <AppHeader page={"about"} />
 
       <main className="flex-1 flex overflow-hidden py-4 gap-4">
         {/* Content will go here */}

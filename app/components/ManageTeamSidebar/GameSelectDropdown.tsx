@@ -61,7 +61,7 @@ export default function GameSelectDropdown({
           {currentGame?.name ?? "No games"}
         </span>
         <ChevronDown
-          className="h-4 w-4 flex-shrink-0 text-gray-500"
+          className={sidebarStyles.gameSelectButtonIcon}
           aria-hidden="true"
         />
       </button>

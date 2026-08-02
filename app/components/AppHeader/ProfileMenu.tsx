@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { popoverStyles, buttonStyles } from "./ProfileMenu.styles";
+import { useRouter } from "next/navigation";
 
 interface ProfileMenuProps {
   onProfileClick?: () => void;
@@ -18,6 +19,7 @@ export default function ProfileMenu({
   // user session variables
   const { session, loading } = useAuth();
   const user = session?.user;
+  const router = useRouter();
 
   const displayName = user?.user_metadata?.full_name ?? "";
   const photoURL = user?.user_metadata?.avatar_url ?? "";
@@ -26,6 +28,8 @@ export default function ProfileMenu({
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const reportIssuesUrl =
+    "https://github.com/atile4/soccer-lineup-organizer/issues";
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -46,19 +50,25 @@ export default function ProfileMenu({
     }
   }, [isOpen]);
 
-  const handleProfileClick = () => {
-    setIsOpen(false);
-    onProfileClick?.();
-  };
+  // const handleProfileClick = () => {
+  //   setIsOpen(false);
+  //   onProfileClick?.();
+  // };
 
-  const handleInfoClick = () => {
+  const handleAboutClick = () => {
     setIsOpen(false);
+    router.push("/create");
     onProfileClick?.();
   };
 
   const handleReportClick = () => {
     setIsOpen(false);
-    onReportClick?.();
+    if (onReportClick) {
+      onReportClick();
+      return;
+    }
+
+    window.open(reportIssuesUrl, "_blank", "noopener,noreferrer");
   };
 
   const handleLogoutClick = () => {
@@ -125,7 +135,7 @@ export default function ProfileMenu({
           {/* Menu Items */}
           <div className="py-2">
             {/* Profile */}
-            <div
+            {/* <div
               onClick={handleProfileClick}
               className={popoverStyles.menuItem}
             >
@@ -143,10 +153,10 @@ export default function ProfileMenu({
                 />
               </svg>
               <div className={popoverStyles.menuText}>Profile</div>
-            </div>
+            </div> */}
 
             {/* About */}
-            <div onClick={handleInfoClick} className={popoverStyles.menuItem}>
+            <div onClick={handleAboutClick} className={popoverStyles.menuItem}>
               <svg
                 className={popoverStyles.menuIcon}
                 fill="none"

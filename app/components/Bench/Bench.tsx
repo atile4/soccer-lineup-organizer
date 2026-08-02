@@ -35,7 +35,7 @@ export const Bench = () => {
         }}
         className={`${styles.benchArea} ${
           open ? styles.benchAreaOpen : styles.benchAreaClosed
-        } ${isOver ? "ring-2 ring-[#318e2a]" : ""}`}
+        } ${isOver ? styles.benchAreaOver : ""}`}
       >
         <div className={styles.innerWrapper}>
           <h2 className={styles.title}>Bench</h2>
@@ -60,7 +60,7 @@ export const Bench = () => {
                       removePlayer,
                     )
                   }
-                  className="flex-shrink-0 rounded-lg bg-gray-100/80 py-1 px-1 hover:bg-gray-200 transition-colors"
+                  className={styles.playerWrapper}
                 >
                   <PlayerToken
                     name={player.name}

@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import ProfileMenu from "./ProfileMenu";
 import LogoAndTitle from "./LogoAndTitle";
 import TeamSwitcher from "./TeamSwitcher";
+import { Button } from "../ui/Button";
 
 interface AppHeaderProps {
   page: string;
@@ -44,14 +45,14 @@ export default function AppHeader({ page = "dash" }: AppHeaderProps) {
               {session ? (
                 <ProfileMenu onLogout={handleLogout} />
               ) : (
-                <button
+                <Button
                   type="button"
-                  className={styles.user.button}
+                  variant="outline-accent"
                   onClick={handleLogin}
                   aria-label="Log in"
                 >
                   Log in
-                </button>
+                </Button>
               )}
             </div>
           )}

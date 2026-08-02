@@ -2,17 +2,18 @@ export const sidebarStyles = {
   // Arrow button visible when sidebar is collapsed (desktop only — mobile uses
   // the toolbar toggle in page.tsx).
   openButton:
-    "hidden lg:block fixed top-20 left-0 z-40 bg-[#fefcf3] border border-l-0 border-[#e8e0c8] rounded-r-lg p-2 shadow-md hover:bg-[#f5edd4] transition-colors",
-  openButtonIcon: "h-5 w-5 text-gray-600",
+    "hidden lg:block fixed top-20 left-0 z-40 bg-surface border border-l-0 border-border rounded-r-lg p-2 shadow-md hover:bg-surface-subtle transition-colors",
+  openButtonIcon: "h-5 w-5 text-muted",
 
   // Backdrop behind the mobile drawer (below lg only).
-  backdrop: "fixed inset-0 z-40 bg-black/40 lg:hidden",
+  backdrop: "fixed inset-0 z-40 bg-ink/40 lg:hidden",
 
   // Below lg: off-canvas drawer sliding in from the left over a backdrop.
   // At lg+: the original in-flow collapsible column (width toggles between
-  // sidebarOpen / sidebarClosed), rendering identically to before.
+  // sidebarOpen / sidebarClosed), rendering identically to before. A clean
+  // white surface panel on the cream paper background.
   sidebar:
-    "fixed inset-y-0 left-0 z-50 w-[85vw] max-w-sm rounded-r-lg shadow-xl transition-transform duration-300 ease-in-out overflow-hidden overflow-y-auto bg-[#fefcf3] border border-[#e8e0c8] lg:static lg:inset-auto lg:z-auto lg:h-full lg:max-w-none lg:shadow-sm lg:flex-shrink-0 lg:translate-x-0 lg:transition-[width]",
+    "fixed inset-y-0 left-0 z-50 w-[85vw] max-w-sm rounded-r-lg shadow-lg transition-transform duration-300 ease-in-out overflow-hidden overflow-y-auto bg-surface border border-border lg:static lg:inset-auto lg:z-auto lg:h-full lg:max-w-none lg:shadow-sm lg:flex-shrink-0 lg:translate-x-0 lg:transition-[width]",
   sidebarOpen: "translate-x-0 lg:w-80",
   sidebarClosed: "-translate-x-full lg:w-0",
 
@@ -21,50 +22,55 @@ export const sidebarStyles = {
 
   // Header row
   header: "flex items-center justify-between mb-6",
-  title: "text-xl font-bold text-gray-800",
-  closeButton: "p-1 rounded-md hover:bg-gray-100 transition-colors",
-  closeButtonIcon: "h-5 w-5 text-gray-500",
+  title: "text-h2 text-ink",
+  closeButton: "p-1 rounded-md hover:bg-surface-subtle transition-colors",
+  closeButtonIcon: "h-5 w-5 text-muted",
 
   // Fields section
-  manageSection: "mt-6 pt-6 border-t border-gray-200 space-y-5",
+  manageSection: "mt-6 pt-6 border-t border-border space-y-5",
   fieldGroup: "flex flex-col gap-1",
-  sectionTitle: "text-lg font-semibold text-gray-800",
+  sectionTitle: "text-h3 text-ink",
   selectWrapper: "relative",
   textInput:
-    "w-full px-3 py-2 text-sm border border-[#e8e0c8] rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400",
+    "w-full px-3 py-2 text-body-sm text-ink bg-surface border border-border rounded-md placeholder:text-faint focus:outline-none focus:ring-2 focus:ring-accent-border focus:border-accent",
   selectInput:
-    "w-full appearance-none bg-[#fefcf3] px-3 py-2 pr-10 text-sm border border-[#e8e0c8] rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400 cursor-pointer",
+    "w-full appearance-none bg-surface px-3 py-2 pr-10 text-body-sm text-ink border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent-border focus:border-accent cursor-pointer",
   customArrowIcon:
-    "pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500",
+    "pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted",
 
   // Custom game dropdown (replaces the native <select> so each game can carry a
   // delete button — currently selected game can't be deleted).
   gameSelectButton:
-    "flex w-full items-center justify-between bg-[#fefcf3] px-3 py-2 text-sm border border-[#e8e0c8] rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400 cursor-pointer",
-  gameSelectButtonLabel: "truncate text-left text-gray-800",
+    "flex w-full items-center justify-between bg-surface px-3 py-2 text-body-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent-border focus:border-accent cursor-pointer",
+  gameSelectButtonLabel: "truncate text-left text-ink",
+  gameSelectButtonIcon: "h-4 w-4 flex-shrink-0 text-muted",
   gameSelectMenu:
-    "absolute left-0 right-0 top-full z-10 mt-1 max-h-60 overflow-y-auto rounded-lg border border-[#e8e0c8] bg-[#fefcf3] py-1 shadow-lg",
+    "absolute left-0 right-0 top-full z-10 mt-1 max-h-60 overflow-y-auto rounded-lg border border-border bg-surface py-1 shadow-lg",
   gameSelectOption:
-    "group flex items-center justify-between gap-2 px-3 py-2 text-sm hover:bg-[#f5edd4]",
-  gameSelectOptionActive: "bg-[#f5edd4] font-semibold",
-  gameSelectOptionLabel: "flex-1 truncate text-left text-gray-800",
+    "group flex items-center justify-between gap-2 px-3 py-2 text-body-sm hover:bg-surface-subtle",
+  gameSelectOptionActive: "bg-accent-subtle font-semibold",
+  gameSelectOptionLabel: "flex-1 truncate text-left text-ink",
   gameSelectDeleteButton:
-    "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors",
+    "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md text-faint hover:bg-danger-fill hover:text-danger transition-colors",
   textArea:
-    "w-full px-3 py-2 text-sm border border-gray-300 rounded-lg resize-y min-h-[80px] focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400",
+    "w-full px-3 py-2 text-body-sm text-ink bg-surface border border-border rounded-md resize-y min-h-[80px] placeholder:text-faint focus:outline-none focus:ring-2 focus:ring-accent-border focus:border-accent",
 
-  errorText: "text-xs text-red-600 mt-1",
-  extraSectionText: "text-xs text-gray-400",
+  errorText: "text-caption text-danger mt-1",
+  extraSectionText: "text-caption text-muted",
 
   // Create Game Button
   createGameButton:
-    "mt-2 flex items-center gap-1.5 text-sm font-semibold text-green-700 hover:text-green-800",
+    "mt-2 flex items-center gap-1.5 text-body-sm font-semibold text-accent hover:text-accent-hover disabled:opacity-50 disabled:cursor-not-allowed",
   createGamePlus:
-    "flex h-5 w-5 items-center justify-center rounded-full border-2 border-green-600 bg-transparent text-green-600",
+    "flex h-5 w-5 items-center justify-center rounded-full border-2 border-accent bg-transparent text-accent",
+
+  // Save Notes button
+  saveNotesButton:
+    "mt-2 self-start rounded-md bg-accent px-3 py-1.5 text-caption font-semibold text-white hover:bg-accent-hover disabled:opacity-50",
 
   // Toasts
   toastSuccess:
-    "fixed bottom-6 left-1/2 -translate-x-1/2 text-sm font-semibold px-5 py-2.5 rounded-xl shadow-lg z-50 bg-gray-900 text-white",
+    "fixed bottom-6 left-1/2 -translate-x-1/2 text-body-sm font-semibold px-5 py-2.5 rounded-xl shadow-lg z-50 bg-ink text-white",
   toastError:
-    "fixed bottom-6 left-1/2 -translate-x-1/2 text-sm font-semibold px-5 py-2.5 rounded-xl shadow-lg z-50 bg-red-600 text-white",
+    "fixed bottom-6 left-1/2 -translate-x-1/2 text-body-sm font-semibold px-5 py-2.5 rounded-xl shadow-lg z-50 bg-danger text-white",
 };

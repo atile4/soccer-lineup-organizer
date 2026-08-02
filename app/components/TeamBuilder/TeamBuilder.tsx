@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, Users, UserPlus, X } from "lucide-react";
-import { teamBuilderStyles as s, themeVars } from "./TeamBuilder.styles";
+import { teamBuilderStyles as s } from "./TeamBuilder.styles";
 import { Division, Gender } from "@/app/types";
 import { useAuth } from "@/context/AuthContext";
 import { useTeam } from "@/context/TeamContext";
@@ -174,7 +174,7 @@ export default function TeamBuilder() {
   };
 
   return (
-    <div className={s.page} style={themeVars.notebook as React.CSSProperties}>
+    <div className={s.page}>
       <div className={s.container}>
         {/* Heading */}
         <div className={s.headingRow}>
@@ -210,7 +210,7 @@ export default function TeamBuilder() {
                 <path
                   d="M25 10 L10 30 L25 35 L25 80 L75 80 L75 35 L90 30 L75 10 C70 18 60 22 50 22 C40 22 30 18 25 10Z"
                   fill={color}
-                  stroke="#1a1a1a"
+                  stroke="var(--color-ink)"
                   strokeWidth="3"
                   strokeLinejoin="round"
                 />
