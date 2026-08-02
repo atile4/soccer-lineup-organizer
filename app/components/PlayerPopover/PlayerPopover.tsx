@@ -65,7 +65,7 @@ export default function PlayerInfoPopover({
     setPositionDraft(player.position);
     setEditingField(null);
     setError(null);
-  }, [player.id]);
+  }, [player.id, player.name, player.position]);
 
   useLayoutEffect(() => {
     const popover = popoverRef.current;

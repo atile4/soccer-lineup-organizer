@@ -36,7 +36,7 @@ export default function LoginPage() {
   // guard for logged in users
   useEffect(() => {
     if (!loading && session) router.push("/");
-  }, [session, loading]);
+  }, [session, loading, router]);
 
   if (loading) return null;
 

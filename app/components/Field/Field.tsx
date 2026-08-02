@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useRef } from "react";
+import Image from "next/image";
 import { useDrop } from "react-dnd";
 import { useLineup } from "@/context/LineupContext";
 import { ItemTypes, PlayerDragItem } from "../dnd/itemTypes";
@@ -45,11 +46,14 @@ export function Field() {
       ref={setRefs}
       className={`${styles.wrapper} ${isOver ? styles.wrapperOver : ""}`}
     >
-      <img
+      <Image
         src="/images/soccer_field.png"
         alt="Soccer field"
+        width={2000}
+        height={3027}
         className={styles.image}
         draggable={false}
+        priority
       />
 
       {fieldedPlayers.map((player) => {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
 import { popoverStyles, buttonStyles } from "./ProfileMenu.styles";
 import { useRouter } from "next/navigation";
@@ -95,9 +96,11 @@ export default function ProfileMenu({
         {/* Avatar */}
         <div className={buttonStyles.avatar}>
           {photoURL ? (
-            <img
+            <Image
               src={photoURL}
-              alt={displayName ?? undefined}
+              alt={displayName || "User avatar"}
+              width={32}
+              height={32}
               className="w-full h-full object-cover rounded-full"
             />
           ) : (
@@ -114,9 +117,11 @@ export default function ProfileMenu({
             {/* Avatar */}
             <div className={buttonStyles.avatar}>
               {photoURL ? (
-                <img
+                <Image
                   src={photoURL}
-                  alt={displayName ?? undefined}
+                  alt={displayName || "User avatar"}
+                  width={32}
+                  height={32}
                   className="w-full h-full object-cover rounded-full"
                 />
               ) : (
