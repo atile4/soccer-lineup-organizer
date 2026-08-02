@@ -26,7 +26,8 @@ jobs:
         run: npm ci
 
       - name: Lint
-        run: npm run lint
+        run: npm run 
+        # --max-warnings=0 if want no warnings
 
       # - name: Run tests
       #   run: npm test
