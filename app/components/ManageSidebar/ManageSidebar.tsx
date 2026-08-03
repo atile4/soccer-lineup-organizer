@@ -23,7 +23,7 @@ import CreateGameModal from "./CreateGameModal";
 import DeleteGameModal from "./DeleteGameModal";
 import GameSelectDropdown from "./GameSelectDropdown";
 
-interface ManageTeamSidebarProps {
+interface ManageSidebarProps {
   teamId: string | null;
   maxPlayers?: number;
   open: boolean;
@@ -38,7 +38,7 @@ interface ToastState {
   variant: ToastVariant;
 }
 
-export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
+export const ManageSidebar: React.FC<ManageSidebarProps> = ({
   teamId,
   open: sidebarOpen,
   onOpenChange: setSidebarOpen,
@@ -400,4 +400,4 @@ export const ManageTeamSidebar: React.FC<ManageTeamSidebarProps> = ({
   );
 };
 
-export default ManageTeamSidebar;
+export default ManageSidebar;

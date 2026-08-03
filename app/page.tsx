@@ -20,7 +20,7 @@ import { PlayerInfoProvider } from "@/context/PlayerInfoContext";
 
 // Components
 import AppHeader from "./components/AppHeader/AppHeader";
-import ManageTeamSidebar from "./components/ManageTeamSidebar/ManageTeamSidebar";
+import ManageSidebar from "./components/ManageSidebar/ManageSidebar";
 import PlayerSidebar from "./components/PlayerSidebar/PlayerSidebar";
 import Bench from "./components/Bench/Bench";
 import { Field } from "./components/Field/Field";
@@ -80,7 +80,7 @@ export default function DashboardPage() {
               </div>
 
               <main className="flex-1 flex flex-col lg:flex-row lg:overflow-hidden py-4 gap-4">
-                <ManageTeamSidebar
+                <ManageSidebar
                   teamId={currentTeamId}
                   open={manageOpen}
                   onOpenChange={setManageOpen}
