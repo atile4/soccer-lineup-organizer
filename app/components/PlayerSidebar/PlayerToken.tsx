@@ -40,8 +40,8 @@ const SIZES: Record<
     gap: "gap-1 sm:gap-2",
   },
   field: {
-    svg: "w-11 h-11",
-    name: "text-[11px] text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.9)]",
+    svg: "w-11 h-11 md:w-[48px] md:h-[48px] lg:w-11 lg:h-11",
+    name: "text-[11px] md:text-[14px] lg:text-[11px] text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.9)]",
     gap: "gap-0.5",
   },
   bench: {
