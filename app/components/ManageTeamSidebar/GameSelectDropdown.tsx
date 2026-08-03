@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Trash2 } from "lucide-react";
-import { sidebarStyles } from "./ManageTeamSidebar.styles";
+import { sidebarStyles } from "./ManageSidebar.styles";
 import { Game } from "@/app/types";
 
 interface GameSelectDropdownProps {

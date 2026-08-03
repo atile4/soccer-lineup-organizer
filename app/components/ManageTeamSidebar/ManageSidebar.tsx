@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ChevronDown, ChevronRight, Plus, X } from "lucide-react";
-import { sidebarStyles } from "./ManageTeamSidebar.styles";
+import { sidebarStyles } from "./ManageSidebar.styles";
 
 // services
 import {
