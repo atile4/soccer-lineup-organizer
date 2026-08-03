@@ -20,11 +20,25 @@ export const sidebarStyles = {
   // Fixed-width wrapper — prevents content from reflowing during animation
   innerWrapper: "w-full min-w-72 p-4",
 
-  // Header row
-  header: "flex items-center justify-between mb-6",
-  title: "text-h2 text-ink",
-  closeButton: "p-1 rounded-md hover:bg-surface-subtle transition-colors",
+  // Header row — tab switcher and the close button share one row.
+  header: "flex items-center gap-2 mb-5",
+  closeButton:
+    "flex-shrink-0 p-1 rounded-md hover:bg-surface-subtle transition-colors",
   closeButtonIcon: "h-5 w-5 text-muted",
+
+  // Tab switcher — a modern segmented control. The active tab reads as a raised
+  // pill on the recessed track; inactive tabs are quiet until hovered.
+  tabList:
+    "flex flex-1 items-center gap-1 p-1 rounded-lg bg-surface-subtle border border-border",
+  tabButton:
+    "flex flex-1 items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-body-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-border",
+  tabButtonActive: "bg-surface text-ink shadow-sm",
+  tabButtonInactive: "text-muted hover:text-ink",
+  tabIcon: "h-4 w-4",
+
+  // Placeholder copy shown by tabs that have no controls yet.
+  emptyState:
+    "flex items-center justify-center rounded-lg border border-dashed border-border px-4 py-10 text-center text-body-sm text-muted",
 
   // Fields section
   manageSection: "mt-6 pt-6 border-t border-border space-y-5",
