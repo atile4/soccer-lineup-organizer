@@ -24,6 +24,7 @@ import ManageSidebar from "./components/ManageSidebar/ManageSidebar";
 import PlayerSidebar from "./components/PlayerSidebar/PlayerSidebar";
 import Bench from "./components/Bench/Bench";
 import { Field } from "./components/Field/Field";
+import FieldSizeControl from "./components/Field/FieldSizeControl";
 import LineupTabs from "./components/LineupTabs/LineupTabs";
 
 export default function DashboardPage() {
@@ -94,7 +95,10 @@ export default function DashboardPage() {
                     <LineupTabs />
 
                     <div className="flex flex-col items-center lg:flex-row lg:items-start gap-3 lg:gap-4 w-full lg:w-auto">
-                      <Field />
+                      <div className="relative">
+                        <FieldSizeControl className="absolute right-full bottom-0 mr-2" />
+                        <Field />
+                      </div>
                       <Bench />
                     </div>
                   </div>
