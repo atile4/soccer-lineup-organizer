@@ -39,3 +39,6 @@ next-env.d.ts
 
 # agents
 AGENTS.md
+.claude/
+.opencode/
+graphify-out/
