@@ -13,6 +13,8 @@ import {
   fetchTeamsWithPlayerCount,
   setCurrentTeam as persistCurrentTeam,
   deleteTeam as deleteTeamService,
+  updateTeamName as updateTeamNameService,
+  updateTeamColor as updateTeamColorService,
 } from "@/services/teams";
 import { fetchCurrentIDs } from "@/services/profiles";
 import { TeamWithPlayerCount } from "@/app/types";
@@ -24,6 +26,8 @@ interface TeamContextValue {
   loading: boolean;
   switchTeam: (teamId: string) => Promise<void>;
   deleteTeam: (teamId: string) => Promise<void>;
+  updateTeamName: (teamId: string, name: string) => Promise<void>;
+  updateTeamColor: (teamId: string, color: string) => Promise<void>;
   refreshTeams: () => Promise<void>;
 }
 
@@ -95,6 +99,52 @@ export function TeamProvider({ children }: { children: ReactNode }) {
     [currentTeamId],
   );
 
+  // Optimistically patch a team in local state, persist, and revert on failure.
+  const patchTeam = useCallback(
+    async (
+      teamId: string,
+      patch: Partial<TeamWithPlayerCount>,
+      persist: () => Promise<unknown>,
+      label: string,
+    ) => {
+      let previous: TeamWithPlayerCount[] = [];
+      setTeams((prev) => {
+        previous = prev;
+        return prev.map((t) => (t.id === teamId ? { ...t, ...patch } : t));
+      });
+      try {
+        await persist();
+      } catch (err) {
+        console.error(label, err);
+        setTeams(previous); // revert the optimistic patch
+        throw err; // let the caller surface the failure
+      }
+    },
+    [],
+  );
+
+  const updateTeamName = useCallback(
+    (teamId: string, name: string) =>
+      patchTeam(
+        teamId,
+        { name },
+        () => updateTeamNameService(teamId, name),
+        "Failed to update team name:",
+      ),
+    [patchTeam],
+  );
+
+  const updateTeamColor = useCallback(
+    (teamId: string, color: string) =>
+      patchTeam(
+        teamId,
+        { color },
+        () => updateTeamColorService(teamId, color),
+        "Failed to update team color:",
+      ),
+    [patchTeam],
+  );
+
   const currentTeam = teams.find((t) => t.id === currentTeamId) ?? null;
 
   return (
@@ -106,6 +156,8 @@ export function TeamProvider({ children }: { children: ReactNode }) {
         loading,
         switchTeam,
         deleteTeam,
+        updateTeamName,
+        updateTeamColor,
         refreshTeams,
       }}
     >

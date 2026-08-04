@@ -1,4 +1,3 @@
-// app/components/ManageTeamSidebar/SplitChangeWarningModal.tsx
 "use client";
 
 import Modal from "../Modal";
@@ -50,9 +49,7 @@ export default function SplitChangeWarningModal({
 
   return (
     <Modal open={open} onClose={onCancel}>
-      <h2 className={modalStyles.title}>
-        Switch to {SPLIT_LABELS[toSplit]}?
-      </h2>
+      <h2 className={modalStyles.title}>Switch to {SPLIT_LABELS[toSplit]}?</h2>
 
       <p className={modalStyles.body}>
         This will permanently delete {removedDescription}, along with any

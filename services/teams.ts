@@ -56,6 +56,36 @@ export async function createTeamWithDefaultGame(
   return team;
 }
 
+export async function updateTeamName(
+  teamId: string,
+  name: string,
+): Promise<Team> {
+  const { data, error } = await supabase
+    .from("teams")
+    .update({ name })
+    .eq("id", teamId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data as Team;
+}
+
+export async function updateTeamColor(
+  teamId: string,
+  color: string,
+): Promise<Team> {
+  const { data, error } = await supabase
+    .from("teams")
+    .update({ color })
+    .eq("id", teamId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data as Team;
+}
+
 export async function deleteTeam(teamId: string) {
   // Players and games cascade-delete via their team_id FK.
   const { error } = await supabase.from("teams").delete().eq("id", teamId);

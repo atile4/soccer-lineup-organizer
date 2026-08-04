@@ -87,3 +87,18 @@ export async function updateNotes(
   if (error) throw error;
   return data as Game;
 }
+
+export async function updateGameName(
+  gameId: string,
+  name: string,
+): Promise<Game> {
+  const { data, error } = await supabase
+    .from("games")
+    .update({ name })
+    .eq("id", gameId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data as Game;
+}
