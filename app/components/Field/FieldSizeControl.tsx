@@ -55,8 +55,7 @@ export default function FieldSizeControl({
       </Button>
 
       <Modal open={open} onClose={() => setOpen(false)}>
-        <h2 className={modalStyles.title}>Player size</h2>
-        <p className={modalStyles.body}>Adjust player size.</p>
+        <h2 className={modalStyles.title}>Adjust player size</h2>
 
         {/* Live preview — field tokens use white text, so show it on a pitch
             colored backdrop for legibility. */}
