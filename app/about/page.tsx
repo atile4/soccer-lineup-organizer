@@ -8,7 +8,7 @@ export default function ManagePage() {
       <AppHeader page={"about"} />
 
       <main className="flex-1 flex overflow-hidden py-4 gap-4">
-        {/* Content will go here */}
+        <p>Nothing here yet</p>
       </main>
     </div>
   );
