@@ -9,6 +9,7 @@ import { sidebarStyles } from "./ManageSidebar.styles";
 import {
   updateSplit,
   updateNotes,
+  updateGameName,
   createGameWithLineups,
   deleteGame,
 } from "@/services/games";
@@ -145,6 +146,19 @@ export const ManageGamesTab: React.FC<ManageGamesTabProps> = ({ teamId }) => {
     }
   };
 
+  // --- Rename Game --- (inline edit from the game dropdown)
+  const handleRenameGame = async (gameId: string, name: string) => {
+    try {
+      await updateGameName(gameId, name);
+      await refreshGameData(); // re-syncs the renamed game into `games`
+      showToast(`Renamed to "${name}"`);
+    } catch (err) {
+      console.error("Failed to rename game:", err);
+      showToast("Couldn't rename the game. Try again.", "error");
+      throw err; // let the dropdown keep edit mode open to retry
+    }
+  };
+
   // --- Save Notes ---
   const handleSaveNotes = async () => {
     if (!currentGame || !notesDirty) return;
@@ -170,6 +184,7 @@ export const ManageGamesTab: React.FC<ManageGamesTabProps> = ({ teamId }) => {
           currentGameId={currentGame?.id ?? null}
           onSelect={switchGame}
           onRequestDelete={setGameToDelete}
+          onRename={handleRenameGame}
         />
 
         {/* Create Game button — opens CreateGameModal, disabled with no team selected */}

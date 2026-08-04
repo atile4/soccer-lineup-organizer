@@ -64,6 +64,11 @@ export const sidebarStyles = {
     "group flex items-center justify-between gap-2 px-3 py-2 text-body-sm hover:bg-surface-subtle",
   gameSelectOptionActive: "bg-accent-subtle font-semibold",
   gameSelectOptionLabel: "flex-1 truncate text-left text-ink",
+  // Inline rename input — sits in place of the label while editing a game.
+  gameSelectEditInput:
+    "flex-1 min-w-0 bg-surface px-1.5 py-0.5 text-body-sm text-ink border border-accent rounded focus:outline-none focus:ring-2 focus:ring-accent-border",
+  gameSelectEditButton:
+    "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md text-faint hover:bg-accent-subtle hover:text-accent transition-colors",
   gameSelectDeleteButton:
     "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md text-faint hover:bg-danger-fill hover:text-danger transition-colors",
   textArea:

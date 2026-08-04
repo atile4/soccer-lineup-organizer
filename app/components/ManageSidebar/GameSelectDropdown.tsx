@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Trash2 } from "lucide-react";
+import { Check, ChevronDown, Pencil, Trash2, X } from "lucide-react";
 import { sidebarStyles } from "./ManageSidebar.styles";
 import { Game } from "@/app/types";
 
@@ -10,29 +10,47 @@ interface GameSelectDropdownProps {
   currentGameId: string | null;
   onSelect: (gameId: string) => void;
   onRequestDelete: (game: Game) => void;
+  onRename: (gameId: string, name: string) => Promise<void>;
 }
 
-// Custom game picker that mimics the native <select> but lets each game (except
-// the currently selected one) carry a delete button.
+// Custom game picker that mimics the native <select> but lets each game carry
+// inline rename controls and — except for the currently selected one — a delete
+// button.
 export default function GameSelectDropdown({
   games,
   currentGameId,
   onSelect,
   onRequestDelete,
+  onRename,
 }: GameSelectDropdownProps) {
   const [open, setOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [draftName, setDraftName] = useState("");
+  const [savingRename, setSavingRename] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const editInputRef = useRef<HTMLInputElement>(null);
 
   const currentGame = games.find((g) => g.id === currentGameId) ?? null;
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setDraftName("");
+  };
 
   // Close the menu on outside click or Escape.
   useEffect(() => {
     if (!open) return;
     const handlePointerDown = (e: MouseEvent) => {
-      if (!wrapperRef.current?.contains(e.target as Node)) setOpen(false);
+      if (!wrapperRef.current?.contains(e.target as Node)) {
+        setOpen(false);
+        cancelEdit();
+      }
     };
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        cancelEdit();
+      }
     };
     document.addEventListener("mousedown", handlePointerDown);
     document.addEventListener("keydown", handleKeyDown);
@@ -42,9 +60,38 @@ export default function GameSelectDropdown({
     };
   }, [open]);
 
+  // Focus and select the input when entering edit mode.
+  useEffect(() => {
+    if (editingId) editInputRef.current?.select();
+  }, [editingId]);
+
   const handleSelect = (gameId: string) => {
     onSelect(gameId);
     setOpen(false);
+  };
+
+  const startEdit = (game: Game) => {
+    setEditingId(game.id);
+    setDraftName(game.name);
+  };
+
+  const commitRename = async (gameId: string) => {
+    const trimmed = draftName.trim();
+    const game = games.find((g) => g.id === gameId);
+    // Nothing to do if the name is blank or unchanged.
+    if (!trimmed || trimmed === game?.name) {
+      cancelEdit();
+      return;
+    }
+    setSavingRename(true);
+    try {
+      await onRename(gameId, trimmed);
+      cancelEdit();
+    } catch {
+      // onRename surfaces its own error toast; keep edit mode open to retry.
+    } finally {
+      setSavingRename(false);
+    }
   };
 
   return (
@@ -70,6 +117,7 @@ export default function GameSelectDropdown({
         <ul className={sidebarStyles.gameSelectMenu} role="listbox">
           {games.map((g) => {
             const isCurrent = g.id === currentGameId;
+            const isEditing = g.id === editingId;
             return (
               <li
                 key={g.id}
@@ -79,27 +127,80 @@ export default function GameSelectDropdown({
                   isCurrent ? sidebarStyles.gameSelectOptionActive : ""
                 }`}
               >
-                <button
-                  type="button"
-                  className={sidebarStyles.gameSelectOptionLabel}
-                  onClick={() => handleSelect(g.id)}
-                >
-                  {g.name}
-                </button>
+                {isEditing ? (
+                  <>
+                    <input
+                      ref={editInputRef}
+                      type="text"
+                      value={draftName}
+                      disabled={savingRename}
+                      className={sidebarStyles.gameSelectEditInput}
+                      onChange={(e) => setDraftName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          commitRename(g.id);
+                        } else if (e.key === "Escape") {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          cancelEdit();
+                        }
+                      }}
+                      aria-label={`Rename ${g.name}`}
+                    />
+                    <button
+                      type="button"
+                      className={sidebarStyles.gameSelectEditButton}
+                      onClick={() => commitRename(g.id)}
+                      disabled={savingRename}
+                      aria-label="Save name"
+                    >
+                      <Check size={16} />
+                    </button>
+                    <button
+                      type="button"
+                      className={sidebarStyles.gameSelectDeleteButton}
+                      onClick={cancelEdit}
+                      disabled={savingRename}
+                      aria-label="Cancel rename"
+                    >
+                      <X size={16} />
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      className={sidebarStyles.gameSelectOptionLabel}
+                      onClick={() => handleSelect(g.id)}
+                    >
+                      {g.name}
+                    </button>
 
-                {/* Currently selected game can't be deleted. */}
-                {!isCurrent && (
-                  <button
-                    type="button"
-                    className={sidebarStyles.gameSelectDeleteButton}
-                    onClick={() => {
-                      onRequestDelete(g);
-                      setOpen(false);
-                    }}
-                    aria-label={`Delete ${g.name}`}
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                    <button
+                      type="button"
+                      className={sidebarStyles.gameSelectEditButton}
+                      onClick={() => startEdit(g)}
+                      aria-label={`Rename ${g.name}`}
+                    >
+                      <Pencil size={16} />
+                    </button>
+
+                    {/* Currently selected game can't be deleted. */}
+                    {!isCurrent && (
+                      <button
+                        type="button"
+                        className={sidebarStyles.gameSelectDeleteButton}
+                        onClick={() => {
+                          onRequestDelete(g);
+                          setOpen(false);
+                        }}
+                        aria-label={`Delete ${g.name}`}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    )}
+                  </>
                 )}
               </li>
             );
