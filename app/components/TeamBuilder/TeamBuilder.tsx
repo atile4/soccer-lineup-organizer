@@ -8,25 +8,10 @@ import { useAuth } from "@/context/AuthContext";
 import { useTeam } from "@/context/TeamContext";
 import { createTeamWithDefaultGame } from "@/services/teams";
 import { createPlayers, NewPlayer } from "@/services/players";
+import ColorSwitcher from "@/app/components/ui/ColorSwitcher";
 import { useRouter } from "next/navigation";
 
 const GENDER_OPTIONS: Gender[] = ["Boys", "Girls", "Coed"];
-
-// Matches the swatches from the original design. Must be valid 6-digit hex
-const COLOR_SWATCHES = [
-  "#dc2626",
-  "#f97316",
-  "#eab308",
-  "#16a34a",
-  "#14b8a6",
-  "#2563eb",
-  "#1e3a8a",
-  "#7c3aed",
-  "#ec4899",
-  "#111827",
-  "#e5e7eb",
-  "#6b7280",
-];
 
 export const DIVISIONS: Division[] = [
   "U-8",
@@ -269,32 +254,7 @@ export default function TeamBuilder() {
             </div>
 
             <label className={s.fieldLabel}>Jersey color</label>
-            <div className={s.swatchGrid}>
-              {COLOR_SWATCHES.map((hex) => (
-                <button
-                  key={hex}
-                  type="button"
-                  aria-label={hex}
-                  onClick={() => setColor(hex)}
-                  className={`${s.swatch} ${color === hex ? s.swatchActive : ""}`}
-                  style={{ background: hex, borderColor: "rgba(0,0,0,.12)" }}
-                />
-              ))}
-            </div>
-            <div className={s.customColorRow}>
-              <label className={s.customColorLabel}>
-                <input
-                  type="color"
-                  value={color}
-                  onChange={(e) => setColor(e.target.value)}
-                  className={s.customColorInput}
-                />
-                Custom
-              </label>
-              <span className={s.customColorValue}>
-                Selected {color.toUpperCase()}
-              </span>
-            </div>
+            <ColorSwitcher value={color} onChange={setColor} />
           </section>
 
           {/* Right: roster */}
