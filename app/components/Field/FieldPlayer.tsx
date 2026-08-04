@@ -7,6 +7,7 @@ import { fieldStyles as styles } from "./Field.styles";
 import { usePlayerInfo } from "@/context/PlayerInfoContext";
 import { useTeam } from "@/context/TeamContext";
 import { useLineup } from "@/context/LineupContext";
+import { usePlayerSize } from "@/context/PlayerSizeContext";
 
 interface FieldPlayerProps {
   player: Player;
@@ -21,6 +22,7 @@ export function FieldPlayer({ player, x, y }: FieldPlayerProps) {
   const { openPlayer } = usePlayerInfo();
   const { currentTeam } = useTeam();
   const { applyPlayerUpdate, removePlayer } = useLineup();
+  const { scale } = usePlayerSize();
   return (
     <DraggablePlayer
       playerId={player.id}
@@ -39,6 +41,7 @@ export function FieldPlayer({ player, x, y }: FieldPlayerProps) {
         number={player.number}
         variant="field"
         jerseyColor={currentTeam?.color}
+        scale={scale}
       />
     </DraggablePlayer>
   );

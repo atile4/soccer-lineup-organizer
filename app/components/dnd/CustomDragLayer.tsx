@@ -3,12 +3,14 @@
 import { useDragLayer, XYCoord } from "react-dnd";
 import PlayerToken from "../PlayerSidebar/PlayerToken";
 import { PlayerDragItem } from "./itemTypes";
+import { usePlayerSize } from "@/context/PlayerSizeContext";
 
 // Renders the dragged player following the pointer/touch. Required because we
 // suppress the native HTML5 drag image (see DraggablePlayer) and the touch
 // backend produces no drag image at all — without this layer, drags would be
 // invisible on touch devices.
 export function CustomDragLayer() {
+  const { scale } = usePlayerSize();
   const { item, isDragging, currentOffset } = useDragLayer((monitor) => ({
     item: monitor.getItem() as PlayerDragItem | null,
     isDragging: monitor.isDragging(),
@@ -31,6 +33,7 @@ export function CustomDragLayer() {
           number={item.number ?? 0}
           variant={item.previewVariant ?? "bench"}
           jerseyColor={item.jerseyColor}
+          scale={scale}
         />
       </div>
     </div>

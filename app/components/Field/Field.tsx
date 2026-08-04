@@ -6,6 +6,7 @@ import { useDrop } from "react-dnd";
 import { useLineup } from "@/context/LineupContext";
 import { ItemTypes, PlayerDragItem } from "../dnd/itemTypes";
 import { FieldPlayer } from "./FieldPlayer";
+import FieldSizeControl from "./FieldSizeControl";
 import { fieldStyles as styles } from "./Field.styles";
 
 const clamp = (n: number) => Math.max(0, Math.min(100, n));
@@ -69,6 +70,8 @@ export function Field() {
           />
         );
       })}
+
+      <FieldSizeControl className="absolute bottom-2 left-2 z-20 shadow-md" />
     </div>
   );
 }

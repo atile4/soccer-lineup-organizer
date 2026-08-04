@@ -10,6 +10,7 @@ import PlayerToken from "../PlayerSidebar/PlayerToken";
 import { useLineup } from "@/context/LineupContext";
 import { usePlayerInfo } from "@/context/PlayerInfoContext";
 import { useTeam } from "@/context/TeamContext";
+import { usePlayerSize } from "@/context/PlayerSizeContext";
 
 export const Bench = () => {
   const [open, setOpen] = useState(true);
@@ -17,6 +18,7 @@ export const Bench = () => {
     useLineup();
   const { openPlayer } = usePlayerInfo();
   const { currentTeam } = useTeam();
+  const { scale } = usePlayerSize();
 
   const [{ isOver }, drop] = useDrop(
     () => ({
@@ -67,6 +69,7 @@ export const Bench = () => {
                     number={player.number}
                     variant="bench"
                     jerseyColor={currentTeam?.color}
+                    scale={scale}
                   />
                 </DraggablePlayer>
               ))
