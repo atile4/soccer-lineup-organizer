@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import "./globals.css";
 import { Caveat, Inter } from "next/font/google";
 
@@ -6,6 +7,8 @@ import { Caveat, Inter } from "next/font/google";
 import { AuthProvider } from "@/context/AuthContext";
 import { TeamProvider } from "@/context/TeamContext";
 import { GameProvider } from "@/context/GameContext";
+import { PlayerSizeProvider } from "@/context/PlayerSizeContext";
+import { COOKIE_NAME, parseScale } from "@/context/playerSize";
 
 export const metadata: Metadata = {
   title: "Soccer Lineup Organizer",
@@ -29,6 +32,10 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Read the saved token-size preference from the cookie on the server so the
+  // correct size renders on first paint (avoids a flash to the default).
+  const initialScale = parseScale(cookies().get(COOKIE_NAME)?.value);
+
   return (
     <html lang="en">
       <body
@@ -36,7 +43,11 @@ export default function RootLayout({
       >
         <AuthProvider>
           <TeamProvider>
-            <GameProvider>{children}</GameProvider>
+            <GameProvider>
+              <PlayerSizeProvider initialScale={initialScale}>
+                {children}
+              </PlayerSizeProvider>
+            </GameProvider>
           </TeamProvider>
         </AuthProvider>
       </body>
