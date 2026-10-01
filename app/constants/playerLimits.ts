@@ -20,4 +20,4 @@ export const MAX_PLAYERS_BY_DIV = {
 export const MAX_TEAMS = 2;
 
 // Maximum games per team
-export const MAX_GAMES = 3;
+export const MAX_GAMES = 20;
