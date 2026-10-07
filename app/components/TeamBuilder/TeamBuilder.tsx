@@ -5,9 +5,13 @@ import { teamBuilderStyles as s } from "./TeamBuilder.styles";
 import { Division, Gender } from "@/app/types";
 import { useAuth } from "@/context/AuthContext";
 import { useTeam } from "@/context/TeamContext";
-import { createTeamWithDefaultGame } from "@/services/teams";
+import {
+  createTeamWithDefaultGame,
+  MaxTeamsReachedError,
+} from "@/services/teams";
 import { createPlayers, NewPlayer } from "@/services/players";
 import { ParsedPlayer } from "@/app/utils/playerListParser";
+import { MAX_TEAMS } from "@/app/constants/playerLimits";
 import { useRouter } from "next/navigation";
 import TeamDetails from "./TeamDetails";
 import AddPlayers from "./AddPlayers";
@@ -152,12 +156,21 @@ export default function TeamBuilder() {
       // Pull the new team into shared state so the header/switcher reflect it
       // once we navigate back to "/".
       await refreshTeams();
-    } catch (err) {
-      console.error("Failed to save team:", err);
-      showToast("Something went wrong saving your team. Try again.");
-    } finally {
+
+      // Only leave on success
       setSaving(false);
       router.push("/");
+    } catch (err) {
+      // Enforce team limit at service level to prevent bypassing from accessing
+      // with /create
+      if (err instanceof MaxTeamsReachedError) {
+        showToast(`You can have at most ${MAX_TEAMS} teams.`);
+        setSaving(false);
+        return;
+      }
+      console.error("Failed to save team:", err);
+      showToast("Something went wrong saving your team. Try again.");
+      setSaving(false);
     }
   };
 

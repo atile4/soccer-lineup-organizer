@@ -12,10 +12,12 @@ import {
   updateGameName,
   createGameWithLineups,
   deleteGame,
+  MaxGamesReachedError,
 } from "@/services/games";
 
 // context
 import { useGame } from "@/context/GameContext";
+import { useIsPremium } from "@/app/hooks/useIsPremium";
 
 // types
 import { SplitBy, Game } from "@/app/types";
@@ -44,6 +46,7 @@ interface ToastState {
 // Manage Games Tab
 export const ManageGamesTab: React.FC<ManageGamesTabProps> = ({ teamId }) => {
   const { games, currentGame, switchGame, refreshGameData } = useGame();
+  const { ensureLoaded } = useIsPremium();
 
   const [splitBy, setSplitBy] = useState<SplitBy>();
   const [notes, setNotes] = useState("");
@@ -89,9 +92,11 @@ export const ManageGamesTab: React.FC<ManageGamesTabProps> = ({ teamId }) => {
     return () => document.removeEventListener("click", handler);
   }, [showGameLimitWarning]);
 
-  const handleCreateGameClick = () => {
+  const handleCreateGameClick = async () => {
     if (!teamId) return;
-    if (games.length >= MAX_GAMES) {
+    // Await lookup to prevent a warning showing up before query is finished
+    const isPremium = await ensureLoaded();
+    if (games.length >= MAX_GAMES && !isPremium) {
       setShowGameLimitWarning(true);
       return;
     }
@@ -147,8 +152,13 @@ export const ManageGamesTab: React.FC<ManageGamesTabProps> = ({ teamId }) => {
       showToast(`"${newGame.name}" created`);
       setShowCreateGameModal(false);
     } catch (err) {
-      console.error("Failed to create game:", err);
-      showToast("Couldn't create the game. Try again.", "error");
+      // Show game error limit warning
+      if (err instanceof MaxGamesReachedError) {
+        setShowGameLimitWarning(true);
+      } else {
+        console.error("Failed to create game:", err);
+        showToast("Couldn't create the game. Try again.", "error");
+      }
     } finally {
       setCreatingGame(false);
     }

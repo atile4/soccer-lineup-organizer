@@ -1,5 +1,7 @@
 import { SplitBy, Game, Lineup } from "@/app/types";
+import { MAX_GAMES } from "@/app/constants/playerLimits";
 import { supabase } from "@/lib/supabase";
+import { fetchIsPremium } from "./premium";
 
 export async function fetchGames(teamId: string) {
   const { data, error } = await supabase
@@ -26,12 +28,46 @@ export async function createGame(
   return data as Game;
 }
 
+// Thrown when a non-premium user is already at MAX_GAMES on a team, so the
+// UI can shows a limit message.
+export class MaxGamesReachedError extends Error {
+  constructor() {
+    super(`You can have at most ${MAX_GAMES} games per team.`);
+    this.name = "MaxGamesReachedError";
+  }
+}
+
+// Enforces MAX_GAMES at the service layer
+async function assertGameLimit(teamId: string) {
+  const { count, error } = await supabase
+    .from("games")
+    .select("id", { count: "exact", head: true })
+    .eq("team_id", teamId);
+
+  if (error) throw error;
+  if ((count ?? 0) < MAX_GAMES) return;
+
+  // At the limit — resolve the owner, since only that user could be exempt.
+  const { data: team, error: teamError } = await supabase
+    .from("teams")
+    .select("user_id")
+    .eq("id", teamId)
+    .single();
+
+  if (teamError) throw teamError;
+  if (await fetchIsPremium(team.user_id)) return;
+
+  throw new MaxGamesReachedError();
+}
+
 export async function createGameWithLineups(
   teamId: string,
   name: string,
   split: SplitBy = "none",
   notes?: string,
 ): Promise<Game> {
+  await assertGameLimit(teamId);
+
   const { data, error } = await supabase.rpc("create_game_with_lineups", {
     p_team_id: teamId,
     p_name: name,
