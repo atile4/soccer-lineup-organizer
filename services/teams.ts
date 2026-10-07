@@ -1,6 +1,31 @@
 import { supabase } from "@/lib/supabase";
 import { Team, Division, Gender, TeamWithPlayerCount } from "@/app/types";
+import { MAX_TEAMS } from "@/app/constants/playerLimits";
 import { createGameWithLineups } from "./games";
+import { fetchIsPremium } from "./premium";
+
+// Thrown when a non-premium user already owns MAX_TEAMS teams, so the UI can
+// show the limit message instead of a generic failure.
+export class MaxTeamsReachedError extends Error {
+  constructor() {
+    super(`You can have at most ${MAX_TEAMS} teams.`);
+    this.name = "MaxTeamsReachedError";
+  }
+}
+
+// Enforces MAX_TEAMS at the service layer.
+async function assertTeamLimit(userId: string) {
+  const { count, error } = await supabase
+    .from("teams")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId);
+
+  if (error) throw error;
+  if ((count ?? 0) < MAX_TEAMS) return;
+  if (await fetchIsPremium(userId)) return;
+
+  throw new MaxTeamsReachedError();
+}
 
 export async function fetchTeams(userId: string) {
   const { data, error } = await supabase
@@ -34,6 +59,8 @@ export async function createTeam(
   gender: Gender,
   color: string,
 ): Promise<Team> {
+  await assertTeamLimit(userId);
+
   const { data, error } = await supabase
     .from("teams")
     .insert({ user_id: userId, name, division, gender, color })
