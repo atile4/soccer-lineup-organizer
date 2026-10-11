@@ -6,6 +6,7 @@ import { Player } from "@/app/types";
 import { playerInfoPopoverStyles as s } from "./PlayerPopover.styles";
 import { useTeam } from "@/context/TeamContext";
 import { useLineup } from "@/context/LineupContext";
+import { useAuth } from "@/context/AuthContext";
 import { deletePlayer, updatePlayer } from "@/services/players";
 import DeletePlayerModal from "./DeletePlayerModal";
 import {
@@ -37,6 +38,8 @@ export default function PlayerInfoPopover({
 }: PlayerInfoPopoverProps) {
   const { currentTeam } = useTeam();
   const { placements } = useLineup();
+  const { session } = useAuth();
+  const canEdit = !!session;
   const popoverRef = useRef<HTMLDivElement | null>(null);
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(
     null,
@@ -130,6 +133,7 @@ export default function PlayerInfoPopover({
   ]);
 
   const handleSave = async (field: EditableField) => {
+    if (!canEdit) return;
     let draft: string;
     let original: string;
 
@@ -191,6 +195,7 @@ export default function PlayerInfoPopover({
   };
 
   const handleConfirmDelete = async () => {
+    if (!canEdit) return;
     setDeleting(true);
     setDeleteError(null);
     try {
@@ -248,14 +253,16 @@ export default function PlayerInfoPopover({
                 ) : (
                   <>
                     <h3 className={s.name}>{player.name}</h3>
-                    <button
-                      type="button"
-                      className={s.editIconButton}
-                      onClick={() => setEditingField("name")}
-                      aria-label="Edit name"
-                    >
-                      <Pencil size={13} />
-                    </button>
+                    {canEdit && (
+                      <button
+                        type="button"
+                        className={s.editIconButton}
+                        onClick={() => setEditingField("name")}
+                        aria-label="Edit name"
+                      >
+                        <Pencil size={13} />
+                      </button>
+                    )}
                   </>
                 )}
               </div>
@@ -286,14 +293,16 @@ export default function PlayerInfoPopover({
                 ) : (
                   <>
                     <span className={s.position}>{player.position || "—"}</span>
-                    <button
-                      type="button"
-                      className={s.editIconButton}
-                      onClick={() => setEditingField("position")}
-                      aria-label="Edit position"
-                    >
-                      <Pencil size={11} />
-                    </button>
+                    {canEdit && (
+                      <button
+                        type="button"
+                        className={s.editIconButton}
+                        onClick={() => setEditingField("position")}
+                        aria-label="Edit position"
+                      >
+                        <Pencil size={11} />
+                      </button>
+                    )}
                   </>
                 )}
               </div>
@@ -309,8 +318,10 @@ export default function PlayerInfoPopover({
                     d="M25 10 L10 30 L25 35 L25 80 L75 80 L75 35 L90 30 L75 10 C70 18 60 22 50 22 C40 22 30 18 25 10Z"
                     fill={currentTeam?.color ?? "#7C3AED"}
                     className={s.jerseyPath}
-                    onClick={() => setEditingField("number")}
-                    style={{ cursor: "pointer" }}
+                    onClick={
+                      canEdit ? () => setEditingField("number") : undefined
+                    }
+                    style={{ cursor: canEdit ? "pointer" : "default" }}
                   />
                   {editingField !== "number" && (
                     <text
@@ -322,7 +333,9 @@ export default function PlayerInfoPopover({
                       fill={numberColorFor(currentTeam?.color ?? "#7C3AED")}
                       fontFamily="Arial, sans-serif"
                       className={s.numberText}
-                      onClick={() => setEditingField("number")}
+                      onClick={
+                        canEdit ? () => setEditingField("number") : undefined
+                      }
                     >
                       {player.number ?? ""}
                     </text>
@@ -351,34 +364,38 @@ export default function PlayerInfoPopover({
             </div>
           </div>
 
-          {/* Delete action — bottom-right corner */}
-          <button
-            type="button"
-            className={s.deleteButton}
-            aria-label="Delete player"
-            onClick={() => {
-              setDeleteError(null);
-              setConfirmingDelete(true);
-            }}
-          >
-            <Trash2 size={16} />
-          </button>
+          {/* Delete action — bottom-right corner (logged-out: read-only) */}
+          {canEdit && (
+            <button
+              type="button"
+              className={s.deleteButton}
+              aria-label="Delete player"
+              onClick={() => {
+                setDeleteError(null);
+                setConfirmingDelete(true);
+              }}
+            >
+              <Trash2 size={16} />
+            </button>
+          )}
         </div>
       </div>
 
-      <DeletePlayerModal
-        open={confirmingDelete}
-        player={player}
-        status={lineupStatus}
-        deleting={deleting}
-        error={deleteError}
-        onConfirm={handleConfirmDelete}
-        onCancel={() => {
-          if (deleting) return; // don't bail out mid-delete
-          setConfirmingDelete(false);
-          setDeleteError(null);
-        }}
-      />
+      {canEdit && (
+        <DeletePlayerModal
+          open={confirmingDelete}
+          player={player}
+          status={lineupStatus}
+          deleting={deleting}
+          error={deleteError}
+          onConfirm={handleConfirmDelete}
+          onCancel={() => {
+            if (deleting) return; // don't bail out mid-delete
+            setConfirmingDelete(false);
+            setDeleteError(null);
+          }}
+        />
+      )}
     </>
   );
 }

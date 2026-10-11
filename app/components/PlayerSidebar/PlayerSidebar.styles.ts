@@ -38,6 +38,10 @@ export const playerSidebarStyles = {
     "bg-surface-subtle rounded-xl flex flex-col items-center justify-center gap-1 aspect-square hover:bg-border transition-colors",
   playerListCreateIcon: "h-20 w-20 sm:h-12 sm:w-12 md:h-14 md:w-14 text-faint",
   playerListCreateLabel: "text-lg sm:text-sm text-muted",
+  // Logged out — no create tile, just a way in (shown under the grid).
+  playerListLoginNote: "mt-4 text-center text-body-sm text-muted",
+  playerListLoginLink:
+    "font-medium text-accent underline underline-offset-2 hover:text-accent-hover transition-colors",
 
   // Create Player Modal
   createModalTitle: "text-h2 text-ink mb-4",
