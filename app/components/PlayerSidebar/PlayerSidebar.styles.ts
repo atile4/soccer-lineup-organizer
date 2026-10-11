@@ -42,6 +42,9 @@ export const playerSidebarStyles = {
   playerListLoginNote: "mt-4 text-center text-body-sm text-muted",
   playerListLoginLink:
     "font-medium text-accent underline underline-offset-2 hover:text-accent-hover transition-colors",
+  // Logged-out demo entry point, under the login link.
+  playerListDemoButton:
+    "mt-2 mb-3 w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm font-medium text-ink-2 hover:bg-surface-subtle transition-colors",
 
   // Create Player Modal
   createModalTitle: "text-h2 text-ink mb-4",

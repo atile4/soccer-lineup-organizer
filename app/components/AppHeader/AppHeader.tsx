@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import ProfileMenu from "./ProfileMenu";
 import LogoAndTitle from "./LogoAndTitle";
 import TeamSwitcher from "./TeamSwitcher";
+import DemoBanner from "../DemoControls/DemoBanner";
 import { Button } from "../ui/Button";
 
 interface AppHeaderProps {
@@ -35,6 +36,12 @@ export default function AppHeader({ page = "dash" }: AppHeaderProps) {
       <div className={styles.header.inner}>
         <div className={styles.header.layout}>
           <LogoAndTitle title={"SLO"} />
+
+          {!loading && !session && (
+            <div className={styles.centerSection.banner}>
+              <DemoBanner />
+            </div>
+          )}
 
           {loading ? (
             <p>Loading...</p>

@@ -7,6 +7,7 @@ import { useLineup } from "@/context/LineupContext";
 import { usePlayerInfo } from "@/context/PlayerInfoContext";
 import { useTeam } from "@/context/TeamContext";
 import { useAuth } from "@/context/AuthContext";
+import { useDemo } from "@/context/DemoContext";
 
 // components
 import { Plus } from "lucide-react";
@@ -44,6 +45,7 @@ export const PlayerList = () => {
   const { session, loading: authLoading } = useAuth();
   const { openPlayer } = usePlayerInfo();
   const { currentTeam } = useTeam();
+  const { isDemo, enable: enableDemo } = useDemo();
 
   // Player creation needs an authenticated user AND a team to attach the row
   // to (RLS rejects everything otherwise). While the session is still
@@ -177,16 +179,27 @@ export const PlayerList = () => {
 
       {/* Logged out → there's no team to attach a player to (and RLS would
           reject the insert), so the button is gone entirely and we show the
-          way in rather than an error. */}
+          way in rather than an error. The demo entry point sits under it. */}
       {!loading && !authLoading && !session && (
-        <p className={playerSidebarStyles.playerListLoginNote}>
-          <Link
-            href="/login"
-            className={playerSidebarStyles.playerListLoginLink}
-          >
-            Log in to start building your team!
-          </Link>
-        </p>
+        <div>
+          <p className={playerSidebarStyles.playerListLoginNote}>
+            <Link
+              href="/login"
+              className={playerSidebarStyles.playerListLoginLink}
+            >
+              Log in to start building your team!
+            </Link>
+          </p>
+          {!isDemo && (
+            <button
+              type="button"
+              onClick={enableDemo}
+              className={playerSidebarStyles.playerListDemoButton}
+            >
+              Try out a demo
+            </button>
+          )}
+        </div>
       )}
 
       <Modal open={showCreateModal} onClose={closeCreateModal}>
