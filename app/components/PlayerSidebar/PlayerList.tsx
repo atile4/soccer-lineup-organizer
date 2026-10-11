@@ -1,17 +1,28 @@
 "use client";
 
+// hooks
 import { useState } from "react";
-import { Plus } from "lucide-react";
-import { useDrop } from "react-dnd";
-import PlayerCard from "./PlayerCard";
-import { playerSidebarStyles } from "./PlayerSidebar.styles";
-import { DraggablePlayer } from "../dnd/DraggablePlayer";
-import { ItemTypes, PlayerDragItem } from "../dnd/itemTypes";
+import Link from "next/link";
 import { useLineup } from "@/context/LineupContext";
 import { usePlayerInfo } from "@/context/PlayerInfoContext";
 import { useTeam } from "@/context/TeamContext";
-import { createPlayer } from "@/services/players";
+import { useAuth } from "@/context/AuthContext";
+
+// components
+import { Plus } from "lucide-react";
+import { useDrop } from "react-dnd";
+import PlayerCard from "./PlayerCard";
 import Modal from "../Modal";
+import { ItemTypes, PlayerDragItem } from "../dnd/itemTypes";
+
+// styles
+import { playerSidebarStyles } from "./PlayerSidebar.styles";
+import { DraggablePlayer } from "../dnd/DraggablePlayer";
+
+// services
+import { createPlayer } from "@/services/players";
+
+// constants
 import {
   MAX_PLAYER_NAME_CHARS,
   MAX_PLAYER_NUMBER_CHARS,
@@ -30,8 +41,15 @@ export const PlayerList = () => {
     loading,
     addPlayer,
   } = useLineup();
+  const { session, loading: authLoading } = useAuth();
   const { openPlayer } = usePlayerInfo();
   const { currentTeam } = useTeam();
+
+  // Player creation needs an authenticated user AND a team to attach the row
+  // to (RLS rejects everything otherwise). While the session is still
+  // resolving neither tile renders, so the create button can't flash into a
+  // state that would fail on click.
+  const canCreatePlayers = !authLoading && !!session && !!currentTeam;
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [name, setName] = useState("");
@@ -58,6 +76,13 @@ export const PlayerList = () => {
   };
 
   const handleCreate = async () => {
+    // Defence in depth: the create button is only rendered when this is
+    // true, but a stale render must never reach `currentTeam.id` — logged
+    // out, there is no team, so the insert would fail anyway.
+    if (!canCreatePlayers) {
+      setError("You need to be logged in to create players");
+      return;
+    }
     const trimmed = name.trim();
     if (!trimmed) {
       setError("Name is required");
@@ -132,7 +157,10 @@ export const PlayerList = () => {
                 />
               </DraggablePlayer>
             ))}
-        {!loading && (
+        {/* Logged out → the create flow is omitted entirely; see the note
+            under the grid. Logged in but teamless → the header's "Create
+            your first team" covers it, so nothing renders here either. */}
+        {!loading && !authLoading && session && currentTeam && (
           <button
             type="button"
             className={playerSidebarStyles.playerListCreateButton}
@@ -146,6 +174,20 @@ export const PlayerList = () => {
           </button>
         )}
       </div>
+
+      {/* Logged out → there's no team to attach a player to (and RLS would
+          reject the insert), so the button is gone entirely and we show the
+          way in rather than an error. */}
+      {!loading && !authLoading && !session && (
+        <p className={playerSidebarStyles.playerListLoginNote}>
+          <Link
+            href="/login"
+            className={playerSidebarStyles.playerListLoginLink}
+          >
+            Log in to start building your team!
+          </Link>
+        </p>
+      )}
 
       <Modal open={showCreateModal} onClose={closeCreateModal}>
         <h2 className={playerSidebarStyles.createModalTitle}>Create Player</h2>
