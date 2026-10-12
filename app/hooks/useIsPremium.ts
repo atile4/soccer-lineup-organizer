@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@/context/AuthContext";
+import { useDemo } from "@/context/DemoContext";
 import { fetchIsPremium } from "@/services/premium";
 
 export interface UseIsPremium {
@@ -16,6 +17,7 @@ export interface UseIsPremium {
 
 export function useIsPremium(): UseIsPremium {
   const { session } = useAuth();
+  const { isDemo } = useDemo();
   const userId = session?.user?.id ?? null;
 
   const [isPremium, setIsPremium] = useState(false);
@@ -28,7 +30,9 @@ export function useIsPremium(): UseIsPremium {
   const userIdRef = useRef<string | null>(null);
 
   const ensureLoaded = useCallback((): Promise<boolean> => {
-    if (!userId) return Promise.resolve(false);
+    // Demo mode has no premium tier (it is logged-out only) — fail closed
+    // without ever issuing a premium_users query.
+    if (isDemo || !userId) return Promise.resolve(false);
     if (requestRef.current) return requestRef.current;
 
     setIsLoading(true);
@@ -49,7 +53,7 @@ export function useIsPremium(): UseIsPremium {
 
     requestRef.current = request;
     return request;
-  }, [userId]);
+  }, [userId, isDemo]);
 
   // Re-run whenever the signed-in user changes.
   useEffect(() => {

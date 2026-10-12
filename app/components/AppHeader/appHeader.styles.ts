@@ -9,6 +9,8 @@ export const appHeaderStyles = {
 
   centerSection: {
     wrapper: "flex items-center space-x-2 sm:space-x-3 min-w-0",
+    banner:
+      "absolute left-1/2 -translate-x-1/2 hidden md:flex items-center justify-center",
   },
 
   logo: {

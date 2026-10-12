@@ -15,8 +15,18 @@ import {
   MaxGamesReachedError,
 } from "@/services/games";
 
+// demo imports
+import {
+  createDemoGame,
+  deleteDemoGame,
+  renameDemoGame,
+  updateDemoNotes,
+  setDemoSplit,
+} from "@/services/demoGames";
+
 // context
 import { useGame } from "@/context/GameContext";
+import { useDemo } from "@/context/DemoContext";
 import { useIsPremium } from "@/app/hooks/useIsPremium";
 
 // types
@@ -46,7 +56,12 @@ interface ToastState {
 // Manage Games Tab
 export const ManageGamesTab: React.FC<ManageGamesTabProps> = ({ teamId }) => {
   const { games, currentGame, switchGame, refreshGameData } = useGame();
+  const { isDemo, demoGames, demoLineups, applyDemoState } = useDemo();
   const { ensureLoaded } = useIsPremium();
+
+  // Single source the demo branches read/write; identical to `games` from
+  // GameContext, but this is the store the pure demo functions operate on.
+  const demoState = { games: demoGames, lineups: demoLineups };
 
   const [splitBy, setSplitBy] = useState<SplitBy>();
   const [notes, setNotes] = useState("");
@@ -94,8 +109,9 @@ export const ManageGamesTab: React.FC<ManageGamesTabProps> = ({ teamId }) => {
 
   const handleCreateGameClick = async () => {
     if (!teamId) return;
-    // Await lookup to prevent a warning showing up before query is finished
-    const isPremium = await ensureLoaded();
+    // Demo is logged-out only: never issue a premium lookup there, and treat
+    // it as non-premium so MAX_GAMES stays a hard cap.
+    const isPremium = isDemo ? false : await ensureLoaded();
     if (games.length >= MAX_GAMES && !isPremium) {
       setShowGameLimitWarning(true);
       return;
@@ -103,7 +119,8 @@ export const ManageGamesTab: React.FC<ManageGamesTabProps> = ({ teamId }) => {
     setShowCreateGameModal(true);
   };
 
-  // handling changing game split
+  // handling changing game split. The shrink check is pure util logic, so
+  // demo and real games share this path — only applySplitChange branches.
   const handleSplitSelect = (value: SplitBy) => {
     if (!currentGame || !splitBy) return;
 
@@ -122,7 +139,13 @@ export const ManageGamesTab: React.FC<ManageGamesTabProps> = ({ teamId }) => {
     if (!currentGame) return;
     setSavingSplit(true);
     try {
-      await updateSplit(currentGame.id, value);
+      if (isDemo) {
+        // Client-only: GameContext re-derives `games`/`lineups` from the
+        // committed demo state, so refreshGameData below is a no-op here.
+        applyDemoState(setDemoSplit(demoState, currentGame.id, value));
+      } else {
+        await updateSplit(currentGame.id, value);
+      }
       setSplitBy(value);
       await refreshGameData();
     } catch (err) {
@@ -146,6 +169,17 @@ export const ManageGamesTab: React.FC<ManageGamesTabProps> = ({ teamId }) => {
     if (!teamId) return;
     setCreatingGame(true);
     try {
+      if (isDemo) {
+        // Mirrors createGameWithLineups: builds the game + its periods
+        // locally, then commits so GameContext picks the new game up.
+        // Throws MaxGamesReachedError at the cap, handled below.
+        const created = createDemoGame(demoState, { teamId, name });
+        applyDemoState(created);
+        switchGame(created.game.id);
+        showToast(`"${created.game.name}" created`);
+        setShowCreateGameModal(false);
+        return;
+      }
       const newGame = await createGameWithLineups(teamId, name);
       await refreshGameData(); // pulls the new game (and its lineups) into `games`
       switchGame(newGame.id);
@@ -169,8 +203,14 @@ export const ManageGamesTab: React.FC<ManageGamesTabProps> = ({ teamId }) => {
     if (!gameToDelete) return;
     setDeletingGame(true);
     try {
-      await deleteGame(gameToDelete.id);
-      await refreshGameData();
+      if (isDemo) {
+        // Drops the game, its lineups, and (via GameLineupContext's
+        // lineup-id-keyed state) its placements — all client-side.
+        applyDemoState(deleteDemoGame(demoState, gameToDelete.id));
+      } else {
+        await deleteGame(gameToDelete.id);
+        await refreshGameData();
+      }
       showToast(`"${gameToDelete.name}" deleted`);
       setGameToDelete(null);
     } catch (err) {
@@ -184,8 +224,12 @@ export const ManageGamesTab: React.FC<ManageGamesTabProps> = ({ teamId }) => {
   // --- Rename Game --- (inline edit from the game dropdown)
   const handleRenameGame = async (gameId: string, name: string) => {
     try {
-      await updateGameName(gameId, name);
-      await refreshGameData(); // re-syncs the renamed game into `games`
+      if (isDemo) {
+        applyDemoState(renameDemoGame(demoState, gameId, name));
+      } else {
+        await updateGameName(gameId, name);
+        await refreshGameData(); // re-syncs the renamed game into `games`
+      }
       showToast(`Renamed to "${name}"`);
     } catch (err) {
       console.error("Failed to rename game:", err);
@@ -199,8 +243,14 @@ export const ManageGamesTab: React.FC<ManageGamesTabProps> = ({ teamId }) => {
     if (!currentGame || !notesDirty) return;
     setSavingNotes(true);
     try {
-      await updateNotes(currentGame.id, notes);
-      await refreshGameData(); // re-syncs currentGame.notes, which clears notesDirty via the effect above
+      if (isDemo) {
+        // GameContext re-derives currentGame from the committed demo state,
+        // which clears notesDirty via the effect above.
+        applyDemoState(updateDemoNotes(demoState, currentGame.id, notes));
+      } else {
+        await updateNotes(currentGame.id, notes);
+        await refreshGameData(); // re-syncs currentGame.notes, which clears notesDirty via the effect above
+      }
       showToast("Note saved to this game");
     } catch (err) {
       console.error("Failed to save notes:", err);

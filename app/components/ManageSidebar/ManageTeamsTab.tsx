@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { sidebarStyles } from "./ManageSidebar.styles";
 import ColorSwitcher from "@/app/components/ui/ColorSwitcher";
 import { useTeam } from "@/context/TeamContext";
+import { useDemo } from "@/context/DemoContext";
 import { AYSO_RULES } from "@/app/utils/ruleset/rules";
 
 type ToastVariant = "success" | "error";
@@ -16,7 +17,8 @@ interface ToastState {
 
 // Managing teams — edit the current team's name and jersey color. Edits are
 // staged locally and committed together by the Save button, persisting through
-// TeamContext (optimistic update + revert on failure).
+// TeamContext (optimistic update + revert on failure). In demo mode the whole
+// tab is read-only: the demo team is a frozen fixture.
 const MAX_TEAM_NAME_CHARS = 20;
 
 export const ManageTeamsTab: React.FC = () => {
@@ -27,6 +29,9 @@ export const ManageTeamsTab: React.FC = () => {
     teamRuleSettings,
     updateTeamRuleSetting,
   } = useTeam();
+  // The demo team is a frozen fixture: everything below renders read-only so
+  // no edit can reach the (RLS-rejected) team/rule-settings writes.
+  const { isDemo } = useDemo();
 
   const [name, setName] = useState("");
   const [color, setColor] = useState("");
@@ -50,6 +55,9 @@ export const ManageTeamsTab: React.FC = () => {
   }, [currentTeam]);
 
   const handleSave = async () => {
+    // Defence in depth: the form is read-only in demo, but a stale render
+    // must never reach the persisted team updates.
+    if (isDemo) return;
     if (!currentTeam || !dirty || !name.trim()) return;
     setSaving(true);
     try {
@@ -77,13 +85,16 @@ export const ManageTeamsTab: React.FC = () => {
     <>
       {/* Edit team name */}
       <div className={sidebarStyles.fieldGroup}>
-        <h2 className={sidebarStyles.sectionTitle}>Edit Team</h2>
+        <h2 className={sidebarStyles.sectionTitle}>
+          {isDemo ? "Team Details" : "Edit Team"}
+        </h2>
         <input
           type="text"
           value={name}
           placeholder="Team name"
           className={sidebarStyles.textInput}
           maxLength={MAX_TEAM_NAME_CHARS}
+          disabled={isDemo}
           onChange={(e) =>
             setName(e.target.value.slice(0, MAX_TEAM_NAME_CHARS))
           }
@@ -96,20 +107,24 @@ export const ManageTeamsTab: React.FC = () => {
       {/* Edit team color */}
       <div className={sidebarStyles.manageSection}>
         <div className={sidebarStyles.fieldGroup}>
-          <h2 className={sidebarStyles.sectionTitle}>Edit Team Color</h2>
-          <ColorSwitcher value={color} onChange={setColor} />
+          <h2 className={sidebarStyles.sectionTitle}>
+            {isDemo ? "Team Color" : "Edit Team Color"}
+          </h2>
+          <ColorSwitcher value={color} onChange={setColor} disabled={isDemo} />
         </div>
       </div>
 
-      {/* Save — commits both name and color together */}
-      <button
-        type="button"
-        onClick={handleSave}
-        disabled={saving || !dirty || !name.trim()}
-        className={sidebarStyles.saveNotesButton}
-      >
-        {saving ? "Saving…" : "Save"}
-      </button>
+      {/* Save — commits both name and color together (never in demo) */}
+      {!isDemo && (
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={saving || !dirty || !name.trim()}
+          className={sidebarStyles.saveNotesButton}
+        >
+          {saving ? "Saving…" : "Save"}
+        </button>
+      )}
 
       {/* Rules toggles */}
       <div className={sidebarStyles.manageSection}>
@@ -127,13 +142,17 @@ export const ManageTeamsTab: React.FC = () => {
                 type="button"
                 role="switch"
                 aria-checked={teamRuleSettings[rule.id] !== false}
-                onClick={() =>
+                disabled={isDemo}
+                aria-readonly={isDemo}
+                onClick={() => {
+                  // Defence in depth — disabled already blocks the click.
+                  if (isDemo) return;
                   updateTeamRuleSetting(
                     rule.id,
                     !(teamRuleSettings[rule.id] !== false),
-                  )
-                }
-                className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-border ${
+                  );
+                }}
+                className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-border disabled:cursor-default ${
                   teamRuleSettings[rule.id] !== false
                     ? "bg-accent"
                     : "bg-border"

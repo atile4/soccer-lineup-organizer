@@ -5,6 +5,7 @@ import { Caveat, Inter } from "next/font/google";
 
 // context providers
 import { AuthProvider } from "@/context/AuthContext";
+import { DemoProvider } from "@/context/DemoContext";
 import { TeamProvider } from "@/context/TeamContext";
 import { GameProvider } from "@/context/GameContext";
 import { PlayerSizeProvider } from "@/context/PlayerSizeContext";
@@ -50,15 +51,17 @@ export default function RootLayout({
         className={`${inter.variable} ${caveat.variable} ${inter.className}`}
       >
         <AuthProvider>
-          <TeamProvider>
-            <GameProvider>
-              <PlayerSizeProvider initialScale={initialScale}>
-                <RulesetWarningsProvider initialEnabled={initialRulesetWarnings}>
-                  {children}
-                </RulesetWarningsProvider>
-              </PlayerSizeProvider>
-            </GameProvider>
-          </TeamProvider>
+          <DemoProvider>
+            <TeamProvider>
+              <GameProvider>
+                <PlayerSizeProvider initialScale={initialScale}>
+                  <RulesetWarningsProvider initialEnabled={initialRulesetWarnings}>
+                    {children}
+                  </RulesetWarningsProvider>
+                </PlayerSizeProvider>
+              </GameProvider>
+            </TeamProvider>
+          </DemoProvider>
         </AuthProvider>
       </body>
     </html>
