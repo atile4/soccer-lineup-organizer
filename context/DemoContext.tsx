@@ -35,6 +35,11 @@ interface DemoContextValue {
 
 const DemoContext = createContext<DemoContextValue | undefined>(undefined);
 
+// Stable empty identity so consumers that list demoPlayers in their effect
+// deps don't re-run just because this provider re-rendered. Never mutated —
+// consumers copy on write.
+const NO_PLAYERS: Player[] = [];
+
 export function DemoProvider({ children }: { children: ReactNode }) {
   const { session } = useAuth();
   const [isDemo, setIsDemo] = useState(false);
@@ -70,7 +75,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       enable,
       disable,
       demoTeam: isDemo ? DEMO_TEAM : null,
-      demoPlayers: isDemo ? DEMO_PLAYERS : [],
+      demoPlayers: isDemo ? DEMO_PLAYERS : NO_PLAYERS,
       demoGames,
       demoLineups,
     }),

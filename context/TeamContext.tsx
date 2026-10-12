@@ -9,6 +9,7 @@ import {
   ReactNode,
 } from "react";
 import { useAuth } from "./AuthContext";
+import { useDemo } from "./DemoContext";
 import {
   fetchTeamsWithPlayerCount,
   setCurrentTeam as persistCurrentTeam,
@@ -41,6 +42,7 @@ const TeamContext = createContext<TeamContextValue | undefined>(undefined);
 
 export function TeamProvider({ children }: { children: ReactNode }) {
   const { session } = useAuth();
+  const { isDemo, demoTeam } = useDemo();
   const userId = session?.user?.id ?? null;
 
   const [teams, setTeams] = useState<TeamWithPlayerCount[]>([]);
@@ -49,6 +51,15 @@ export function TeamProvider({ children }: { children: ReactNode }) {
   const [teamRuleSettings, setTeamRuleSettings] = useState<Record<string, boolean>>({});
 
   const refreshTeams = useCallback(async () => {
+    // Demo mode: the frozen fixture team is the whole roster of teams. No
+    // fetches, no persisted current-team id to reconcile.
+    if (isDemo && demoTeam) {
+      setTeams([demoTeam]);
+      setCurrentTeamId(demoTeam.id);
+      setLoading(false);
+      return;
+    }
+
     if (!userId) {
       setTeams([]);
       setCurrentTeamId(null);
@@ -75,7 +86,7 @@ export function TeamProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, [userId]);
+  }, [userId, isDemo, demoTeam]);
 
   useEffect(() => {
     refreshTeams();
@@ -83,6 +94,12 @@ export function TeamProvider({ children }: { children: ReactNode }) {
 
   // Load rule settings when the current team changes.
   useEffect(() => {
+    // Demo has no per-team overrides — ruleset evaluation runs on the
+    // fixture defaults (every rule enabled), so skip the query entirely.
+    if (isDemo) {
+      setTeamRuleSettings({});
+      return;
+    }
     if (!currentTeamId) {
       setTeamRuleSettings({});
       return;
@@ -94,7 +111,7 @@ export function TeamProvider({ children }: { children: ReactNode }) {
         setTeamRuleSettings(settings);
       })
       .catch((err) => console.error("Failed to load rule settings:", err));
-  }, [currentTeamId]);
+  }, [currentTeamId, isDemo]);
 
   const switchTeam = useCallback(
     async (teamId: string) => {

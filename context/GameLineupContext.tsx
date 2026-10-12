@@ -12,6 +12,7 @@ import {
 
 import { Placement } from "@/app/types";
 import { useGame } from "./GameContext";
+import { useDemo } from "./DemoContext";
 import { fetchFieldPositionsForLineups } from "@/services/fieldPositions";
 
 // Placements for one lineup, keyed by player_id for O(1) lookups.
@@ -47,6 +48,7 @@ const GameLineupContext = createContext<GameLineupContextValue | undefined>(
 
 export function GameLineupProvider({ children }: { children: ReactNode }) {
   const { lineups } = useGame();
+  const { isDemo } = useDemo();
   const [placementsByLineup, setPlacementsByLineup] =
     useState<PlacementsByLineup>({});
   const [loading, setLoading] = useState(true);
@@ -60,6 +62,20 @@ export function GameLineupProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (lineupIds.length === 0) {
       setPlacementsByLineup({});
+      setLoading(false);
+      return;
+    }
+
+    // Demo placements are pure client state — there is no field_positions
+    // table behind them. Seed any period not seen yet and keep the ones
+    // already on screen, so an effect re-run never wipes a drag. Periods
+    // removed by a demo split change drop out here (same as the DB cascade).
+    if (isDemo) {
+      setPlacementsByLineup((prev) => {
+        const next: PlacementsByLineup = {};
+        for (const id of lineupIds) next[id] = prev[id] ?? {};
+        return next;
+      });
       setLoading(false);
       return;
     }
@@ -95,7 +111,7 @@ export function GameLineupProvider({ children }: { children: ReactNode }) {
     };
     // lineupKey stands in for lineupIds — see the note above.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lineupKey]);
+  }, [lineupKey, isDemo]);
 
   const setPlacement = useCallback(
     (lineupId: string, playerId: string, next: Placement | null) => {

@@ -11,6 +11,7 @@ import {
 } from "react";
 
 import { Player } from "@/app/types";
+import { useDemo } from "./DemoContext";
 import { fetchPlayers } from "@/services/players";
 import {
   placePlayerOnField,
@@ -83,6 +84,7 @@ export function LineupProvider({
     setLineupPlacements,
     dropPlayer,
   } = useGameLineup();
+  const { isDemo, demoPlayers } = useDemo();
 
   const placements = lineupId
     ? (placementsByLineup[lineupId] ?? EMPTY_PLACEMENTS)
@@ -90,6 +92,12 @@ export function LineupProvider({
 
   // Load the roster for the active team.
   useEffect(() => {
+    if (isDemo) {
+      setPlayers(demoPlayers);
+      setRosterLoading(false);
+      return;
+    }
+
     if (!teamId) {
       setPlayers([]);
       setRosterLoading(false); // nothing to load — no team selected
@@ -111,7 +119,7 @@ export function LineupProvider({
     return () => {
       cancelled = true;
     };
-  }, [teamId]);
+  }, [teamId, isDemo, demoPlayers]);
 
   // Without a game there's no valid lineup FK, and placements are keyed by
   // lineup — so there's nowhere to put the change. Drop it with a warning.

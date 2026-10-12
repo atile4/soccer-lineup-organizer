@@ -10,6 +10,7 @@ import {
 } from "react";
 import { useAuth } from "./AuthContext";
 import { useTeam } from "./TeamContext";
+import { useDemo } from "./DemoContext";
 import { fetchGames } from "@/services/games";
 import {
   fetchLineups,
@@ -36,6 +37,7 @@ const byPeriod = (list: Lineup[]) =>
 export function GameProvider({ children }: { children: ReactNode }) {
   const { session } = useAuth();
   const { currentTeamId } = useTeam();
+  const { isDemo, demoGames, demoLineups } = useDemo();
   const userId = session?.user?.id ?? null;
 
   const [games, setGames] = useState<Game[]>([]);
@@ -47,6 +49,17 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   // Load games whenever the active team changes
   useEffect(() => {
+    if (isDemo) {
+      // Seeds demo and resyncs whenever changes occurs
+      setGames(demoGames);
+      setCurrentGameId(
+        (prev) =>
+          demoGames.find((g) => g.id === prev)?.id ?? demoGames[0]?.id ?? null,
+      );
+      setLoading(false);
+      return;
+    }
+
     if (!currentTeamId) {
       setGames([]);
       setCurrentGameId(null);
@@ -77,10 +90,21 @@ export function GameProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [currentTeamId, userId]);
+  }, [currentTeamId, userId, isDemo, demoGames]);
 
   // Load lineups whenever the active game changes.
   useEffect(() => {
+    if (isDemo) {
+      // DemoContext holds lineups for every demo game; scope to the active
+      // one the way fetchLineups(gameId) would.
+      setLineups(
+        currentGameId
+          ? byPeriod(demoLineups.filter((l) => l.game_id === currentGameId))
+          : [],
+      );
+      return;
+    }
+
     if (!currentGameId) {
       setLineups([]);
       return;
@@ -96,7 +120,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [currentGameId]);
+  }, [currentGameId, isDemo, demoLineups]);
 
   const switchGame = useCallback((gameId: string) => {
     setCurrentGameId(gameId);
