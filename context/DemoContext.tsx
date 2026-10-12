@@ -22,6 +22,7 @@ import {
   DEMO_LINEUPS,
 } from "@/app/data/demoFixtures";
 import { TeamWithPlayerCount, Player, Game, Lineup } from "@/app/types";
+import type { DemoGameState } from "@/services/demoGames";
 
 interface DemoContextValue {
   isDemo: boolean;
@@ -31,6 +32,10 @@ interface DemoContextValue {
   demoPlayers: Player[];
   demoGames: Game[];
   demoLineups: Lineup[];
+  // Commit the result of a services/demoGames mutation. Writes are composed
+  // outside this provider: callers run the pure function first, then hand
+  // the next state here so every reader (GameContext, …) picks it up.
+  applyDemoState: (next: DemoGameState) => void;
 }
 
 const DemoContext = createContext<DemoContextValue | undefined>(undefined);
@@ -44,7 +49,8 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   const { session } = useAuth();
   const [isDemo, setIsDemo] = useState(false);
   // Games/lineups are state (not just the fixture constants) so demo-mode
-  // mutations in later phases can update them without touching real contexts.
+  // mutations — pure functions in services/demoGames.ts, committed via
+  // applyDemoState — can update them without touching the real contexts.
   const [demoGames, setDemoGames] = useState<Game[]>([]);
   const [demoLineups, setDemoLineups] = useState<Lineup[]>([]);
 
@@ -63,6 +69,11 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     setDemoLineups([]);
   }, []);
 
+  const applyDemoState = useCallback((next: DemoGameState) => {
+    setDemoGames(next.games);
+    setDemoLineups(next.lineups);
+  }, []);
+
   // Signing in during a demo (e.g. via the header's Log in button) silently
   // exits demo so real data can never be mixed with demo state.
   useEffect(() => {
@@ -78,8 +89,9 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       demoPlayers: isDemo ? DEMO_PLAYERS : NO_PLAYERS,
       demoGames,
       demoLineups,
+      applyDemoState,
     }),
-    [isDemo, enable, disable, demoGames, demoLineups],
+    [isDemo, enable, disable, demoGames, demoLineups, applyDemoState],
   );
 
   return (

@@ -38,6 +38,8 @@ interface LineupContextValue {
   placements: PlacementMap;
 
   // Mutations — each updates local state optimistically, then persists.
+  // In demo mode the local write still happens but persistence is skipped;
+  // demo placements live only in memory.
   placeOnField: (playerId: string, x: number, y: number) => void;
   placeOnBench: (playerId: string) => void;
   unplace: (playerId: string) => void;
@@ -134,33 +136,38 @@ export function LineupProvider({
     (playerId: string, x: number, y: number) => {
       if (!lineupId) return warnNoLineup();
       setPlacement(lineupId, playerId, { x, y, bench: false });
+      // Demo placements are client-only (there is no field_positions table
+      // behind them) — skip persistence, keep the local write above.
+      if (isDemo) return;
       placePlayerOnField(lineupId, playerId, x, y).catch((err) =>
         console.error("Failed to persist field placement:", err),
       );
     },
-    [lineupId, setPlacement],
+    [lineupId, setPlacement, isDemo],
   );
 
   const placeOnBench = useCallback(
     (playerId: string) => {
       if (!lineupId) return warnNoLineup();
       setPlacement(lineupId, playerId, { x: null, y: null, bench: true });
+      if (isDemo) return;
       benchPlayer(lineupId, playerId).catch((err) =>
         console.error("Failed to persist bench placement:", err),
       );
     },
-    [lineupId, setPlacement],
+    [lineupId, setPlacement, isDemo],
   );
 
   const unplace = useCallback(
     (playerId: string) => {
       if (!lineupId) return warnNoLineup();
       setPlacement(lineupId, playerId, null);
+      if (isDemo) return;
       removeFieldPosition(lineupId, playerId).catch((err) =>
         console.error("Failed to remove field placement:", err),
       );
     },
-    [lineupId, setPlacement],
+    [lineupId, setPlacement, isDemo],
   );
 
   const benchAll = useCallback(() => {
@@ -169,10 +176,11 @@ export function LineupProvider({
     const next: PlacementMap = {};
     for (const id of ids) next[id] = { x: null, y: null, bench: true };
     setLineupPlacements(lineupId, next);
+    if (isDemo) return;
     benchAllPlayers(lineupId, ids).catch((err) =>
       console.error("Failed to bench all players:", err),
     );
-  }, [players, lineupId, setLineupPlacements]);
+  }, [players, lineupId, setLineupPlacements, isDemo]);
 
   const applyPlayerUpdate = useCallback((updated: Player) => {
     setPlayers((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));

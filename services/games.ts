@@ -2,6 +2,11 @@ import { SplitBy, Game, Lineup } from "@/app/types";
 import { MAX_GAMES } from "@/app/constants/playerLimits";
 import { supabase } from "@/lib/supabase";
 import { fetchIsPremium } from "./premium";
+import { MaxGamesReachedError } from "./errors";
+
+// Re-exported so callers keep importing it from here. The class itself lives
+// in ./errors so demo mode can share it without pulling in supabase.
+export { MaxGamesReachedError };
 
 export async function fetchGames(teamId: string) {
   const { data, error } = await supabase
@@ -26,15 +31,6 @@ export async function createGame(
 
   if (error) throw error;
   return data as Game;
-}
-
-// Thrown when a non-premium user is already at MAX_GAMES on a team, so the
-// UI can shows a limit message.
-export class MaxGamesReachedError extends Error {
-  constructor() {
-    super(`You can have at most ${MAX_GAMES} games per team.`);
-    this.name = "MaxGamesReachedError";
-  }
 }
 
 // Enforces MAX_GAMES at the service layer

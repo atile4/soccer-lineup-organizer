@@ -21,24 +21,32 @@ export const COLOR_SWATCHES = [
 
 const styles = {
   swatchGrid: "grid grid-cols-6 gap-2 mb-2.5",
-  swatch: "aspect-square rounded-md border-2 cursor-pointer",
+  swatch:
+    "aspect-square rounded-md border-2 cursor-pointer disabled:cursor-default disabled:opacity-60",
   swatchActive: "ring-2 ring-offset-2 ring-accent",
   customColorRow: "flex items-center gap-2.5",
   customColorLabel:
     "inline-flex items-center gap-2 text-caption text-muted cursor-pointer",
   customColorInput:
-    "w-8 h-8 p-0 border border-border rounded-md bg-transparent cursor-pointer",
+    "w-8 h-8 p-0 border border-border rounded-md bg-transparent cursor-pointer disabled:cursor-default disabled:opacity-60",
   customColorValue: "text-caption text-muted tabular-nums",
 };
 
 interface ColorSwitcherProps {
   value: string;
   onChange: (hex: string) => void;
+  // Render-only mode (e.g. demo team details): swatches stay visible but
+  // can't be picked.
+  disabled?: boolean;
 }
 
 // Palette of preset swatches plus a native "custom" picker. Controlled — the
 // parent owns the selected hex.
-export default function ColorSwitcher({ value, onChange }: ColorSwitcherProps) {
+export default function ColorSwitcher({
+  value,
+  onChange,
+  disabled = false,
+}: ColorSwitcherProps) {
   return (
     <div>
       <div className={styles.swatchGrid}>
@@ -47,6 +55,7 @@ export default function ColorSwitcher({ value, onChange }: ColorSwitcherProps) {
             key={hex}
             type="button"
             aria-label={hex}
+            disabled={disabled}
             onClick={() => onChange(hex)}
             className={`${styles.swatch} ${value === hex ? styles.swatchActive : ""}`}
             style={{ background: hex, borderColor: "rgba(0,0,0,.12)" }}
@@ -58,6 +67,7 @@ export default function ColorSwitcher({ value, onChange }: ColorSwitcherProps) {
           <input
             type="color"
             value={value}
+            disabled={disabled}
             onChange={(e) => onChange(e.target.value)}
             className={styles.customColorInput}
           />
