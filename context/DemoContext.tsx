@@ -77,8 +77,8 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   // Signing in during a demo (e.g. via the header's Log in button) silently
   // exits demo so real data can never be mixed with demo state.
   useEffect(() => {
-    if (session) disable();
-  }, [session, disable]);
+    if (session && !isDemo) disable();
+  }, [session, isDemo, disable]);
 
   const value = useMemo<DemoContextValue>(
     () => ({
@@ -94,9 +94,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     [isDemo, enable, disable, demoGames, demoLineups, applyDemoState],
   );
 
-  return (
-    <DemoContext.Provider value={value}>{children}</DemoContext.Provider>
-  );
+  return <DemoContext.Provider value={value}>{children}</DemoContext.Provider>;
 }
 
 export function useDemo() {

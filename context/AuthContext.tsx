@@ -26,8 +26,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
+    } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      setSession((prev) => {
+        // avoid redundant re-render if session is unchanged.
+        const sameUser =
+          (prev?.user?.id ?? null) === (nextSession?.user?.id ?? null);
+        const sameToken = prev?.access_token === nextSession?.access_token;
+        return sameUser && sameToken ? prev : nextSession;
+      });
     });
 
     return () => subscription.unsubscribe();
